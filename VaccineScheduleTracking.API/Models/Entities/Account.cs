@@ -11,5 +11,9 @@
         public string PhoneNumber { get; set; }
         public string? Avatar { get; set; }
         public string Status { get; set; }
+
+        public Parent? Parent { get; set; }
+        public Doctor? Doctor { get; set; }
+        public Staff? Staff { get; set; }
     }
 }
