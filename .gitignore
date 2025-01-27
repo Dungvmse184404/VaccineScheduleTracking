@@ -1,0 +1,59 @@
+# Windows thumbnail cache
+Thumbs.db
+ehthumbs.db
+
+# .NET Core
+.vs/
+.vscode/
+.idea/
+
+# ASP.NET temporary files
+# .NET 6 or later
+bin/
+obj/
+
+# User-specific files
+# User-specific build results
+project.lock.json
+project.fragment.lock.json
+
+# ASP.NET Core
+wwwroot/
+node_modules/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer files (and related)
+*.pdb
+*.exe
+*.dll
+
+# NPM packages (if using Node.js for frontend)
+node_modules/
+
+# .NET Core user secrets
+secrets/
+
+# Environment-specific files
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
+
+# Logs
+logs/
+
+# IDEs
+.idea/
+.vscode/
+
+# Rider, JetBrains, and Visual Studio Code-specific files
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
