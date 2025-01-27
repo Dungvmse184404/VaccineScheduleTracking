@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API.Data;
+using VaccineScheduleTracking.API.Mappings;
+using VaccineScheduleTracking.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<VaccineScheduleDbContext>(option =>
 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 
