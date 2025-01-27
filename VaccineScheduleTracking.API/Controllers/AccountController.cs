@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Repository;
 
@@ -11,11 +12,13 @@ namespace VaccineScheduleTracking.API.Controllers
     {
         private readonly IAccountRepository accountRepository;
         private readonly IMapper mapper;
+        private readonly JwtHelper jwtHelper;
 
-        public AccountController(IAccountRepository accountRepository, IMapper mapper)
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, JwtHelper jwtHelper)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;
+            this.jwtHelper = jwtHelper;
         }
 
         [HttpPost("login")]
@@ -33,7 +36,15 @@ namespace VaccineScheduleTracking.API.Controllers
                 return Unauthorized(new { Message = "Wrong account or password" });
             }
 
-            return Ok(mapper.Map<AccountDto>(account));
+            var role = account.Parent != null ? "PARENT" : account.Doctor != null ? "DOCTOR" : "STAFF";
+
+            var token = jwtHelper.GenerateToken(account.Username, account.Password);
+
+            return Ok(new
+            {
+                Token = token,
+                Profile = mapper.Map<AccountDto>(account)
+            });
         }
     }
 }
