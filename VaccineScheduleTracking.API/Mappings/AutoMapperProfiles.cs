@@ -9,6 +9,8 @@ namespace VaccineScheduleTracking.API.Mappings
         public AutoMapperProfiles()
         {
             CreateMap<Account, AccountDto>().ReverseMap();
+            CreateMap<Account, RegisterAccountDto>().ReverseMap();
+            CreateMap<Account, UpdateAccountDto>().ReverseMap();
         }
     }
 }
