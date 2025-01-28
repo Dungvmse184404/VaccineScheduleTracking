@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Repository;
+using VaccineScheduleTracking.API.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Azure.Core;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -12,39 +16,72 @@ namespace VaccineScheduleTracking.API.Controllers
     {
         private readonly IAccountRepository accountRepository;
         private readonly IMapper mapper;
+        private readonly IAccountService accountService;
         private readonly JwtHelper jwtHelper;
 
-        public AccountController(IAccountRepository accountRepository, IMapper mapper, JwtHelper jwtHelper)
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, IAccountService accountService, JwtHelper jwtHelper)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;
+            this.accountService = accountService;
             this.jwtHelper = jwtHelper;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginAccountDto loginAccountDto)
         {
-            var account = await accountRepository.GetAccountByUsernameAsync(loginAccountDto.Username);
-
-            if (account == null)
+            try
             {
-                return Unauthorized(new { Message = "Account does not exist!" });
+                var account = await accountService.LoginAsync(loginAccountDto.Username, loginAccountDto.Password);
+                var role = account.Parent != null ? "PARENT" : account.Doctor != null ? "DOCTOR" : "STAFF";
+                var token = jwtHelper.GenerateToken(account.AccountID.ToString() ,account.Username, account.Password);
+                return Ok(new
+                {
+                    Token = token,
+                    AccountType = role,
+                    Profile = mapper.Map<AccountDto>(account)
+                });
             }
-
-            if (loginAccountDto.Password != account.Password)
+            catch (Exception ex)
             {
-                return Unauthorized(new { Message = "Wrong account or password" });
+                return Unauthorized(ex.Message);
             }
-
-            var role = account.Parent != null ? "PARENT" : account.Doctor != null ? "DOCTOR" : "STAFF";
-
-            var token = jwtHelper.GenerateToken(account.Username, account.Password);
-
-            return Ok(new
-            {
-                Token = token,
-                Profile = mapper.Map<AccountDto>(account)
-            });
         }
+
+        [HttpPost("register-parent")]
+        public async Task<IActionResult> Register([FromBody] RegisterAccountDto registerAccount)
+        {
+            try
+            {
+                var account = await accountService.RegisterAsync(registerAccount);
+                return Ok(mapper.Map<AccountDto>(account));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("update-account")]
+        public async Task<IActionResult> Update([FromBody] UpdateAccountDto updateAccount)
+        {
+            try
+            {
+                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                if (currentUserId != updateAccount.AccountID)
+                {
+                    return BadRequest("You can't modifile account of another person.");
+                }
+                var account = await accountService.UpdateAsync(updateAccount);
+
+                return Ok(mapper.Map<AccountDto>(account));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);  
+            }
+        }
+
     }
 }
