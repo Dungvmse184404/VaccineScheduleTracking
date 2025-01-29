@@ -11,6 +11,7 @@ namespace VaccineScheduleTracking.API.Mappings
             CreateMap<Account, AccountDto>().ReverseMap();
             CreateMap<Account, RegisterAccountDto>().ReverseMap();
             CreateMap<Account, UpdateAccountDto>().ReverseMap();
+            CreateMap<Vaccine, VaccineDto>().ReverseMap();
         }
     }
 }
