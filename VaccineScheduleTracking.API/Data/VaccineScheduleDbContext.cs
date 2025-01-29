@@ -13,5 +13,7 @@ namespace VaccineScheduleTracking.API.Data
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Parent> Parents { get; set; }
         public DbSet<Child> Children { get; set; } 
+        public DbSet<VaccineType> VaccineTypes { get; set; }
+        public DbSet<Vaccine> Vaccines { get; set; }
     }
 }
