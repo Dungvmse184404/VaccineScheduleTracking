@@ -23,7 +23,7 @@ namespace VaccineScheduleTracking.API.Helpers
             {
                 new Claim(ClaimTypes.NameIdentifier, accountID),
                 new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim("Role", role),
+                new Claim("role", role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

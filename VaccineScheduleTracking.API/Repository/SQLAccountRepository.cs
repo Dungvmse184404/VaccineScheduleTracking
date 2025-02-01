@@ -26,7 +26,9 @@ namespace VaccineScheduleTracking.API.Repository
 
         public async Task<Account?> GetAccountByUsernameAsync(string username)
         {
-            return await dbContext.Accounts.Include(x => x.Parent).FirstOrDefaultAsync(user => user.Username == username);
+            return await dbContext.Accounts.Include(x => x.Parent).
+                                            Include(x => x.Doctor).
+                                            Include(x => x.Staff).FirstOrDefaultAsync(user => user.Username == username);
         }
 
         public async Task<Account> AddAsync(Account account)

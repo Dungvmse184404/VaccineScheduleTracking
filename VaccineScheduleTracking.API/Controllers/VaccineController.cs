@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.DTOs;
+using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Services;
 
 namespace VaccineScheduleTracking.API.Controllers
@@ -25,5 +27,20 @@ namespace VaccineScheduleTracking.API.Controllers
 
             return Ok(mapper.Map<List<VaccineDto>>(vaccines));
         }
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPost]
+        public async Task<IActionResult> CreateVaccineType([FromBody] AddVaccineTypeDto addVaccineTypeDto)
+        {
+            var vaccineType = await vaccineService.CreateVaccineTypeAsync(addVaccineTypeDto);
+
+            if (vaccineType == null)
+            {
+                return BadRequest($"{addVaccineTypeDto.Name} is exist!");
+            }
+
+            return Ok(vaccineType);
+        }
     }
+
 }

@@ -33,8 +33,8 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var account = await accountService.LoginAsync(loginAccountDto.Username, loginAccountDto.Password);
-                var role = account.Parent != null ? "PARENT" : account.Doctor != null ? "DOCTOR" : "STAFF";
-                var token = jwtHelper.GenerateToken(account.AccountID.ToString() ,account.Username, account.Password);
+                var role = account.Parent != null ? "Parent" : account.Doctor != null ? "Doctor" : "Staff";
+                var token = jwtHelper.GenerateToken(account.AccountID.ToString() ,account.Username, role);
                 return Ok(new
                 {
                     Token = token,

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
@@ -36,6 +37,19 @@ namespace VaccineScheduleTracking.API.Repository
             }
 
             return await query.ToListAsync();
+        }
+
+        public async Task<VaccineType?> GetVaccineTypeByNameAsync(string name)
+        {
+            return await dbContext.VaccineTypes.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
+        public async Task<VaccineType> AddVaccineTypeAsync(VaccineType vaccineType)
+        {
+            await dbContext.VaccineTypes.AddAsync(vaccineType);
+            await dbContext.SaveChangesAsync();
+
+            return vaccineType;
         }
     }
 }
