@@ -28,7 +28,7 @@ namespace VaccineScheduleTracking.API.Controllers
             return Ok(mapper.Map<List<VaccineDto>>(vaccines));
         }
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor, Staff")]
         [HttpPost]
         public async Task<IActionResult> CreateVaccineType([FromBody] AddVaccineTypeDto addVaccineTypeDto)
         {
