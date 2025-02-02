@@ -51,6 +51,8 @@ builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVaccineRepository, SQLVaccineRepository>();
 builder.Services.AddScoped<IVaccineService, VaccineService>();
+builder.Services.AddScoped<IChildRepository, SQLChildRepository>();
+builder.Services.AddScoped<IChildService, ChildService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
