@@ -45,7 +45,7 @@ namespace VaccineScheduleTracking.API.Services
             }
 
             var account = mapper.Map<Account>(registerAccount);
-            account.Status = "ACTIVE"; 
+            account.Status = "ACTIVE";
             account.Parent = new Parent() { Account = account };
 
             return await accountRepository.AddAccountAsync(account);
@@ -69,6 +69,11 @@ namespace VaccineScheduleTracking.API.Services
                 throw new Exception("Account does not exist!");
             }
             return account;
+        }
+
+        public async Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccount)
+        {
+            return await accountRepository.GetAllAccountsAsync(filterAccount);
         }
     }
 }

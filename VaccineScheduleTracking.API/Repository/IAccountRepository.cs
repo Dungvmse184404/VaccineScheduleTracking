@@ -11,5 +11,6 @@ namespace VaccineScheduleTracking.API.Repository
         Task<Account?> GetAccountByPhonenumberAsync(string phonenumber);
         Task<Account> AddAccountAsync(Account account);
         Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount);
+        Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccountDto);
     }
 }

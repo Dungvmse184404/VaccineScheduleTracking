@@ -83,5 +83,14 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
+        [Authorize(Roles = "Doctor, Staff")]
+        [HttpGet("get-accounts")]
+        public async Task<IActionResult> GetAllAccounts([FromQuery] FilterAccountDto filterAccount)
+        {
+            var accounts = await accountService.GetAllAccountsAsync(filterAccount);
+
+            return Ok(mapper.Map<List<AccountDto>>(accounts));
+        }
+
     }
 }
