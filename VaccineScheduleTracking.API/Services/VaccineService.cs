@@ -16,11 +16,42 @@ namespace VaccineScheduleTracking.API.Services
             this.mapper = mapper;
         }
 
+        // Vaccine funtion
         public async Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto)
         {
-            return await vaccineRepository.GetVaccinesAsync(filterVaccineDto); 
+            return await vaccineRepository.GetVaccinesAsync(filterVaccineDto);
         }
 
+        public async Task<Vaccine?> CreateVaccineAsync(AddVaccineDto addVaccineDto)
+        {
+            var vaccine = await vaccineRepository.GetVaccineByNameAsync(addVaccineDto.Name);
+            if (vaccine != null)
+            {
+                throw new Exception($"{addVaccineDto.Name} is exist!");
+            }
+            var vaccineType = await vaccineRepository.GetVaccineTypeByNameAsync(addVaccineDto.VaccineType);
+            if (vaccineType == null)
+            {
+                throw new Exception($"{addVaccineDto.VaccineType} is invalid!");
+            }
+            vaccine = new Vaccine
+            {
+                Name = addVaccineDto.Name,
+                VaccineTypeID = vaccineType.VaccineTypeID,
+                Manufacturer = addVaccineDto.Manufacturer,
+                Stock = addVaccineDto.Stock,
+                Price = addVaccineDto.Price,
+                Description = addVaccineDto.Description,
+                FromAge = addVaccineDto.FromAge,
+                ToAge = addVaccineDto.ToAge,
+                Period = addVaccineDto.Period,
+                VaccineType = vaccineType
+            };
+            await vaccineRepository.AddVaccineAsync(vaccine);
+            return vaccine;
+        }
+
+        // VaccineType function
         public async Task<VaccineType?> CreateVaccineTypeAsync(AddVaccineTypeDto addVaccineTypeDto)
         {
             var vaccineType = await vaccineRepository.GetVaccineTypeByNameAsync(addVaccineTypeDto.Name);

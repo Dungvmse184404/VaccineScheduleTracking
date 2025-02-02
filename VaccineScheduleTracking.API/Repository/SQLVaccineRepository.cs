@@ -15,6 +15,21 @@ namespace VaccineScheduleTracking.API.Repository
             this.dbContext = dbContext;
         }
 
+        public async Task<Vaccine?> GetVaccineByNameAsync(string name)
+        {
+            return await dbContext.Vaccines.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
+        public async Task<Vaccine> AddVaccineAsync(Vaccine vaccine)
+        {
+            await dbContext.Vaccines.AddAsync(vaccine);
+            await dbContext.SaveChangesAsync();
+
+            return vaccine;
+        }
+
+
+        // Vaccine function
         public async Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto)
         {
             var query = dbContext.Vaccines.Include(x => x.VaccineType).AsQueryable();
@@ -39,6 +54,8 @@ namespace VaccineScheduleTracking.API.Repository
             return await query.ToListAsync();
         }
 
+
+        // VaccineType function
         public async Task<VaccineType?> GetVaccineTypeByNameAsync(string name)
         {
             return await dbContext.VaccineTypes.FirstOrDefaultAsync(x => x.Name == name);
@@ -51,5 +68,7 @@ namespace VaccineScheduleTracking.API.Repository
 
             return vaccineType;
         }
+
+        
     }
 }
