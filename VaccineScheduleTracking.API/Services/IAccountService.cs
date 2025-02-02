@@ -7,6 +7,6 @@ namespace VaccineScheduleTracking.API.Services
     {
         Task<Account?> LoginAsync(string username, string password);
         Task<Account?> RegisterAsync(RegisterAccountDto registerAccount);
-        Task<Account?> UpdateAsync(UpdateAccountDto updateAccount);
+        Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount);
     }
 }

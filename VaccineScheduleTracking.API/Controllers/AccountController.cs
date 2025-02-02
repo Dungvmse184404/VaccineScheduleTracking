@@ -64,7 +64,7 @@ namespace VaccineScheduleTracking.API.Controllers
 
         [Authorize]
         [HttpPut("update-account")]
-        public async Task<IActionResult> Update([FromBody] UpdateAccountDto updateAccount)
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto updateAccount)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 {
                     return BadRequest("You can't modifile account of another person.");
                 }
-                var account = await accountService.UpdateAsync(updateAccount);
+                var account = await accountService.UpdateAccountAsync(updateAccount);
 
                 return Ok(mapper.Map<AccountDto>(account));
             }

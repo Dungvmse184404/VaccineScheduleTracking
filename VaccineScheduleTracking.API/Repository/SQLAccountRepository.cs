@@ -14,6 +14,11 @@ namespace VaccineScheduleTracking.API.Repository
             this.dbContext = dbContext;
         }
 
+        public async Task<Account?> GetAccountByID(int id)
+        {
+            return await dbContext.Accounts.FirstOrDefaultAsync(user => user.AccountID == id);
+        }
+
         public async Task<Account?> GetAccountByEmailAsync(string email)
         {
             return await dbContext.Accounts.FirstOrDefaultAsync(user => user.Email == email);
@@ -31,7 +36,7 @@ namespace VaccineScheduleTracking.API.Repository
                                             Include(x => x.Staff).FirstOrDefaultAsync(user => user.Username == username);
         }
 
-        public async Task<Account> AddAsync(Account account)
+        public async Task<Account> AddAccountAsync(Account account)
         {
             await dbContext.Accounts.AddAsync(account);
             await dbContext.SaveChangesAsync();
@@ -39,12 +44,7 @@ namespace VaccineScheduleTracking.API.Repository
             return account;
         }
 
-        public async Task<Account?> GetAccountByID(int id)
-        {
-            return await dbContext.Accounts.FirstOrDefaultAsync(user => user.AccountID == id);
-        }
-
-        public async Task<Account?> UpdateAsync(UpdateAccountDto updateAccount)
+        public async Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount)
         {
             var account = await GetAccountByID(updateAccount.AccountID);
             if (account == null)

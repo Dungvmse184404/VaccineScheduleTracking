@@ -48,10 +48,10 @@ namespace VaccineScheduleTracking.API.Services
             account.Status = "ACTIVE"; 
             account.Parent = new Parent() { Account = account };
 
-            return await accountRepository.AddAsync(account);
+            return await accountRepository.AddAccountAsync(account);
         }
 
-        public async Task<Account?> UpdateAsync(UpdateAccountDto updateAccount)
+        public async Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount)
         {
             var email = await accountRepository.GetAccountByEmailAsync(updateAccount.Email);
             if (email != null && email.AccountID != updateAccount.AccountID)
@@ -63,7 +63,7 @@ namespace VaccineScheduleTracking.API.Services
             {
                 throw new Exception($"{updateAccount.PhoneNumber} is not available");
             }
-            var account = await accountRepository.UpdateAsync(updateAccount);
+            var account = await accountRepository.UpdateAccountAsync(updateAccount);
             if (account == null)
             {
                 throw new Exception("Account does not exist!");
