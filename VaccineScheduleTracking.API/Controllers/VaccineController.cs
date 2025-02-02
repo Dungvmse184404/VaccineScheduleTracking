@@ -21,7 +21,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] FilterVaccineDto filterVaccineDto)
+        public async Task<IActionResult> GetVaccines([FromQuery] FilterVaccineDto filterVaccineDto)
         {
             var vaccines = await vaccineService.GetVaccinesAsync(filterVaccineDto);
 
@@ -29,7 +29,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize(Roles = "Doctor, Staff")]
-        [HttpPost]
+        [HttpPost("add-vaccinetype")]
         public async Task<IActionResult> CreateVaccineType([FromBody] AddVaccineTypeDto addVaccineTypeDto)
         {
             var vaccineType = await vaccineService.CreateVaccineTypeAsync(addVaccineTypeDto);
