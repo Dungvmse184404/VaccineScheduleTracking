@@ -62,7 +62,7 @@ CREATE TABLE [dbo].[Children] (
 	[FirstName] [nvarchar](100) NOT NULL,
 	[LastName] [nvarchar](100) NOT NULL,
 	[Weight] [decimal](8,2) NOT NULL,
-	[Heigth] [decimal](8,2) NOT NULL,
+	[Height] [decimal](8,2) NOT NULL,
 	[Gender] [varchar](10) NOT NULL,
 	[DateOfBirth] [date] NOT NULL,
 	[ParentID] [int] NOT NULL,
@@ -113,6 +113,7 @@ INSERT [dbo].[Staffs] (AccountID) VALUES (4)
 
 /****** Insert:  Table [dbo].[Child] ******/
 INSERT [dbo].[Children] ([FirstName], [LastName], [Weight], [Heigth], [Gender], [DateOfBirth], [ParentID]) VALUES
+('Thuy', 'Nguyen', 11.3, 0.8, 'FEMALE', '2022-01-01', 1),
 ('Thu', 'Nguyen', 22.3, 1.23, 'FEMALE', '2022-12-25', 1),
 ('Minh', 'Nguyen', 20.3, 1.1, 'MALE', '2022-1-1', 2)
 GO
@@ -129,6 +130,7 @@ INSERT [dbo].[Vaccines] ([Name], [VaccineTypeID], [Manufacturer], [Stock], [Pric
 ('AZD1222', 1, 'AstraZeneca', 100, 100000, 'In April 2021, the Medicines and Healthcare products Regulatory Agency (MHRA) confirmed a possible link between the AstraZeneca Covid-19 vaccine and these rare blood clots, but emphasised that the benefits of the vaccine continued to outweigh the risks for the vast majority of people.', 60, 200, 10),
 ('VAXIGRIP TETRA', 2, 'Sanofi Pasteur (France)', 100, 356000, 'Vaxigrip Tetra is a vaccine. This vaccine helps to protect you or your child against influenza (flu). Vaxigrip Tetra is used to prevent flu in persons of 6 months of age and older. If you are pregnant, one dose of vaccine given to you during pregnancy may protect your baby from birth to less than 6 months of age.', 6, 200, 4)
 GO
+
 
 
 /******
