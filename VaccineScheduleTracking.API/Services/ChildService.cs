@@ -16,5 +16,15 @@ namespace VaccineScheduleTracking.API.Services
         {
             return await childRepository.GetChildrenByParentID(parentID);
         }
+
+        public async Task<Child> AddChild(Child child)
+        {
+            return await childRepository.AddChild(child);
+        }
+
+        public async Task<Child> UpdateChild(int id, Child child)
+        {
+            return await childRepository.UpdateChild(id, child);
+        }
     }
 }
