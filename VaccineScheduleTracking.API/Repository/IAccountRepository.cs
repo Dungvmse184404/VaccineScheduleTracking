@@ -5,6 +5,7 @@ namespace VaccineScheduleTracking.API.Repository
 {
     public interface IAccountRepository 
     {
+        Task<Account?> GetAccountByKeywordAsync(string keyword);
         Task<Account?> GetAccountByID(int id);
         Task<Account?> GetAccountByUsernameAsync(string username);
         Task<Account?> GetAccountByEmailAsync(string email);
@@ -12,5 +13,6 @@ namespace VaccineScheduleTracking.API.Repository
         Task<Account> AddAccountAsync(Account account);
         Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount);
         Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccountDto);
+        Task<Account?> DeleteAccountsAsync(Account account);
     }
 }

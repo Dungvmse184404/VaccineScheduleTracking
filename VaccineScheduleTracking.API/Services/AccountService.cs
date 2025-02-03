@@ -75,5 +75,17 @@ namespace VaccineScheduleTracking.API.Services
         {
             return await accountRepository.GetAllAccountsAsync(filterAccount);
         }
+
+
+        public async Task<Account?> DeleteAccountAsync(string keyword)
+        {
+            var account = await accountRepository.GetAccountByKeywordAsync(keyword);
+            if (account == null)
+            {
+                throw new Exception($"{keyword} is not available");
+            }
+            account = mapper.Map<Account>(account);
+            return await accountRepository.DeleteAccountsAsync(account);
+        }
     }
 }

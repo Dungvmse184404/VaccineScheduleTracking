@@ -34,7 +34,7 @@ namespace VaccineScheduleTracking.API.Controllers
             {
                 var account = await accountService.LoginAsync(loginAccountDto.Username, loginAccountDto.Password);
                 var role = account.Parent != null ? "Parent" : account.Doctor != null ? "Doctor" : "Staff";
-                var token = jwtHelper.GenerateToken(account.AccountID.ToString() ,account.Username, role);
+                var token = jwtHelper.GenerateToken(account.AccountID.ToString(), account.Username, role);
                 return Ok(new
                 {
                     Token = token,
@@ -79,7 +79,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);  
+                return BadRequest(ex.Message);
             }
         }
 
@@ -90,6 +90,26 @@ namespace VaccineScheduleTracking.API.Controllers
             var accounts = await accountService.GetAllAccountsAsync(filterAccount);
 
             return Ok(mapper.Map<List<AccountDto>>(accounts));
+        }
+
+        [Authorize(Roles = "Staff")]
+        [HttpDelete("delete-account")]
+        public async Task<IActionResult> DeleteAccount(string keyword)
+        {
+            try
+            {
+                var account = await accountService.DeleteAccountAsync(keyword);
+                if (account == null)
+                {
+                    return NotFound();
+                }
+                return Ok(mapper.Map<DeleteAccountDto>(account));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
     }

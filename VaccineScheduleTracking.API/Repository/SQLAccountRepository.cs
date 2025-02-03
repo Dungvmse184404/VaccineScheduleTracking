@@ -14,6 +14,26 @@ namespace VaccineScheduleTracking.API.Repository
             this.dbContext = dbContext;
         }
 
+
+        public async Task<Account?> GetAccountByKeywordAsync(string keyword)
+        {
+            return await GetAccountByIDAsync(keyword)
+                ?? await GetAccountByEmailAsync(keyword)
+                ?? await GetAccountByUsernameAsync(keyword)
+                ?? await GetAccountByPhonenumberAsync(keyword);
+        }
+
+        private async Task<Account?> GetAccountByIDAsync(string keyword)
+        {
+            if (int.TryParse(keyword, out int id))
+            {
+                return await GetAccountByID(id);
+            }
+            return null;
+        }
+
+
+
         public async Task<Account?> GetAccountByID(int id)
         {
             return await dbContext.Accounts.FirstOrDefaultAsync(user => user.AccountID == id);
@@ -70,9 +90,9 @@ namespace VaccineScheduleTracking.API.Repository
                                            Include(x => x.Staff).AsQueryable();
             if (filterAccountDto.AccountID.HasValue)
             {
-                query = query.Where(x => x.AccountID ==  filterAccountDto.AccountID);
+                query = query.Where(x => x.AccountID == filterAccountDto.AccountID);
             }
-            if(!string.IsNullOrEmpty(filterAccountDto.Username))
+            if (!string.IsNullOrEmpty(filterAccountDto.Username))
             {
                 query = query.Where(x => x.Username == filterAccountDto.Username);
             }
@@ -97,7 +117,15 @@ namespace VaccineScheduleTracking.API.Repository
                 query = query.Where(x => x.Status == filterAccountDto.Status);
             }
 
-            return await query.ToListAsync();   
+            return await query.ToListAsync();
+        }
+
+        public async Task<Account?> DeleteAccountsAsync(Account account)
+        {
+            account.Status = "INACTIVE";
+            await dbContext.SaveChangesAsync();
+
+            return account;
         }
     }
 }
