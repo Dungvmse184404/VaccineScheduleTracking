@@ -62,6 +62,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
+
         [Authorize]
         [HttpPut("update-account")]
         public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto updateAccount)
@@ -92,16 +93,17 @@ namespace VaccineScheduleTracking.API.Controllers
             return Ok(mapper.Map<List<AccountDto>>(accounts));
         }
 
-        [Authorize(Roles = "Staff")]
-        [HttpDelete("delete-account")]
-        public async Task<IActionResult> DeleteAccount(string keyword)
+
+        //[Authorize(Roles = "Staff")]
+        [HttpDelete("delete-account/{keyword}")]
+        public async Task<IActionResult> DeleteAccount([FromRoute] string keyword)
         {
             try
             {
                 var account = await accountService.DeleteAccountAsync(keyword);
                 if (account == null)
                 {
-                    return NotFound();
+                    return NotFound("Account not found or already active");
                 }
                 return Ok(mapper.Map<DeleteAccountDto>(account));
             }

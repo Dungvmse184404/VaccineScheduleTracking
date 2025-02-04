@@ -15,5 +15,7 @@
         public Parent? Parent { get; set; }
         public Doctor? Doctor { get; set; }
         public Staff? Staff { get; set; }
+
+        
     }
 }

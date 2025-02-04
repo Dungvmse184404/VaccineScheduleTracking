@@ -17,22 +17,14 @@ namespace VaccineScheduleTracking.API.Repository
 
         public async Task<Account?> GetAccountByKeywordAsync(string keyword)
         {
-            return await GetAccountByIDAsync(keyword)
-                ?? await GetAccountByEmailAsync(keyword)
-                ?? await GetAccountByUsernameAsync(keyword)
-                ?? await GetAccountByPhonenumberAsync(keyword);
-        }
-
-        private async Task<Account?> GetAccountByIDAsync(string keyword)
-        {
             if (int.TryParse(keyword, out int id))
             {
                 return await GetAccountByID(id);
             }
-            return null;
+            return await GetAccountByEmailAsync(keyword)
+                ?? await GetAccountByUsernameAsync(keyword)
+                ?? await GetAccountByPhonenumberAsync(keyword);
         }
-
-
 
         public async Task<Account?> GetAccountByID(int id)
         {
