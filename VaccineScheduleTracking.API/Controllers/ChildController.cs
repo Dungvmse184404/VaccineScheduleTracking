@@ -33,11 +33,18 @@ namespace VaccineScheduleTracking.API.Controllers
         [HttpPost("add-child")]
         public async Task<IActionResult> CreateChildProfile([FromBody] AddChildDto addChild)
         {
-            var child = mapper.Map<Child>(addChild);
-            var currentUserID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            child.ParentID = currentUserID;
-            child = await childService.AddChild(child);
-            return Ok(child);
+            try
+            {
+                var child = mapper.Map<Child>(addChild);
+                var currentUserID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                child.ParentID = currentUserID;
+                child = await childService.AddChild(child);
+                return Ok(child);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]

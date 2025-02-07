@@ -14,10 +14,10 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VaccineScheduleTracking.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ec3058a228102d2ca6b80ffdc89e9aad8b0d5bc")]
-=======
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+89641be669d75bdd16f041f237c3182d73ac55a4")]
+>>>>>>> tulm
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f417dc696dc59afa6fe1d29d8a6c460d4331c818")]
 >>>>>>> tulm
 [assembly: System.Reflection.AssemblyProductAttribute("VaccineScheduleTracking.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VaccineScheduleTracking.API")]

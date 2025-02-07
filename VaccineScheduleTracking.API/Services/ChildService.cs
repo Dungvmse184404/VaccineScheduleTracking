@@ -19,6 +19,13 @@ namespace VaccineScheduleTracking.API.Services
 
         public async Task<Child> AddChild(Child child)
         {
+            if (!child.Gender.ToLower().Equals("female") && !child.Gender.ToLower().Equals("male"))
+            {
+                throw new Exception("Please input valid gender!");
+            } else
+            {
+                child.Gender = child.Gender.ToUpper()[0] + child.Gender.ToLower().Substring(1);
+            }
             return await childRepository.AddChild(child);
         }
 

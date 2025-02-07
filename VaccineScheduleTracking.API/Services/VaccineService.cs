@@ -34,6 +34,15 @@ namespace VaccineScheduleTracking.API.Services
             {
                 throw new Exception($"{addVaccineDto.VaccineType} is invalid!");
             }
+            if (vaccine.FromAge >= vaccine.ToAge)
+            {
+                throw new Exception("Invalid age limit!");
+            }
+            if (vaccine.Period == 0)
+            {
+                throw new Exception("The period is invalid!");
+            }
+
             vaccine = new Vaccine
             {
                 Name = addVaccineDto.Name,
