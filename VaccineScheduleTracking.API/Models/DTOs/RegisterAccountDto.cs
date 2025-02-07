@@ -9,9 +9,9 @@ namespace VaccineScheduleTracking.API.Models.DTOs
         public string Username { get; set; } = string.Empty;
         [Required]
         [MinLength(8, ErrorMessage = "Password must have at least 8 characters.")]
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*\W).{8,}$",
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\W).$",
         ErrorMessage = "Password must have at least 1 uppercase letter and 1 special character.")]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; set; } = "";
         [Required]
         public string Firstname { get; set; } = string.Empty;
         [Required]
