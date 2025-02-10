@@ -50,6 +50,37 @@ namespace VaccineScheduleTracking.API.Services
             await vaccineRepository.AddVaccineAsync(vaccine);
             return vaccine;
         }
+        public async Task<Vaccine?> UpdateVaccineAsync(int id, UpdateVaccineDto updateVaccine)
+        {
+            var vaccine = await vaccineRepository.GetVaccineByIDAsync(id);
+            if (vaccine == null)
+            {
+                throw new Exception($"Can't find vaccine with ID {id}");
+            }
+            vaccine.Name = updateVaccine.Name ?? vaccine.Name;
+            //vaccine.VaccineTypeID = updateVaccine.VaccineTypeID ?? vaccine.VaccineTypeID;
+            vaccine.Manufacturer = updateVaccine.Manufacturer ?? vaccine.Manufacturer;
+            vaccine.Stock = updateVaccine.Stock ?? vaccine.Stock;
+            vaccine.Price = updateVaccine.Price ?? vaccine.Price;
+            vaccine.Description = updateVaccine.Description ?? vaccine.Description;
+            vaccine.FromAge = updateVaccine.FromAge ?? vaccine.FromAge;
+            vaccine.ToAge = updateVaccine.ToAge ?? vaccine.ToAge;
+            vaccine.Period = updateVaccine.Period ?? vaccine.Period;
+            vaccine.DosesRequired = updateVaccine.DosesRequired ?? vaccine.DosesRequired;
+            vaccine.Priority = updateVaccine.Priority ?? vaccine.Priority;
+
+            return await vaccineRepository.UpdateVaccineAsync(vaccine);
+        }
+
+        public async Task<Vaccine?> DeleteVaccineAsync(int id)
+        {
+            var vaccine = await vaccineRepository.GetVaccineByIDAsync(id);
+            if (vaccine == null)
+            {
+                throw new Exception($"VaccineID {id} not found!");
+            }
+            return await vaccineRepository.DeleteVaccineAsync(vaccine);
+        }
 
         // VaccineType function
         public async Task<VaccineType?> CreateVaccineTypeAsync(AddVaccineTypeDto addVaccineTypeDto)
@@ -66,30 +97,8 @@ namespace VaccineScheduleTracking.API.Services
             return vaccineType;
         }
 
-        //public async Task<Vaccine?> UpdateVaccineDto(UpdateAccountDto updateVaccine)
-        //{
-        //    var updateVaccine = await vaccineRepository.
-        //}
 
-        public async Task<Vaccine?> DeleteVaccineAsync(int id)
-        {
-            var vaccine = await vaccineRepository.GetVaccineByIDAsync(id);
-            if (vaccine == null)
-            {
-                throw new Exception($"VaccineID {id} not found!");
-            }
-            return await vaccineRepository.DeleteVaccineByIDAsync(vaccine);
-        }
 
-        //public async Task<Vaccine?> DeleteVaccineAsync(int id)
-        //{
-        //    var vaccine = await vaccineRepository.DeleteVaccineAsync(id);
-        //    if (vaccine != null)
-        //    {
-        //        throw new Exception($"vaccine name {vaccine.Name} doesn't exist");
-        //    }
-        //    return vaccine;
 
-        //}
     }
 }

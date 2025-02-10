@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Services;
+using VaccineScheduleTracking.API.Helpers;
+using static VaccineScheduleTracking.API.Helpers.MessageColorUtility;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -57,6 +59,24 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
+
+        //[Authorize(Roles = "Doctor")]
+        [HttpPost("update-vaccine/{id}")]
+        public async Task<IActionResult> UpdateVaccine([FromRoute]int id, [FromBody] UpdateVaccineDto updateVaccineDto)
+        {
+            try
+            {
+                var vaccine = await vaccineService.UpdateVaccineAsync(id, updateVaccineDto);
+                var vaccineDto = mapper.Map<VaccineDto>(vaccine);
+                return Ok($"Updated vaccine {vaccineDto.VaccineID} successfully");
+            }
+            catch (Exception ex)
+            {
+                DisplayMsg(ex.Message, Color.Red);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [Authorize(Roles = "Staff")]
         [HttpPost("delete-vaccine")]
         public async Task<IActionResult> DeleteVaccine(int id)
@@ -64,7 +84,8 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var vaccine = await vaccineService.DeleteVaccineAsync(id);
-                return Ok($"Vaccine {vaccine.Name} Deleted Successfully");
+                var vaccineDto = mapper.Map<VaccineDto>(vaccine);
+                return Ok($"Vaccine {vaccineDto.Name} Deleted Successfully");
             }
             catch (Exception e){ return BadRequest(e.Message); }
         }

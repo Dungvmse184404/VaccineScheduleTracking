@@ -11,8 +11,8 @@ namespace VaccineScheduleTracking.API.Repository
         Task<Vaccine?> GetVaccineByNameAsync(string name);
         Task<Vaccine> AddVaccineAsync(Vaccine vaccine);
         Task<Vaccine> GetSutableVaccine(int Age, string TypeName);
-        //Task<Vaccine> UpdateVaccineAsync(int id);
-        Task<Vaccine> DeleteVaccineByIDAsync(Vaccine vaccine);
+        Task<Vaccine> UpdateVaccineAsync(Vaccine vaccine);
+        Task<Vaccine> DeleteVaccineAsync(Vaccine vaccine);
         // VaccineType function
         Task<VaccineType?> GetVaccineTypeByNameAsync(string name);
         Task<VaccineType> AddVaccineTypeAsync(VaccineType vaccineType);
