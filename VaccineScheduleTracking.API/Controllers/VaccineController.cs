@@ -5,7 +5,6 @@ using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API.Helpers;
-using static VaccineScheduleTracking.API.Helpers.MessageColorUtility;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -72,7 +71,6 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                DisplayMsg(ex.Message, Color.Red);
                 return BadRequest(ex.Message);
             }
         }

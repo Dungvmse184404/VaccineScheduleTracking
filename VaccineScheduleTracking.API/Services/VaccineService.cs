@@ -57,17 +57,18 @@ namespace VaccineScheduleTracking.API.Services
             {
                 throw new Exception($"Can't find vaccine with ID {id}");
             }
-            vaccine.Name = updateVaccine.Name ?? vaccine.Name;
+            
+            vaccine.Name = updateVaccine.Name == "string" ? vaccine.Name : updateVaccine.Name;
             //vaccine.VaccineTypeID = updateVaccine.VaccineTypeID ?? vaccine.VaccineTypeID;
-            vaccine.Manufacturer = updateVaccine.Manufacturer ?? vaccine.Manufacturer;
-            vaccine.Stock = updateVaccine.Stock ?? vaccine.Stock;
-            vaccine.Price = updateVaccine.Price ?? vaccine.Price;
-            vaccine.Description = updateVaccine.Description ?? vaccine.Description;
-            vaccine.FromAge = updateVaccine.FromAge ?? vaccine.FromAge;
-            vaccine.ToAge = updateVaccine.ToAge ?? vaccine.ToAge;
-            vaccine.Period = updateVaccine.Period ?? vaccine.Period;
-            vaccine.DosesRequired = updateVaccine.DosesRequired ?? vaccine.DosesRequired;
-            vaccine.Priority = updateVaccine.Priority ?? vaccine.Priority;
+            vaccine.Manufacturer = updateVaccine.Manufacturer == "string" ? vaccine.Manufacturer : updateVaccine.Manufacturer;
+            vaccine.Stock = (updateVaccine.Stock == 0 ? vaccine.Stock : updateVaccine.Stock);
+            vaccine.Price = updateVaccine.Price == 0 ? vaccine.Price : updateVaccine.Price;
+            vaccine.Description = updateVaccine.Description == "string" ? vaccine.Description : updateVaccine.Description;
+            vaccine.FromAge = updateVaccine.FromAge == 0 ? vaccine.FromAge : updateVaccine.FromAge;
+            vaccine.ToAge = updateVaccine.ToAge == 0 ? vaccine.ToAge : updateVaccine.ToAge;
+            vaccine.Period = updateVaccine.Period == 0 ? vaccine.Period : updateVaccine.Period;
+            vaccine.DosesRequired = updateVaccine.DosesRequired == 0 ? vaccine.DosesRequired : updateVaccine.DosesRequired;
+            vaccine.Priority = updateVaccine.Priority == 0 ? vaccine.Priority : updateVaccine.Priority;
 
             return await vaccineRepository.UpdateVaccineAsync(vaccine);
         }
