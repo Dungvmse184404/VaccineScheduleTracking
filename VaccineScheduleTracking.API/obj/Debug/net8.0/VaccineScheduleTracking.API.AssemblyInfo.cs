@@ -14,11 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VaccineScheduleTracking.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+89641be669d75bdd16f041f237c3182d73ac55a4")]
->>>>>>> tulm
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f417dc696dc59afa6fe1d29d8a6c460d4331c818")]
->>>>>>> tulm
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+92bd9fcf86c60d9506325ca8cac17987f24198b0")]
 [assembly: System.Reflection.AssemblyProductAttribute("VaccineScheduleTracking.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VaccineScheduleTracking.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
