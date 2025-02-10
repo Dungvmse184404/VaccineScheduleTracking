@@ -12,42 +12,66 @@ namespace VaccineScheduleTracking.API.Repository
     {
         private readonly VaccineScheduleDbContext _dbContext;
 
-        public SQLAppointmentReopsitory(VaccineScheduleDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public async Task<Appointment?> SearchAppointmentByKeyword(string keyword)
+        /// <summary>
+        /// tổng hợp các hàm Get (Chắc cũng ko dùng nhiều)
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        public async Task<List<Appointment>> SearchAppointmentByKeyword(string keyword)
         {
             if (int.TryParse(keyword, out int id))
             {
-                return await GetAppointmentByID(id)
-                    ?? await GetAppointmentByDoctorID(id)
-                    ?? await GetAppointmentByChildID(id);
+                return await GetAppointmentListByDoctorID(id)
+                    ?? await GetAppointmentListByChildID(id);
             }
-            return await GetAppointmentByStatus(keyword);
+            return await GetAppointmentListByStatus(keyword);
 
         }
+
+
+        /// <summary>
+        /// hàm này để tìm 1 appointment thôi 
+        /// </summary>
+        /// <param name="id"> Cho ID zô </param>
+        /// <returns> appointment có ID tương ứng </returns>
         public async Task<Appointment?> GetAppointmentByID(int id)
         {
             return await _dbContext.Appointments.FirstOrDefaultAsync(appointment => appointment.AppointmentID == id);
         }
 
-        public async Task<Appointment?> GetAppointmentByChildID(int id)
-        {
-            return await _dbContext.Appointments.FirstOrDefaultAsync(appointment => appointment.ChildID == id);
-        }
-        public async Task<Appointment?> GetAppointmentByDoctorID(int id)
-        {
-            return await _dbContext.Appointments.FirstOrDefaultAsync(appointment => appointment.DoctorID == id);
-        }
 
-        public async Task<Appointment?> GetAppointmentByStatus(string status)
+        /// <summary>
+        /// Nhét vô ChildID lấy ra danh sách appointment 
+        /// </summary>
+        /// <param name="id"> ID của Child </param>
+        /// <returns> danh sách Appointment của child </returns>
+        public async Task<List<Appointment>> GetAppointmentListByChildID(int id)
         {
-            return await _dbContext.Appointments.FirstOrDefaultAsync(appointment => appointment.Status == status);
+            return await _dbContext.Appointments.Where(Appmt => Appmt.ChildID == id).ToListAsync();
         }
 
 
+        /// <summary>
+        /// hàm này nhập vào DoctorId lấy ra danh sách appointment
+        /// </summary>
+        /// <param name="id"> ID của Doctor </param>
+        /// <returns> danh sách Appointment của Doctor </returns>
+        public async Task<List<Appointment>> GetAppointmentListByDoctorID(int id)
+        {
+            return await _dbContext.Appointments.Where(Appmt => Appmt.DoctorID == id).ToListAsync();
+        }
+
+
+        public async Task<List<Appointment>> GetAppointmentListByStatus(string status)
+        {
+            return await _dbContext.Appointments.Where(Appmt => Appmt.Status == status).ToListAsync();
+        }
+
+        /// <summary>
+        /// hàm này dùng để save appointment xuống Database
+        /// </summary>
+        /// <param name="appointment"></param>
+        /// <returns></returns>
         public async Task<Appointment?> CreateAppointmentAsync(Appointment appointment)
         {
             await _dbContext.Appointments.AddAsync(appointment);
@@ -56,42 +80,57 @@ namespace VaccineScheduleTracking.API.Repository
             return appointment;
         }
 
+        /// <summary>
+        /// lấy tất cả appointment cuả 1 parent cần sửa
+        /// </summary>
+        /// <param name="appointmentDto"></param>
+        /// <returns></returns>
+        //public async Task<List<Appointment>> GetAllAppointmentAsync(AppointmentDto appointmentDto)
+        //{
+        //    var query = _dbContext.Appointments.Include(i => i.Doctor)
+        //                                                 .Include(i => i.Child)
+        //                                                 .Include(i => i.VaccineType).AsQueryable();
+        //    if (appointmentDto.AppointmentID.HasValue)
+        //    {
+        //        query = query.Where(i => i.AppointmentID == appointmentDto.AppointmentID);
+        //    }
+        //    if (appointmentDto.Time.HasValue)
+        //    {
+        //        query = query.Where(i => i.Time == appointmentDto.Time);
+        //    }
+        //    if (!string.IsNullOrEmpty(appointmentDto.Status))
+        //    {
+        //        query = query.Where(i => i.Status == appointmentDto.Status);
+        //    }
 
-        public async Task<List<Appointment>> GetAllAppointmentAsync(AppointmentDto appointmentDto)
-        {
-            var query = _dbContext.Appointments.Include(i => i.Doctor)
-                                                         .Include(i => i.Child)
-                                                         .Include(i => i.VaccineType).AsQueryable();
-            if (appointmentDto.AppointmentID.HasValue)
-            {
-                query = query.Where(i => i.AppointmentID == appointmentDto.AppointmentID);
-            }
-            if (appointmentDto.Time.HasValue)
-            {
-                query = query.Where(i => i.Time == appointmentDto.Time);
-            }
-            if (!string.IsNullOrEmpty(appointmentDto.Status))
-            {
-                query = query.Where(i => i.Status == appointmentDto.Status);
-            }
+        //    return await query.ToListAsync();
+        //}
+        ///
 
-            return await query.ToListAsync();
-        }
+
 
         public async Task<Appointment?> ModifyAppointmentAsync(AppointmentDto appointmentDto)
         {
-            var appointment = await SearchAppointmentByKeyword(appointmentDto.AppointmentID?.ToString());
+            var appointment = await GetAppointmentByID(appointmentDto.AppointmentID);
             if (appointment == null)
             {
                 return null;
             }
-            appointment.ChildID = (int)appointmentDto.ChildID;
-            appointment.DoctorID = (int)appointmentDto.DoctorID;
-            appointment.VaccineTypeID = (int)appointmentDto.VaccineTypeID;
+            appointment.ChildID = appointmentDto.ChildID;
+            appointment.DoctorID = appointmentDto.DoctorID;
+            appointment.VaccineTypeID = appointmentDto.VaccineTypeID;
             appointment.Time = (DateTime)appointmentDto.Time;
             appointment.Status = appointmentDto.Status;
 
-            await _dbContext .SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
+
+            return appointment;
+        }
+
+        public async Task<Appointment?> DeleteAppointmentAsync(Appointment appointment)
+        {
+            _dbContext.Remove(appointment);
+            await _dbContext.SaveChangesAsync();
 
             return appointment;
         }

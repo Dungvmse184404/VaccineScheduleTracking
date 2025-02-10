@@ -1,0 +1,72 @@
+﻿using Microsoft.EntityFrameworkCore;
+using VaccineScheduleTracking.API.Data;
+using VaccineScheduleTracking.API.Models.Entities;
+
+namespace VaccineScheduleTracking.API.Repository
+{
+    public class SQLDoctorRepository : IDoctorRepository
+    {
+        private readonly VaccineScheduleDbContext _dbContext;
+
+        public SQLDoctorRepository(VaccineScheduleDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<List<Doctor>> GetAllDoctorAsync()
+        {
+            return await _dbContext.Doctors.ToListAsync();
+        }
+
+        public async Task<List<int>> GetUsedSlots(int doctorId, DateTime Date)
+        {
+            var appointments = await _dbContext.Appointments
+                .Where(a => a.DoctorID == doctorId && a.Time == Date)
+                .ToListAsync();
+
+            var usedSlots = appointments
+                .Select(a => a.Slot)
+                .Distinct()
+                .ToList();
+
+            return usedSlots;
+        }
+
+
+        //public async Task<Doctor?> GetSuitableDoctor(int slot, DateTime time)
+        //{
+        //    var doctor = await _dbContext.Doctors
+        //        .Where(d => d.Slots.Any(s => s.DocSlotId == slot && s.Date.Date == time.Date && s.available))
+        //        .FirstOrDefaultAsync();
+
+        //    if (doctor == null)
+        //    {
+        //        return null;
+        //    }
+
+        //    // cập nhật trangj thái available
+        //    var slotToUpdate = doctor.Slots.FirstOrDefault(s => s.DocSlotId == slot && s.Date.Date == time.Date && s.available);
+
+        //    if (slotToUpdate != null)
+        //    {
+        //        slotToUpdate.available = false;
+        //        await _dbContext.SaveChangesAsync();
+        //    }
+
+        //    return doctor;
+        //}
+
+
+
+        public async Task<Doctor?> GetSuitableDoctor(int slot, DateTime time)
+        {
+            var suitableDoctor = await _dbContext.Doctors
+                 .Where(d => d.AvailableSlots.Contains(slot)) // Bác sĩ có slot trong danh sách
+                 .FirstOrDefaultAsync(d =>
+                     _dbContext.Slots.Any(s => s.SlotID == slot && s.appointment.Time.Date == time.Date && s.AppointmentID == null) // Kiểm tra slot có trống trong ngày không
+                 );
+
+                return suitableDoctor; 
+        }
+    }
+}

@@ -9,7 +9,7 @@ namespace VaccineScheduleTracking.API.Repository
         Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto);
         Task<Vaccine?> GetVaccineByNameAsync(string name);
         Task<Vaccine> AddVaccineAsync(Vaccine vaccine);
-
+        Task<Vaccine> GetSutableVaccine(int Age, string TypeName);
         // VaccineType function
         Task<VaccineType?> GetVaccineTypeByNameAsync(string name);
         Task<VaccineType> AddVaccineTypeAsync(VaccineType vaccineType);

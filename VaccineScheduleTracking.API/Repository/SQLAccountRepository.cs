@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Net.Sockets;
+using System.Numerics;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaccineScheduleTracking.API.Repository
 {
@@ -44,7 +47,7 @@ namespace VaccineScheduleTracking.API.Repository
         public async Task<Account?> GetAccountByUsernameAsync(string username)
         {
             return await dbContext.Accounts.Include(x => x.Parent).
-                                            Include(x => x.Doctor).
+                                            Include(x => x.Doctor).//chỗ này đang trả exception Invalid column name 'Slot'.
                                             Include(x => x.Staff).FirstOrDefaultAsync(user => user.Username == username);
         }
 
@@ -119,5 +122,6 @@ namespace VaccineScheduleTracking.API.Repository
 
             return account;
         }
+
     }
 }

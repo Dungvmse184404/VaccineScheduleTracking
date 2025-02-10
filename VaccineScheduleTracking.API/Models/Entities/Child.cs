@@ -11,5 +11,15 @@
         public DateOnly DateOfBirth { get; set; }
         public int ParentID { get; set; }
         public Parent Parent { get; set; }
+
+        public int Age => CalculateAge(DateOfBirth);
+
+        private int CalculateAge(DateOnly birthDate)
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            int age = today.Year - birthDate.Year;
+            if (birthDate > today.AddYears(-age)) age--; //chưa đến sinh nhật thì -1
+            return age;
+        }
     }
 }

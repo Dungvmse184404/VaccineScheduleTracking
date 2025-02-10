@@ -12,6 +12,8 @@
         public int FromAge { get; set; }
         public int ToAge { get; set; }
         public int Period { get; set; }
+        public int DosesRequired { get; set; }
+        public int Priority { get; set; }
         public VaccineType VaccineType { get; set; }
     }
 }

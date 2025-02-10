@@ -38,11 +38,11 @@ namespace VaccineScheduleTracking.API.Repository
             {
                 query = query.Where(x => x.Name.Contains(filterVaccineDto.Name));
             }
-            if(!string.IsNullOrEmpty(filterVaccineDto.Manufacturer))
+            if (!string.IsNullOrEmpty(filterVaccineDto.Manufacturer))
             {
                 query = query.Where(x => x.Manufacturer.Contains(filterVaccineDto.Manufacturer));
             }
-            if(filterVaccineDto.FromAge.HasValue)
+            if (filterVaccineDto.FromAge.HasValue)
             {
                 query = query.Where(x => x.FromAge <= filterVaccineDto.FromAge.Value);
             }
@@ -54,6 +54,18 @@ namespace VaccineScheduleTracking.API.Repository
             return await query.ToListAsync();
         }
 
+
+        /// <summary>
+        /// hàm này dùng để tìm những loại vaccine phù hợp cho child dựa trên tuổi
+        /// </summary>
+        /// <param name="Age"> tuổi của child </param>
+        /// <param name="TypeName"> TypeName của vaccine </param>
+        /// <returns> Danh sách vaccine phù hợp </returns>
+        public async Task<Vaccine> GetSutableVaccine(int Age, string TypeName)
+        {
+            var vaccine = dbContext.Vaccines.Where(v => v.FromAge <= Age && v.ToAge >= Age && v.Stock > 0);
+            return await vaccine.OrderBy(v => v.FromAge).FirstOrDefaultAsync();
+        }
 
         // VaccineType function
         public async Task<VaccineType?> GetVaccineTypeByNameAsync(string name)
