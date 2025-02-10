@@ -18,7 +18,10 @@ namespace VaccineScheduleTracking.API.Repository
         {
             var Slot = await GetSlotByID(slotID);
             if (Slot.AppointmentID != null || Slot == null)
+            {
                 return false;
+            }
+
             Slot.AppointmentID = appointmentID;
             return await _dbContext.SaveChangesAsync() > 0;
         }
@@ -41,29 +44,29 @@ namespace VaccineScheduleTracking.API.Repository
         /// </summary>`
         /// <param name="date"> là ngày muốn tạo slot </param>
         /// <returns> (DB) </returns>
-        public async Task GenerateSlotsForDay(DateTime date)
-        {
-            //var startTime = new TimeSpan(7, 0, 0); // 07:00
-            //var slotDuration = new TimeSpan(0, 45, 0); // 45'/slot
-            //int totalSlots = 20; // Số slot mỗi ngày
+        //public async Task GenerateSlotsForDay(DateTime date)
+        //{
+        //    var startTime = new TimeSpan(7, 0, 0); // 07:00
+        //    var slotDuration = new TimeSpan(0, 45, 0); // 45'/slot
+        //    int totalSlots = 20; // Số slot mỗi ngày
 
-            //for (int i = 0; i < totalSlots; i++)
-            //{
-            //    var slotTime = startTime.Add(TimeSpan.FromMinutes(i * 45));
+        //    for (int i = 0; i < totalSlots; i++)
+        //    {
+        //        var slotTime = startTime.Add(TimeSpan.FromMinutes(i * 45));
 
-            //    var existingSlot = await _dbContext.Slots.FirstOrDefaultAsync(s => s.startTime == slotTime && s.AppointmentDate == date);
+        //        var existingSlot = await _dbContext.Slots.FirstOrDefaultAsync(s => s.startTime == slotTime && s.AppointmentDate == date);
 
-            //    if (existingSlot == null)
-            //    {
-            //        _dbContext.Slots.Add(new Slot
-            //        {
-            //            startTime = slotTime,
-            //            AppointmentDate = date
-            //        });
-            //    }
-            //}
-            //await _dbContext.SaveChangesAsync();
-        }
+        //        if (existingSlot == null)
+        //        {
+        //            _dbContext.Slots.Add(new Slot
+        //            {
+        //                startTime = slotTime,
+        //                AppointmentDate = date
+        //            });
+        //        }
+        //    }
+        //    await _dbContext.SaveChangesAsync();
+        //}
 
 
         /// <summary>
@@ -71,17 +74,17 @@ namespace VaccineScheduleTracking.API.Repository
         /// </summary>
         /// <param name="month"> độ dài lịch tính từ thời điểm hiện tại </param>
         /// <returns> (DB) tạo ta lịch có độ dài tương ứng month </returns>
-        public async Task GenerateSlotsForMonth(int month)
-        {
-            var currentDate = DateTime.Now;
-            var endDate = currentDate.AddMonths(month);  
+        //public async Task GenerateSlotsForMonth(int month)
+        //{
+        //    var currentDate = DateTime.Now;
+        //    var endDate = currentDate.AddMonths(month);
 
-            while (currentDate <= endDate)
-           {
-                await GenerateSlotsForDay(currentDate);  
-                currentDate = currentDate.AddDays(1); 
-            }
-        }
+        //    while (currentDate <= endDate)
+        //    {
+        //        await GenerateSlotsForDay(currentDate);
+        //        currentDate = currentDate.AddDays(1);
+        //    }
+        //}
 
     }
 }

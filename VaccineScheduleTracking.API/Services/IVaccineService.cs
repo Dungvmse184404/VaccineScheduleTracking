@@ -8,8 +8,10 @@ namespace VaccineScheduleTracking.API.Services
         // Vaccine funtion
         Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto);
         Task<Vaccine?> CreateVaccineAsync(AddVaccineDto addVaccineDto);
+        Task<Vaccine?> DeleteVaccineAsync(int id);
 
         // VaccineType functin
         Task<VaccineType?> CreateVaccineTypeAsync(AddVaccineTypeDto addVaccineTypeDto);
+        
     }
 }

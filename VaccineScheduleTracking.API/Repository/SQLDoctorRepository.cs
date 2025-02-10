@@ -33,35 +33,11 @@ namespace VaccineScheduleTracking.API.Repository
         }
 
 
-        //public async Task<Doctor?> GetSuitableDoctor(int slot, DateTime time)
-        //{
-        //    var doctor = await _dbContext.Doctors
-        //        .Where(d => d.Slots.Any(s => s.DocSlotId == slot && s.Date.Date == time.Date && s.available))
-        //        .FirstOrDefaultAsync();
-
-        //    if (doctor == null)
-        //    {
-        //        return null;
-        //    }
-
-        //    // cập nhật trangj thái available
-        //    var slotToUpdate = doctor.Slots.FirstOrDefault(s => s.DocSlotId == slot && s.Date.Date == time.Date && s.available);
-
-        //    if (slotToUpdate != null)
-        //    {
-        //        slotToUpdate.available = false;
-        //        await _dbContext.SaveChangesAsync();
-        //    }
-
-        //    return doctor;
-        //}
-
-
 
         public async Task<Doctor?> GetSuitableDoctor(int slot, DateTime time)
         {
             var suitableDoctor = await _dbContext.Doctors
-                 .Where(d => d.AvailableSlots.Contains(slot)) // Bác sĩ có slot trong danh sách
+                 //.Where(d => d.Contains(slot)) // Bác sĩ có slot trong danh sách
                  .FirstOrDefaultAsync(d =>
                      _dbContext.Slots.Any(s => s.SlotID == slot && s.appointment.Time.Date == time.Date && s.AppointmentID == null) // Kiểm tra slot có trống trong ngày không
                  );

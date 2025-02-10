@@ -26,5 +26,10 @@ namespace VaccineScheduleTracking.API.Services
         {
             return await childRepository.UpdateChild(id, child);
         }
+
+        public async Task<Child> DeleteChild(int id)
+        {
+            return await childRepository.DeleteChild(id);
+        }
     }
 }

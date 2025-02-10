@@ -13,6 +13,7 @@ namespace VaccineScheduleTracking.API.Repository
         Task<Account> AddAccountAsync(Account account);
         Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount);
         Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccountDto);
-        Task<Account?> DeleteAccountsAsync(Account account);
+        Task<Account?> DisableAccountAsync(Account account);
+        //Task<Account?> DeleteAccountsAsync(Account account);
     }
 }

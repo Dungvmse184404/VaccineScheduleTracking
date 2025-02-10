@@ -56,6 +56,18 @@ namespace VaccineScheduleTracking.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize(Roles = "Staff")]
+        [HttpPost("delete-vaccine")]
+        public async Task<IActionResult> DeleteVaccine(int id)
+        {
+            try
+            {
+                var vaccine = await vaccineService.DeleteVaccineAsync(id);
+                return Ok($"Vaccine {vaccine.Name} Deleted Successfully");
+            }
+            catch (Exception e){ return BadRequest(e.Message); }
+        }
     }
 
 }

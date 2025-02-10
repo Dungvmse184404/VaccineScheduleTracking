@@ -78,15 +78,29 @@ namespace VaccineScheduleTracking.API.Services
         }
 
 
-        public async Task<Account?> DeleteAccountAsync(string keyword)
+        public async Task<Account?> DisableAccountAsync(int id)
         {
-            var account = await accountRepository.GetAccountByKeywordAsync(keyword);
+            var account = await accountRepository.GetAccountByID(id);
             if (account == null)
             {
-                throw new Exception($"{keyword} is not available");
+                throw new Exception($"ID {id} is not available");
             }
-            account = mapper.Map<Account>(account);
-            return await accountRepository.DeleteAccountsAsync(account);
+            //account = mapper.Map<Account>(account);
+            return await accountRepository.DisableAccountAsync(account);
         }
+
+
+
+
+        //public async Task<Account?> DeleteAccountAsync(int id)
+        //{
+        //    var account = await accountRepository.GetAccountByID(id);
+        //    if (account == null)
+        //    {
+        //        throw new Exception($"ID {id} is not available");
+        //    }
+        //    account = mapper.Map<Account>(account);
+        //    return await accountRepository.DeleteAccountsAsync(account);
+        //}
     }
 }

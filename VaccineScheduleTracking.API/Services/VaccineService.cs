@@ -65,5 +65,31 @@ namespace VaccineScheduleTracking.API.Services
 
             return vaccineType;
         }
+
+        //public async Task<Vaccine?> UpdateVaccineDto(UpdateAccountDto updateVaccine)
+        //{
+        //    var updateVaccine = await vaccineRepository.
+        //}
+
+        public async Task<Vaccine?> DeleteVaccineAsync(int id)
+        {
+            var vaccine = await vaccineRepository.GetVaccineByIDAsync(id);
+            if (vaccine == null)
+            {
+                throw new Exception($"VaccineID {id} not found!");
+            }
+            return await vaccineRepository.DeleteVaccineByIDAsync(vaccine);
+        }
+
+        //public async Task<Vaccine?> DeleteVaccineAsync(int id)
+        //{
+        //    var vaccine = await vaccineRepository.DeleteVaccineAsync(id);
+        //    if (vaccine != null)
+        //    {
+        //        throw new Exception($"vaccine name {vaccine.Name} doesn't exist");
+        //    }
+        //    return vaccine;
+
+        //}
     }
 }

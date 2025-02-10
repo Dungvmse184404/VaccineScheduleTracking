@@ -94,18 +94,19 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        //[Authorize(Roles = "Staff")]
-        [HttpDelete("delete-account/{keyword}")]
-        public async Task<IActionResult> DeleteAccount([FromRoute] string keyword)
+        [Authorize(Roles = "Staff")]
+        [HttpDelete("delete-account/{id}")]
+        public async Task<IActionResult> DisableAccount([FromRoute] int id)
         {
             try
             {
-                var account = await accountService.DeleteAccountAsync(keyword);
+                var account = await accountService.DisableAccountAsync(id);
                 if (account == null)
                 {
-                    return NotFound("Account not found or already active");
+                    return NotFound("Account not found or already inactive");
                 }
-                return Ok(mapper.Map<DeleteAccountDto>(account));
+                //return Ok(mapper.Map<DeleteAccountDto>(account));
+                return Ok($" Account {account.Username} disabled successfully");
             }
             catch (Exception ex)
             {

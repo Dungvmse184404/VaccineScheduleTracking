@@ -8,6 +8,6 @@ namespace VaccineScheduleTracking.API.Repository
         Task<List<Slot>> GetAllSlotAsync(DateTime date);
         Task<List<Slot>> GetAvailableSlotsAsync(DateTime date);
         Task<bool> BookSlotAsync(int slot, int appointmentID);
-        Task GenerateSlotsForMonth(int month);
+        //Task GenerateSlotsForMonth(int month);
     }
 }

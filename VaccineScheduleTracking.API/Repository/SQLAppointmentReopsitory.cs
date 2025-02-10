@@ -134,5 +134,13 @@ namespace VaccineScheduleTracking.API.Repository
 
             return appointment;
         }
+
+        public async Task<Appointment?> ChangeAppointmentStatus(Appointment appointment, string status)
+        {
+            appointment.Status = status;
+            await _dbContext.SaveChangesAsync();
+
+            return appointment;
+        }
     }
 }

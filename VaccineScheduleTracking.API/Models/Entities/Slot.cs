@@ -6,7 +6,6 @@ namespace VaccineScheduleTracking.API.Models.Entities
     {
         public int SlotID { get; set; }
         public TimeSpan startTime { get; set; }
-        public DateTime AppointmentDate { get; set; }
         public int? AppointmentID { get; set; }
         public Appointment appointment { get; set; }
 

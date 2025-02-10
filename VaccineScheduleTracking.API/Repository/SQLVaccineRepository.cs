@@ -15,6 +15,11 @@ namespace VaccineScheduleTracking.API.Repository
             this.dbContext = dbContext;
         }
 
+        public async Task<Vaccine?> GetVaccineByIDAsync(int id)
+        {
+            return await dbContext.Vaccines.FirstOrDefaultAsync(x => x.VaccineID == id);
+        }
+
         public async Task<Vaccine?> GetVaccineByNameAsync(string name)
         {
             return await dbContext.Vaccines.FirstOrDefaultAsync(x => x.Name == name);
@@ -81,6 +86,20 @@ namespace VaccineScheduleTracking.API.Repository
             return vaccineType;
         }
 
-        
+        public async Task<Vaccine?> DeleteVaccineByIDAsync(Vaccine deleteVaccine)
+        {
+            dbContext.Vaccines.Remove(deleteVaccine);
+            await dbContext.SaveChangesAsync();
+
+            return deleteVaccine;
+        }
+
+
+        //public async Task<Vaccine?> UpdateVaccineAsync(int id)
+        //{
+        //    var vaccine = await GetvaccineByIDAsync(id);
+        //    if (vaccine == null) { return null; }
+
+        //}
     }
 }

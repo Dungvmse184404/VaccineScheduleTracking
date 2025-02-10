@@ -48,5 +48,21 @@ namespace VaccineScheduleTracking.API.Repository
             await dbContext.SaveChangesAsync();
             return child;
         }
-    }
+
+        public async Task<Child> DeleteChildAsync(int id)
+        {
+            var child = await GetChildById(id);
+            if (child != null)
+            {
+                dbContext.Children.Remove(child);
+                await dbContext.SaveChangesAsync();
+            }
+            return child;   
+        }
+
+        public Task<Child> DeleteChild(int id)
+        {
+            throw new NotImplementedException();
+        }
+    } 
 }

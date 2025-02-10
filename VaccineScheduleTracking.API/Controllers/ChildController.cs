@@ -55,5 +55,17 @@ namespace VaccineScheduleTracking.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [HttpDelete("delete-child{id}")]
+        public async Task<IActionResult> DeleteChildProfile(int ChildId)
+        {
+            try
+            {
+                var deleteChild = await childService.DeleteChild(ChildId);
+                return Ok(deleteChild);
+            }
+            catch { return BadRequest(); }
+        }
     }
 }

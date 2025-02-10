@@ -47,7 +47,7 @@ namespace VaccineScheduleTracking.API.Repository
         public async Task<Account?> GetAccountByUsernameAsync(string username)
         {
             return await dbContext.Accounts.Include(x => x.Parent).
-                                            Include(x => x.Doctor).//chỗ này đang trả exception Invalid column name 'Slot'.
+                                           // Include(x => x.Doctor).//chỗ này đang trả exception Invalid column name 'Slot'.
                                             Include(x => x.Staff).FirstOrDefaultAsync(user => user.Username == username);
         }
 
@@ -115,13 +115,21 @@ namespace VaccineScheduleTracking.API.Repository
             return await query.ToListAsync();
         }
 
-        public async Task<Account?> DeleteAccountsAsync(Account account)
+        public async Task<Account?> DisableAccountAsync(Account account)
         {
             account.Status = "INACTIVE";
             await dbContext.SaveChangesAsync();
 
             return account;
         }
+
+        //public async Task<Account?> DeleteAccountsAsync(Account account)
+        //{
+        //    dbContext.Remove(account);
+        //    await dbContext.SaveChangesAsync();
+
+        //    return account;
+        //}
 
     }
 }
