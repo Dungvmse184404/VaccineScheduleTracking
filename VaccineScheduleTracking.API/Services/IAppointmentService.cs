@@ -7,6 +7,6 @@ namespace VaccineScheduleTracking.API.Services
     {
         Task<Appointment?> CreateAppointmentAsync(CreateAppointmentDto appointment);
         Task<List<Appointment>> GetAppointmentListByIDAsync(AppointmentDto appointment);
-        Task<Appointment?> ModifyAppointmentAsync(AppointmentDto appointment);
+        Task<Appointment?> UpdateAppointmentAsync(UpdateAppointmentDto appointment);
     }
 }

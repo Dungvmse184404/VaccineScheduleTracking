@@ -18,7 +18,7 @@ namespace VaccineScheduleTracking.API.Mappings
             CreateMap<Child, ChildDto>().ReverseMap();
             CreateMap<Child, AddChildDto>().ReverseMap();
             CreateMap<Child, UpdateChildDto>().ReverseMap();
-            CreateMap<Slot, SlotDto>()
+            CreateMap<DailySchedule, DailyScheduleDto>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.AppointmentID.HasValue));
         }
     }

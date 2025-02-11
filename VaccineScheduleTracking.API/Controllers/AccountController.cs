@@ -95,7 +95,7 @@ namespace VaccineScheduleTracking.API.Controllers
 
 
         [Authorize(Roles = "Staff")]
-        [HttpDelete("delete-account/{id}")]
+        [HttpDelete("disable-account/{id}")]
         public async Task<IActionResult> DisableAccount([FromRoute] int id)
         {
             try
@@ -114,6 +114,27 @@ namespace VaccineScheduleTracking.API.Controllers
             }
 
         }
+
+        //[Authorize (Roles = "Staff")]
+        //[HttpDelete("delete-account")]
+        //public async Task<IActionResult> deleteAccount([FromRoute] int id)
+        //{
+        //    try
+        //    {
+        //        var account = await accountService.DeleteAccountAsync(id);
+        //        if (account == null)
+        //        {
+        //            return NotFound("Account not found or already inactive");
+        //        }
+        //        //return Ok(mapper.Map<DeleteAccountDto>(account));
+        //        return Ok($" Account {account.Username} deleted successfully");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+
+        //}
 
     }
 }

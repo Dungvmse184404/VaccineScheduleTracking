@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\dungv\\Source\\Repos\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj": {}
+    "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\dungv\\Source\\Repos\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj": {
+    "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\dungv\\Source\\Repos\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj",
+        "projectUniqueName": "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj",
         "projectName": "VaccineScheduleTracking.API",
-        "projectPath": "C:\\Users\\dungv\\Source\\Repos\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj",
+        "projectPath": "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj",
         "packagesPath": "C:\\Users\\dungv\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\dungv\\Source\\Repos\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\obj\\",
+        "outputPath": "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

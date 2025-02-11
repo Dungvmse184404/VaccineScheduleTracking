@@ -5,11 +5,11 @@ using VaccineScheduleTracking.API.Models.Entities;
 
 namespace VaccineScheduleTracking.API.Repository
 {
-    public class SQLSlotRepository : ISlotRepository
+    public class SQLDailyScheduleRepository : IDailyScheduleRepository
     {
         private readonly VaccineScheduleDbContext _dbContext;
 
-        public SQLSlotRepository(VaccineScheduleDbContext dbContext)
+        public SQLDailyScheduleRepository(VaccineScheduleDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
@@ -25,19 +25,20 @@ namespace VaccineScheduleTracking.API.Repository
             Slot.AppointmentID = appointmentID;
             return await _dbContext.SaveChangesAsync() > 0;
         }
-        public async Task<Slot?> GetSlotByID(int SlotID)
+        public async Task<DailySchedule?> GetSlotByID(int SlotID)
         {
-            return await _dbContext.Slots.FirstOrDefaultAsync(s => s.SlotID == SlotID);
+            return await _dbContext.DailySchedule.FirstOrDefaultAsync(s => s.Slot == SlotID);
         }
-        public async Task<List<Slot>> GetAllSlotAsync(DateTime date)
+        public async Task<List<DailySchedule>> GetAllSlotAsync(DateTime date)
         {
-            return await _dbContext.Slots.Where(s => s.appointment.Time == date).ToListAsync();
+            return await _dbContext.DailySchedule.Where(s => s.Appointment.Time == date).ToListAsync();
         }
 
-        public async Task<List<Slot>> GetAvailableSlotsAsync(DateTime date)
+        public async Task<List<DailySchedule>> GetAvailableSlotsAsync(DateTime date)
         {
-            return await _dbContext.Slots.Where(s => s.appointment.Time == date && s.AppointmentID == null).ToListAsync();
+            return await _dbContext.DailySchedule.Where(s => s.Appointment.Time == date && s.AppointmentID == null).ToListAsync();
         }
+
 
         /// <summary>
         /// hàm này tạo 20 slot cho 1 ngày

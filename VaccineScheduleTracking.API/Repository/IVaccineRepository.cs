@@ -1,5 +1,6 @@
 ﻿using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Models.DTOs;
 
 namespace VaccineScheduleTracking.API.Repository
 {
@@ -15,7 +16,11 @@ namespace VaccineScheduleTracking.API.Repository
         Task<Vaccine> DeleteVaccineAsync(Vaccine vaccine);
         // VaccineType function
         Task<VaccineType?> GetVaccineTypeByNameAsync(string name);
+        Task<VaccineType> GetVaccineTypeByIDAsync(int id);
         Task<VaccineType> AddVaccineTypeAsync(VaccineType vaccineType);
-        
+        Task<VaccineType> UpdateVaccineTypeAsync(VaccineType vaccineType);
+        Task<VaccineType> DeleteVaccineTypeAsync(VaccineType vaccineType);
+
+
     }
 }

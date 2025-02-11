@@ -39,7 +39,7 @@ namespace VaccineScheduleTracking.API.Repository
             var suitableDoctor = await _dbContext.Doctors
                  //.Where(d => d.Contains(slot)) // Bác sĩ có slot trong danh sách
                  .FirstOrDefaultAsync(d =>
-                     _dbContext.Slots.Any(s => s.SlotID == slot && s.appointment.Time.Date == time.Date && s.AppointmentID == null) // Kiểm tra slot có trống trong ngày không
+                     _dbContext.DailySchedule.Any(s => s.DailyScheduleID == slot && s.Appointment.Time.Date == time.Date && s.AppointmentID == null) // Kiểm tra slot có trống trong ngày không
                  );
 
                 return suitableDoctor; 

@@ -33,6 +33,18 @@ namespace VaccineScheduleTracking.API.Repository
             return vaccine;
         }
 
+        /// <summary>
+        /// hàm này dùng để tìm những loại vaccine phù hợp cho child dựa trên tuổi
+        /// </summary>
+        /// <param name="Age"> tuổi của child </param>
+        /// <param name="TypeName"> TypeName của vaccine </param>
+        /// <returns> Danh sách vaccine phù hợp </returns>
+        public async Task<Vaccine> GetSutableVaccine(int Age, string TypeName)
+        {
+            var vaccine = dbContext.Vaccines.Where(v => v.FromAge <= Age && v.ToAge >= Age && v.Stock > 0);
+            return await vaccine.OrderBy(v => v.FromAge).FirstOrDefaultAsync();
+        }
+
 
         // Vaccine function
         public async Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto)
@@ -59,33 +71,6 @@ namespace VaccineScheduleTracking.API.Repository
             return await query.ToListAsync();
         }
 
-
-        /// <summary>
-        /// hàm này dùng để tìm những loại vaccine phù hợp cho child dựa trên tuổi
-        /// </summary>
-        /// <param name="Age"> tuổi của child </param>
-        /// <param name="TypeName"> TypeName của vaccine </param>
-        /// <returns> Danh sách vaccine phù hợp </returns>
-        public async Task<Vaccine> GetSutableVaccine(int Age, string TypeName)
-        {
-            var vaccine = dbContext.Vaccines.Where(v => v.FromAge <= Age && v.ToAge >= Age && v.Stock > 0);
-            return await vaccine.OrderBy(v => v.FromAge).FirstOrDefaultAsync();
-        }
-
-        // VaccineType function
-        public async Task<VaccineType?> GetVaccineTypeByNameAsync(string name)
-        {
-            return await dbContext.VaccineTypes.FirstOrDefaultAsync(x => x.Name == name);
-        }
-
-        public async Task<VaccineType> AddVaccineTypeAsync(VaccineType vaccineType)
-        {
-            await dbContext.VaccineTypes.AddAsync(vaccineType);
-            await dbContext.SaveChangesAsync();
-
-            return vaccineType;
-        }
-
         public async Task<Vaccine?> DeleteVaccineAsync(Vaccine deleteVaccine)
         {
             dbContext.Vaccines.Remove(deleteVaccine);
@@ -93,7 +78,6 @@ namespace VaccineScheduleTracking.API.Repository
 
             return deleteVaccine;
         }
-
 
         public async Task<Vaccine?> UpdateVaccineAsync(Vaccine UpdateVaccine)
         {
@@ -116,5 +100,49 @@ namespace VaccineScheduleTracking.API.Repository
 
             return vaccine;
         }
+        // VaccineType function
+        public async Task<VaccineType?> GetVaccineTypeByNameAsync(string name)
+        {
+            return await dbContext.VaccineTypes.FirstOrDefaultAsync(x => x.Name == name);
+        }
+        public async Task<VaccineType> GetVaccineTypeByIDAsync(int id)
+        {
+            return await dbContext.VaccineTypes.FirstOrDefaultAsync(x => x.VaccineTypeID == id);
+        }
+
+        public async Task<VaccineType> AddVaccineTypeAsync(VaccineType vaccineType)
+        {
+            await dbContext.VaccineTypes.AddAsync(vaccineType);
+            await dbContext.SaveChangesAsync();
+
+            return vaccineType;
+        }
+
+        public async Task<VaccineType> UpdateVaccineTypeAsync(VaccineType vaccineType)
+        {
+            var Type = await GetVaccineTypeByIDAsync(vaccineType.VaccineTypeID);
+            if (Type == null)
+            {
+                return null;
+            }
+            Type.Name = vaccineType.Name;
+            Type.Description = vaccineType.Description;
+            
+            await dbContext.SaveChangesAsync();
+            return Type;
+        }
+
+
+        public async Task<VaccineType> DeleteVaccineTypeAsync(VaccineType vaccineType)
+        {
+            dbContext.VaccineTypes.Remove(vaccineType);
+            await dbContext.SaveChangesAsync();
+
+            return vaccineType;
+        }
+
+
+
+
     }
 }

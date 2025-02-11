@@ -15,7 +15,7 @@ namespace VaccineScheduleTracking.API.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentRepository;
-        private readonly ISlotRepository _slotRepository;
+        private readonly IDailyScheduleRepository _slotRepository;
         private readonly IAppointmentService _appointmentService;
         private readonly IMapper _mapper;
 
@@ -53,7 +53,7 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var slots = await _slotRepository.GetAllSlotAsync(date);
-                return Ok(_mapper.Map<List<SlotDto>>(slots));
+                return Ok(_mapper.Map<List<DailyScheduleDto>>(slots));
 
             }
             catch (Exception e) { return BadRequest(e.Message); }

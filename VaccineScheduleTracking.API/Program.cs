@@ -47,7 +47,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<VaccineScheduleDbContext>(option =>
 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<ISlotRepository, SQLSlotRepository>();
+builder.Services.AddScoped<IDailyScheduleRepository, SQLDailyScheduleRepository>();
 builder.Services.AddScoped<IAppointmentRepository, SQLAppointmentReopsitory>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();

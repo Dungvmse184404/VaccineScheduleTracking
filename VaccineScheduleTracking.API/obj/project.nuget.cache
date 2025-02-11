@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fRbXwG7Wz2Y=",
+  "dgSpecHash": "ooo8gBbljuU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\dungv\\Source\\Repos\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API.csproj",
+  "projectFilePath": "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API_Test.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\dungv\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\dungv\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",

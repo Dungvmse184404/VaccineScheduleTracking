@@ -109,7 +109,7 @@ namespace VaccineScheduleTracking.API.Repository
 
 
 
-        public async Task<Appointment?> ModifyAppointmentAsync(AppointmentDto appointmentDto)
+        public async Task<Appointment?> UpdateAppointmentAsync(UpdateAppointmentDto appointmentDto)
         {
             var appointment = await GetAppointmentByID(appointmentDto.AppointmentID);
             if (appointment == null)

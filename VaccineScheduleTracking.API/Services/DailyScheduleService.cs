@@ -6,17 +6,17 @@ using VaccineScheduleTracking.API.Repository;
 
 namespace VaccineScheduleTracking.API.Services
 {
-    public class SlotService : ISlotService
+    public class DailyScheduleService : IDailyScheduleService
     {
-        private readonly ISlotRepository slotRepository;
+        private readonly IDailyScheduleRepository slotRepository;
         private readonly IMapper mapper;
-        public SlotService(ISlotRepository slotRepository, IMapper mapper)
+        public DailyScheduleService(IDailyScheduleRepository slotRepository, IMapper mapper)
         {
             this.slotRepository = slotRepository;
             this.mapper = mapper;
         }
 
-        public async Task<Slot?> GetSlotByID(int SlotID)
+        public async Task<DailySchedule?> GetSlotByID(int SlotID)
         {
 
             var slot = await slotRepository.GetSlotByID(SlotID);

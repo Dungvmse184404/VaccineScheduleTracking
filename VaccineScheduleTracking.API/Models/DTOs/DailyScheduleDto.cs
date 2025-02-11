@@ -2,7 +2,7 @@
 
 namespace VaccineScheduleTracking.API.Models.DTOs
 {
-    public class SlotDto
+    public class DailyScheduleDto
     {
         [Required]
         public int SlotID { get; set; }
