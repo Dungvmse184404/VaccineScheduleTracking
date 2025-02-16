@@ -12,6 +12,10 @@ namespace VaccineScheduleTracking.API.Repository
     {
         private readonly VaccineScheduleDbContext _dbContext;
 
+        public SQLAppointmentReopsitory(VaccineScheduleDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
         /// <summary>
         /// tổng hợp các hàm Get (Chắc cũng ko dùng nhiều)
         /// </summary>
@@ -21,8 +25,8 @@ namespace VaccineScheduleTracking.API.Repository
         {
             if (int.TryParse(keyword, out int id))
             {
-                return await GetAppointmentListByDoctorID(id)
-                    ?? await GetAppointmentListByChildID(id);
+                return await GetAppointmentListByDoctorIDAsync(id)
+                    ?? await GetAppointmentListByChildIDAsync(id);
             }
             return await GetAppointmentListByStatus(keyword);
 
@@ -45,9 +49,16 @@ namespace VaccineScheduleTracking.API.Repository
         /// </summary>
         /// <param name="id"> ID của Child </param>
         /// <returns> danh sách Appointment của child </returns>
-        public async Task<List<Appointment>> GetAppointmentListByChildID(int id)
+        public async Task<List<Appointment>> GetAppointmentListByChildIDAsync(int id)
         {
-            return await _dbContext.Appointments.Where(Appmt => Appmt.ChildID == id).ToListAsync();
+            return await _dbContext.Appointments
+               .Where(Appmt => Appmt.ChildID == id)
+               .Include(a => a.Child)
+               .Include(a => a.Doctor)
+                   .ThenInclude(d => d.Account)
+               .Include(a => a.VaccineType)
+               .Include(a => a.TimeSlots)
+               .ToListAsync();
         }
 
 
@@ -56,9 +67,16 @@ namespace VaccineScheduleTracking.API.Repository
         /// </summary>
         /// <param name="id"> ID của Doctor </param>
         /// <returns> danh sách Appointment của Doctor </returns>
-        public async Task<List<Appointment>> GetAppointmentListByDoctorID(int id)
+        public async Task<List<Appointment>> GetAppointmentListByDoctorIDAsync(int id)
         {
-            return await _dbContext.Appointments.Where(Appmt => Appmt.DoctorID == id).ToListAsync();
+            return await _dbContext.Appointments
+                .Where(a => a.DoctorID == id)
+                .Include(a => a.Child)
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.Account)
+                .Include(a => a.VaccineType)
+                .Include(a => a.TimeSlots)
+                .ToListAsync();
         }
 
 
@@ -119,7 +137,6 @@ namespace VaccineScheduleTracking.API.Repository
             appointment.ChildID = appointmentDto.ChildID;
             appointment.DoctorID = appointmentDto.DoctorID;
             appointment.VaccineTypeID = appointmentDto.VaccineTypeID;
-            appointment.Time = (DateTime)appointmentDto.Time;
             appointment.Status = appointmentDto.Status;
 
             await _dbContext.SaveChangesAsync();

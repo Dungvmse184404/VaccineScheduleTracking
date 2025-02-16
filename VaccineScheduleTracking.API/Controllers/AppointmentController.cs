@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,8 @@ using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API.Services;
+using VaccineScheduleTracking.API_Test.Repository;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -15,7 +18,7 @@ namespace VaccineScheduleTracking.API.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentRepository;
-        private readonly IDailyScheduleRepository _slotRepository;
+        private readonly ITimeSlotRepository _timeSlotRepository;
         private readonly IAppointmentService _appointmentService;
         private readonly IMapper _mapper;
 
@@ -47,17 +50,30 @@ namespace VaccineScheduleTracking.API.Controllers
             catch (Exception e) { return BadRequest(e.Message); }
         }
 
-        [HttpGet("available-slots/{date}")]
-        public async Task<IActionResult> GetAvailableSlots(DateTime date)
+
+        //[HttpGet("available-slots/{date}")]
+        //public async Task<IActionResult> GetAvailableSlots(DateTime date)
+        //{
+        //    try
+        //    {
+        //        var slots = await _timeSlotRepository.GetAllSlotAsync(date);
+        //        return Ok(_mapper.Map<List<DailyScheduleDto>>(slots));
+
+        //    }
+        //    catch (Exception e) { return BadRequest(e.Message); }
+
+        //}
+
+
+        [HttpGet("get-appointment-list")]
+        public async Task<IActionResult> GetAppointmentByID(int id, string role)
         {
             try
             {
-                var slots = await _slotRepository.GetAllSlotAsync(date);
-                return Ok(_mapper.Map<List<DailyScheduleDto>>(slots));
-
+                var Appointment = await _appointmentRepository.GetAppointmentListByIDAsync(id, role);
+                return Ok(_mapper.Map<List<AppointmentDto>>(Appointment));
             }
             catch (Exception e) { return BadRequest(e.Message); }
-
         }
     }
 }

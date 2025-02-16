@@ -11,8 +11,8 @@ namespace VaccineScheduleTracking.API.Models.DTOs
         [Required]
         public int VaccineName { get; set; }
         [Required]
-        public DateTime Time { get; set; }
+        public DateOnly Date { get; set; }
         [Required]
-        public int Slot { get; set; }
+        public int TimeSlot { get; set; }
     }
 }

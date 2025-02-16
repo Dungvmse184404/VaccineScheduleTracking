@@ -4,19 +4,10 @@ namespace VaccineScheduleTracking.API.Models.Entities
 {
     public class DailySchedule
     {
-        public int DailyScheduleID { get; set; } 
-        public DateTime Date { get; set; }// ngày làm việc
-        
-        public int Slot { get; set; }// Slot trong ngày (1-20)
-        public TimeOnly StartTime => SetStartTime(Slot);
-        public int? AppointmentID { get; set; }
-        public Appointment Appointment { get; set; }
+        public int DailyScheduleID { get; set; }
+        public int Slot { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime => StartTime.AddMinutes(45);
 
-
-        private TimeOnly SetStartTime(int slot)
-        {
-            TimeOnly baseStartTime = new TimeOnly(7, 0);
-            return baseStartTime.AddMinutes((slot - 1) * 45);
-        }
     }
 }

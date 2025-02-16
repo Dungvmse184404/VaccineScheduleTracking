@@ -29,7 +29,13 @@ namespace VaccineScheduleTracking.API.Services
 
         public async Task<Child> DeleteChild(int id)
         {
-            return await childRepository.DeleteChild(id);
+            var child = await childRepository.GetChildById(id);
+            if (child == null)
+            {
+                throw new Exception($"Can't find child with ID: {id}");
+            }
+            return await childRepository.DeleteChildAsync(child);
+            
         }
     }
 }

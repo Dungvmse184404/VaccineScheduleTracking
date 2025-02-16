@@ -6,6 +6,7 @@ namespace VaccineScheduleTracking.API.Repository
     {
         Task<List<Doctor>> GetAllDoctorAsync();
         Task<Doctor?> GetSuitableDoctor(int slot, DateTime time);
-        // Remove Doctor authorize
+        
+
     }
 }

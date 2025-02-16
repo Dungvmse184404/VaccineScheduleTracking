@@ -7,7 +7,7 @@
         public int DoctorID { get; set; }
         public int VaccineTypeID { get; set; }
         public int Slot { get; set; }
-        public DateTime Time { get; set; }
+        public DateTime Date { get; set; }
         public string Status { get; set; }
     }
 }

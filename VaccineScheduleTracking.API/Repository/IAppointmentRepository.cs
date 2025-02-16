@@ -5,8 +5,8 @@ namespace VaccineScheduleTracking.API.Repository
 {
     public interface IAppointmentRepository
     {
-        Task<List<Appointment>> GetAppointmentListByDoctorID(int id);
-        Task<List<Appointment>> GetAppointmentListByChildID(int id);
+        Task<List<Appointment>> GetAppointmentListByDoctorIDAsync(int id);
+        Task<List<Appointment>> GetAppointmentListByChildIDAsync(int id);
         Task<Appointment> GetAppointmentByID(int id);
         Task<List<Appointment>> GetAppointmentListByStatus(string status);
         Task<Appointment?> CreateAppointmentAsync(Appointment Appointment);

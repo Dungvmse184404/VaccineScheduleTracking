@@ -63,9 +63,12 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var deleteChild = await childService.DeleteChild(ChildId);
-                return Ok(deleteChild);
+                return Ok($"Child name {deleteChild.Firstname} has been deleted!");
             }
-            catch { return BadRequest(); }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
