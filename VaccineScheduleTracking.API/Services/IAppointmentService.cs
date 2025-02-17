@@ -1,7 +1,7 @@
-﻿using VaccineScheduleTracking.API.Models.DTOs;
-using VaccineScheduleTracking.API.Models.Entities;
+﻿using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
 
-namespace VaccineScheduleTracking.API.Services
+namespace VaccineScheduleTracking.API_Test.Services
 {
     public interface IAppointmentService
     {

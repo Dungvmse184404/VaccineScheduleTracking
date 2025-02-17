@@ -13,4 +13,16 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repository\Account\" />
+    <Folder Include="Repository\Appointment\" />
+    <Folder Include="Repository\Child\" />
+    <Folder Include="Repository\Vaccine\" />
+    <Folder Include="Services\Account\" />
+    <Folder Include="Services\Appointment\" />
+    <Folder Include="Services\Child\" />
+    <Folder Include="Services\DailySchedule\" />
+    <Folder Include="Services\IServices\" />
+  </ItemGroup>
+
 </Project>

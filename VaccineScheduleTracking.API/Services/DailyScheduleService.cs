@@ -4,7 +4,7 @@ using System.Globalization;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Repository;
 
-namespace VaccineScheduleTracking.API.Services
+namespace VaccineScheduleTracking.API_Test.Services
 {
     public class DailyScheduleService : IDailyScheduleService
     {

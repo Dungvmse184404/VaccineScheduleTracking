@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API.Helpers;
-using VaccineScheduleTracking.API_Test.Models.DTOs;
 using System.Reflection.PortableExecutable;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
+using VaccineScheduleTracking.API_Test.Services;
 
 
 namespace VaccineScheduleTracking.API.Services
@@ -31,12 +31,12 @@ namespace VaccineScheduleTracking.API.Services
             var vaccine = await vaccineRepository.GetVaccineByNameAsync(addVaccineDto.Name);
             if (vaccine != null)
             {
-                throw new Exception($"{addVaccineDto.Name} is exist!");
+                throw new Exception($"{addVaccineDto.Name} đã tồn tại ");
             }
             var vaccineType = await vaccineRepository.GetVaccineTypeByNameAsync(addVaccineDto.VaccineType);
             if (vaccineType == null)
             {
-                throw new Exception($"{addVaccineDto.VaccineType} is invalid!");
+                throw new Exception($"{addVaccineDto.VaccineType} không khả dụng");
             }
             vaccine = new Vaccine
             {
@@ -172,7 +172,9 @@ namespace VaccineScheduleTracking.API.Services
             return await vaccineRepository.DeleteVaccineTypeAsync(vaccineType);
         }
 
-
-
+        public async Task<List<VaccineType>> GetAllVaccineTypeAsync()
+        {
+            return await vaccineRepository.GetVaccinesTypeAsync();
+        }
     }
 }

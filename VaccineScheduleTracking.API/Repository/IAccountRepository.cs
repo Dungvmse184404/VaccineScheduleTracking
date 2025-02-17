@@ -1,9 +1,9 @@
-﻿using VaccineScheduleTracking.API.Models.DTOs;
-using VaccineScheduleTracking.API.Models.Entities;
+﻿using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 
-namespace VaccineScheduleTracking.API.Repository
+namespace VaccineScheduleTracking.API_Test.Repository
 {
-    public interface IAccountRepository 
+    public interface IAccountRepository
     {
         Task<Account?> GetAccountByKeywordAsync(string keyword);
         Task<Account?> GetAccountByID(int id);

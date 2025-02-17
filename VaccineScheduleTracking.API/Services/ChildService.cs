@@ -1,7 +1,7 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
+using VaccineScheduleTracking.API_Test.Repository.IRepository;
 
-namespace VaccineScheduleTracking.API.Services
+namespace VaccineScheduleTracking.API_Test.Services
 {
     public class ChildService : IChildService
     {
@@ -35,7 +35,7 @@ namespace VaccineScheduleTracking.API.Services
                 throw new Exception($"Can't find child with ID: {id}");
             }
             return await childRepository.DeleteChildAsync(child);
-            
+
         }
     }
 }

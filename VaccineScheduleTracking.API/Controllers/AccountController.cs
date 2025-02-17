@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Helpers;
-using VaccineScheduleTracking.API.Models.DTOs;
-using VaccineScheduleTracking.API.Repository;
-using VaccineScheduleTracking.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Azure.Core;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Services;
+using VaccineScheduleTracking.API_Test.Repository;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -44,7 +44,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(ex.Message);
+                return Unauthorized(new { Message = ex.Message });
             }
         }
 
@@ -58,7 +58,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message});
             }
         }
 
@@ -80,7 +80,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -110,7 +110,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
 
         }

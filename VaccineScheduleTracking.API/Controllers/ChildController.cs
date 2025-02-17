@@ -3,8 +3,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Models.DTOs;
-using VaccineScheduleTracking.API.Services;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
+using VaccineScheduleTracking.API_Test.Services;
 
 namespace VaccineScheduleTracking.API.Controllers
 {

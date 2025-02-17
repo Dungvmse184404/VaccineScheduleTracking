@@ -8,6 +8,9 @@ using VaccineScheduleTracking.API.Mappings;
 using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Repository;
+using VaccineScheduleTracking.API_Test.Repository.IRepository;
+using VaccineScheduleTracking.API_Test.Repository.SQLRepository;
+using VaccineScheduleTracking.API_Test.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System.Transactions;
-using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Repository;
 
-namespace VaccineScheduleTracking.API.Services
+namespace VaccineScheduleTracking.API_Test.Services
 {
     public class AccountService : IAccountService
     {

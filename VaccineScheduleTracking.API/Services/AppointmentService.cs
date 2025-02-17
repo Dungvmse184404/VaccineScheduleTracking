@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Helpers;
-using VaccineScheduleTracking.API.Models.DTOs;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Repository;
-using VaccineScheduleTracking.API_Test.Repository;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
+using VaccineScheduleTracking.API_Test.Repository.IRepository;
 
-namespace VaccineScheduleTracking.API.Services
+namespace VaccineScheduleTracking.API_Test.Services
 {
     public class AppointmentService : IAppointmentService
     {
@@ -34,18 +34,14 @@ namespace VaccineScheduleTracking.API.Services
             var appointment = _mapper.Map<Appointment>(createAppointment);
             //-------------------------------
 
-            /// Kiểm tra ca tiêm đã được đặt chưa
+            ///check ca tiêm đặt chưa
             var timeSlot = await _timeSlotRepository.GetTimeSlotAsync(createAppointment.TimeSlot, createAppointment.Date);
             if (timeSlot.Available == false)
             {
                 throw new Exception("this slot is already taken.");
             }
-            else /// đặt ca tiêm
-            {
-                timeSlot = await _timeSlotRepository.ChangeTimeSlotStatus(timeSlot.TimeSlotID, false);
-            }
 
-            /// Kiểm tra bác sĩ trùng slot
+            /// check bác sĩ trùng slot
             //var doctor = await _doctorRepository.GetSuitableDoctor(createAppointment.Slot, createAppointment.Time);
             //if (doctor == null)
             //{
@@ -53,13 +49,12 @@ namespace VaccineScheduleTracking.API.Services
             //}
 
 
-            /// Kiểm tra độ tuổi của trẻ em có phù hợp với vắc xin
+            /// check tuổi của child (chưa check phản ứng phụ)
             var vaccine = await _vaccineRepository.GetSutableVaccine(appointment.Child.Age, appointment.VaccineType.Name);
             if (vaccine == null)
             {
                 throw new Exception("No suitable vaccine available");
             }
-
 
 
             //-------------------------------
@@ -69,6 +64,7 @@ namespace VaccineScheduleTracking.API.Services
             appointment.TimeSlotID = timeSlot.TimeSlotID;
             appointment.Status = "PENDING";
 
+            timeSlot = await _timeSlotRepository.ChangeTimeSlotStatus(timeSlot.TimeSlotID, false);
             return await _appointmentRepository.CreateAppointmentAsync(appointment);
         }
 
@@ -90,9 +86,10 @@ namespace VaccineScheduleTracking.API.Services
                 case "doctor":
                     return await _appointmentRepository.GetAppointmentListByDoctorIDAsync(id);
                 default:
-                    throw new Exception("Invalid role specified"); 
+                    throw new Exception("Invalid role specified");
             }
         }
+
         public async Task<Appointment?> UpdateAppointmentAsync(UpdateAppointmentDto modifyAppointment)
         {
             var appointment = await _appointmentRepository.UpdateAppointmentAsync(modifyAppointment);
