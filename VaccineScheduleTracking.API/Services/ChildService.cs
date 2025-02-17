@@ -32,7 +32,7 @@ namespace VaccineScheduleTracking.API_Test.Services
             var child = await childRepository.GetChildById(id);
             if (child == null)
             {
-                throw new Exception($"Can't find child with ID: {id}");
+                throw new Exception($"Không tìm thấy ID: {id}");
             }
             return await childRepository.DeleteChildAsync(child);
 

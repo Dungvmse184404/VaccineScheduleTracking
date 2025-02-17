@@ -22,11 +22,11 @@ namespace VaccineScheduleTracking.API_Test.Services
             var account = await accountRepository.GetAccountByUsernameAsync(username);
             if (account == null)
             {
-                throw new Exception("The account does not exist!");
+                throw new Exception("Tài khoản không tồn tại!");
             }
             if (account.Password != password)
             {
-                throw new Exception("The password is invalid!");
+                throw new Exception("Sai mật khẩu!");
             }
             return mapper.Map<Account>(account);
         }
@@ -35,15 +35,15 @@ namespace VaccineScheduleTracking.API_Test.Services
         {
             if (await accountRepository.GetAccountByUsernameAsync(registerAccount.Username) != null)
             {
-                throw new Exception($"{registerAccount.Username} is not available");
+                throw new Exception($"Tên người dùng: {registerAccount.Username} đã tồn tại");
             }
             if (await accountRepository.GetAccountByEmailAsync(registerAccount.Email) != null)
             {
-                throw new Exception($"{registerAccount.Email} is not available");
+                throw new Exception($"Địa chỉ email {registerAccount.Email} đã tồn tại ");
             }
             if (await accountRepository.GetAccountByPhonenumberAsync(registerAccount.PhoneNumber) != null)
             {
-                throw new Exception($"{registerAccount.PhoneNumber} is not available");
+                throw new Exception($"Số điện thoại {registerAccount.PhoneNumber} đã tồn tại");
             }
 
             var account = mapper.Map<Account>(registerAccount);
@@ -58,17 +58,17 @@ namespace VaccineScheduleTracking.API_Test.Services
             var email = await accountRepository.GetAccountByEmailAsync(updateAccount.Email);
             if (email != null && email.AccountID != updateAccount.AccountID)
             {
-                throw new Exception($"{updateAccount.Email} is not available");
+                throw new Exception($"Email {updateAccount.Email} đã tồn tại");
             }
             var phoneNumber = await accountRepository.GetAccountByPhonenumberAsync(updateAccount.PhoneNumber);
             if (phoneNumber != null && phoneNumber.AccountID != updateAccount.AccountID)
             {
-                throw new Exception($"{updateAccount.PhoneNumber} is not available");
+                throw new Exception($"Số điện thoại {updateAccount.PhoneNumber} đã tồn tại");
             }
             var account = await accountRepository.UpdateAccountAsync(updateAccount);
             if (account == null)
             {
-                throw new Exception("Account does not exist!");
+                throw new Exception($"Tài khoản không tồn tại!");
             }
             return account;
         }
@@ -84,7 +84,7 @@ namespace VaccineScheduleTracking.API_Test.Services
             var account = await accountRepository.GetAccountByID(id);
             if (account == null)
             {
-                throw new Exception($"ID {id} is not available");
+                throw new Exception($"ID {id} không tồn tại");
             }
             //account = mapper.Map<Account>(account);
             return await accountRepository.DisableAccountAsync(account);

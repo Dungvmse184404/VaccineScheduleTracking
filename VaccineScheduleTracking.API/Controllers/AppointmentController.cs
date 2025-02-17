@@ -40,7 +40,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
 
             }
-            catch (Exception e) { return BadRequest(e.Message); }
+            catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
         }
 
 
@@ -52,7 +52,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 var Appointment = await _appointmentRepository.GetAppointmentListByIDAsync(id, role);
                 return Ok(_mapper.Map<List<AppointmentDto>>(Appointment));
             }
-            catch (Exception e) { return BadRequest(e.Message); }
+            catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
         }
     }
 }
