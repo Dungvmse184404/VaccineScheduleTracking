@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Repository\Account\**" />
+    <Compile Remove="Repository\Appointment\**" />
+    <Compile Remove="Repository\Child\**" />
+    <Compile Remove="Repository\Vaccine\**" />
+    <Compile Remove="Services\Account\**" />
+    <Compile Remove="Services\Appointment\**" />
+    <Compile Remove="Services\Child\**" />
+    <Compile Remove="Services\DailySchedule\**" />
+    <Compile Remove="Services\IServices\**" />
+    <Content Remove="Repository\Account\**" />
+    <Content Remove="Repository\Appointment\**" />
+    <Content Remove="Repository\Child\**" />
+    <Content Remove="Repository\Vaccine\**" />
+    <Content Remove="Services\Account\**" />
+    <Content Remove="Services\Appointment\**" />
+    <Content Remove="Services\Child\**" />
+    <Content Remove="Services\DailySchedule\**" />
+    <Content Remove="Services\IServices\**" />
+    <EmbeddedResource Remove="Repository\Account\**" />
+    <EmbeddedResource Remove="Repository\Appointment\**" />
+    <EmbeddedResource Remove="Repository\Child\**" />
+    <EmbeddedResource Remove="Repository\Vaccine\**" />
+    <EmbeddedResource Remove="Services\Account\**" />
+    <EmbeddedResource Remove="Services\Appointment\**" />
+    <EmbeddedResource Remove="Services\Child\**" />
+    <EmbeddedResource Remove="Services\DailySchedule\**" />
+    <EmbeddedResource Remove="Services\IServices\**" />
+    <None Remove="Repository\Account\**" />
+    <None Remove="Repository\Appointment\**" />
+    <None Remove="Repository\Child\**" />
+    <None Remove="Repository\Vaccine\**" />
+    <None Remove="Services\Account\**" />
+    <None Remove="Services\Appointment\**" />
+    <None Remove="Services\Child\**" />
+    <None Remove="Services\DailySchedule\**" />
+    <None Remove="Services\IServices\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+</Project>

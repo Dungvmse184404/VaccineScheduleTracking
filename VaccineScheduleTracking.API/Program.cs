@@ -7,6 +7,10 @@ using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Mappings;
 using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API.Services;
+using VaccineScheduleTracking.API_Test.Repository;
+using VaccineScheduleTracking.API_Test.Repository.IRepository;
+using VaccineScheduleTracking.API_Test.Repository.SQLRepository;
+using VaccineScheduleTracking.API_Test.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +51,10 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<VaccineScheduleDbContext>(option =>
 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddScoped<IDailyScheduleRepository, SQLDailyScheduleRepository>();
+builder.Services.AddScoped<ITimeSlotRepository, SQLTimeSlotRepository>();
+builder.Services.AddScoped<IAppointmentRepository, SQLAppointmentReopsitory>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVaccineRepository, SQLVaccineRepository>();
@@ -79,6 +87,13 @@ builder.Services.AddScoped<JwtHelper>();
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -87,6 +102,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

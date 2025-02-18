@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Helpers;
-using VaccineScheduleTracking.API.Models.DTOs;
-using VaccineScheduleTracking.API.Repository;
-using VaccineScheduleTracking.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Azure.Core;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Services;
+using VaccineScheduleTracking.API_Test.Repository;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -34,7 +34,7 @@ namespace VaccineScheduleTracking.API.Controllers
             {
                 var account = await accountService.LoginAsync(loginAccountDto.Username, loginAccountDto.Password);
                 var role = account.Parent != null ? "Parent" : account.Doctor != null ? "Doctor" : "Staff";
-                var token = jwtHelper.GenerateToken(account.AccountID.ToString() ,account.Username, role);
+                var token = jwtHelper.GenerateToken(account.AccountID.ToString(), account.Username, role);
                 return Ok(new
                 {
                     Token = token,
@@ -44,7 +44,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(ex.Message);
+                return Unauthorized(new { Message = ex.Message });
             }
         }
 
@@ -58,9 +58,10 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message});
             }
         }
+
 
         [Authorize]
         [HttpPut("update-account")]
@@ -79,7 +80,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);  
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -91,6 +92,49 @@ namespace VaccineScheduleTracking.API.Controllers
 
             return Ok(mapper.Map<List<AccountDto>>(accounts));
         }
+
+
+        [Authorize(Roles = "Staff")]
+        [HttpDelete("disable-account/{id}")]
+        public async Task<IActionResult> DisableAccount([FromRoute] int id)
+        {
+            try
+            {
+                var account = await accountService.DisableAccountAsync(id);
+                if (account == null)
+                {
+                    return NotFound("Account not found or already inactive");
+                }
+                //return Ok(mapper.Map<DeleteAccountDto>(account));
+                return Ok($" Account {account.Username} disabled successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+
+        }
+
+        //[Authorize (Roles = "Staff")]
+        //[HttpDelete("delete-account")]
+        //public async Task<IActionResult> deleteAccount([FromRoute] int id)
+        //{
+        //    try
+        //    {
+        //        var account = await accountService.DeleteAccountAsync(id);
+        //        if (account == null)
+        //        {
+        //            return NotFound("Account not found or already inactive");
+        //        }
+        //        //return Ok(mapper.Map<DeleteAccountDto>(account));
+        //        return Ok($" Account {account.Username} deleted successfully");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+
+        //}
 
     }
 }

@@ -3,8 +3,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Models.DTOs;
-using VaccineScheduleTracking.API.Services;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
+using VaccineScheduleTracking.API_Test.Services;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -59,7 +59,22 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("delete-child{id}")]
+        public async Task<IActionResult> DeleteChildProfile(int ChildId)
+        {
+            try
+            {
+                var deleteChild = await childService.DeleteChild(ChildId);
+                return Ok($"Child name {deleteChild.Firstname} has been deleted!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
         }
     }
