@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
+using VaccineScheduleTracking.API;
 using VaccineScheduleTracking.API_Test.Models.Entities;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
+using VaccineScheduleTracking.API_Test.Repository;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaccineScheduleTracking.API_Test.Services

@@ -1,7 +1,7 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
 
-namespace VaccineScheduleTracking.API_Test.Repository.IRepository
+namespace VaccineScheduleTracking.API_Test.Repository.Appointments
 {
     public interface IAppointmentRepository
     {

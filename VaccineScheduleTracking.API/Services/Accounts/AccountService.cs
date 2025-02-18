@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using System.Transactions;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
-using VaccineScheduleTracking.API_Test.Repository;
+using VaccineScheduleTracking.API_Test.Repository.Accounts;
 
-namespace VaccineScheduleTracking.API_Test.Services
+namespace VaccineScheduleTracking.API_Test.Services.Accounts
 {
     public class AccountService : IAccountService
     {

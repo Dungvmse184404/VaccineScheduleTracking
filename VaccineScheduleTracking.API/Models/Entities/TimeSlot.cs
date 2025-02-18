@@ -1,4 +1,5 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using VaccineScheduleTracking.API.Models.Entities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaccineScheduleTracking.API_Test.Models.Entities
 {
@@ -6,10 +7,10 @@ namespace VaccineScheduleTracking.API_Test.Models.Entities
     {
         public int TimeSlotID { get; set; }
         public TimeOnly StartTime { get; private set; }
-        public DateOnly AppointmentDate { get; set; }
         public int SlotNumber { get; set; }
         public bool Available { get; set; }
-
+        public int DailyScheduleID { get; set; }
+        public DailySchedule DailySchedule { get; set; }    
         public TimeSlot(int slotNumber)
         {
             SlotNumber = slotNumber;

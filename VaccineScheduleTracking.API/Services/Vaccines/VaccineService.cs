@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API.Helpers;
 using System.Reflection.PortableExecutable;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
-using VaccineScheduleTracking.API_Test.Services;
+using VaccineScheduleTracking.API_Test.Repository.Vaccines;
 
 
-namespace VaccineScheduleTracking.API.Services
+namespace VaccineScheduleTracking.API_Test.Services.Vaccines
 {
     public class VaccineService : IVaccineService
     {
@@ -73,36 +72,36 @@ namespace VaccineScheduleTracking.API.Services
             {
                 throw new Exception($"Can't find vaccine with ID {id}");
             }
-            vaccine.Name = ValidationHelper.NullValidator(updateVaccine.Name) 
-                ? updateVaccine.Name 
+            vaccine.Name = ValidationHelper.NullValidator(updateVaccine.Name)
+                ? updateVaccine.Name
                 : vaccine.Name;
             //vaccine.VaccineTypeID = updateVaccine.VaccineTypeID ?? vaccine.VaccineTypeID;
-            vaccine.Manufacturer = ValidationHelper.NullValidator(updateVaccine.Manufacturer) 
-                ? updateVaccine.Manufacturer 
+            vaccine.Manufacturer = ValidationHelper.NullValidator(updateVaccine.Manufacturer)
+                ? updateVaccine.Manufacturer
                 : vaccine.Manufacturer;
-            vaccine.Stock = ValidationHelper.NullValidator(updateVaccine.Stock) 
-                ? updateVaccine.Stock 
+            vaccine.Stock = ValidationHelper.NullValidator(updateVaccine.Stock)
+                ? updateVaccine.Stock
                 : vaccine.Stock;
-            vaccine.Price = ValidationHelper.NullValidator(updateVaccine.Price) 
-                ? updateVaccine.Price 
+            vaccine.Price = ValidationHelper.NullValidator(updateVaccine.Price)
+                ? updateVaccine.Price
                 : vaccine.Price;
-            vaccine.Description = ValidationHelper.NullValidator(updateVaccine.Description) 
-                ? updateVaccine.Description 
+            vaccine.Description = ValidationHelper.NullValidator(updateVaccine.Description)
+                ? updateVaccine.Description
                 : vaccine.Description;
-            vaccine.FromAge = ValidationHelper.NullValidator(updateVaccine.FromAge) 
-                ? updateVaccine.FromAge 
+            vaccine.FromAge = ValidationHelper.NullValidator(updateVaccine.FromAge)
+                ? updateVaccine.FromAge
                 : vaccine.FromAge;
-            vaccine.ToAge = ValidationHelper.NullValidator(updateVaccine.ToAge) 
-                ? updateVaccine.ToAge 
+            vaccine.ToAge = ValidationHelper.NullValidator(updateVaccine.ToAge)
+                ? updateVaccine.ToAge
                 : vaccine.ToAge;
-            vaccine.Period = ValidationHelper.NullValidator(updateVaccine.Period) 
-                ? updateVaccine.Period 
+            vaccine.Period = ValidationHelper.NullValidator(updateVaccine.Period)
+                ? updateVaccine.Period
                 : vaccine.Period;
-            vaccine.DosesRequired = ValidationHelper.NullValidator(updateVaccine.DosesRequired) 
-                ? updateVaccine.DosesRequired 
+            vaccine.DosesRequired = ValidationHelper.NullValidator(updateVaccine.DosesRequired)
+                ? updateVaccine.DosesRequired
                 : vaccine.DosesRequired;
-            vaccine.Priority = ValidationHelper.NullValidator(updateVaccine.Priority) 
-                ? updateVaccine.Priority 
+            vaccine.Priority = ValidationHelper.NullValidator(updateVaccine.Priority)
+                ? updateVaccine.Priority
                 : vaccine.Priority;
 
             return await vaccineRepository.UpdateVaccineAsync(vaccine);

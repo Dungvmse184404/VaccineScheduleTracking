@@ -1,6 +1,6 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 
-namespace VaccineScheduleTracking.API_Test.Repository.IRepository
+namespace VaccineScheduleTracking.API_Test.Repository.Children
 {
     public interface IChildRepository
     {

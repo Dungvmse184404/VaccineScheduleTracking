@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
-using VaccineScheduleTracking.API_Test.Services;
+using VaccineScheduleTracking.API_Test.Services.Children;
 
 namespace VaccineScheduleTracking.API.Controllers
 {

@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
-using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
-using VaccineScheduleTracking.API_Test.Services;
+using VaccineScheduleTracking.API_Test.Repository;
 using static System.Reflection.Metadata.BlobBuilder;
+using VaccineScheduleTracking.API_Test.Services.Appointments;
 
 namespace VaccineScheduleTracking.API.Controllers
 {

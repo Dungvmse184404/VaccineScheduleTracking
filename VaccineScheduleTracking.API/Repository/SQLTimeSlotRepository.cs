@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API.Data;
-using VaccineScheduleTracking.API.Repository;
+using VaccineScheduleTracking.API;
 using VaccineScheduleTracking.API_Test.Models.Entities;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
 
-namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
+namespace VaccineScheduleTracking.API_Test.Repository
 {
 
     public class SQLTimeSlotRepository : ITimeSlotRepository
@@ -18,7 +17,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
 
         public async Task<TimeSlot?> GetTimeSlotAsync(int slot, DateOnly date)
         {
-            return await _dbContext.TimeSlots.FirstOrDefaultAsync(s => s.SlotNumber == slot && s.AppointmentDate == date);
+            return await _dbContext.TimeSlots.FirstOrDefaultAsync(s => s.SlotNumber == slot && s.DailySchedule.AppointmentDate == date);
         }
 
         public async Task<TimeSlot?> GetTimeSlotByIDAsync(int id)

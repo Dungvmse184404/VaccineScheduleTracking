@@ -5,12 +5,15 @@ using Microsoft.IdentityModel.Tokens;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Mappings;
-using VaccineScheduleTracking.API.Repository;
-using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Repository;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
-using VaccineScheduleTracking.API_Test.Repository.SQLRepository;
-using VaccineScheduleTracking.API_Test.Services;
+using VaccineScheduleTracking.API_Test.Repository.Accounts;
+using VaccineScheduleTracking.API_Test.Repository.Appointments;
+using VaccineScheduleTracking.API_Test.Repository.Children;
+using VaccineScheduleTracking.API_Test.Repository.Vaccines;
+using VaccineScheduleTracking.API_Test.Services.Accounts;
+using VaccineScheduleTracking.API_Test.Services.Appointments;
+using VaccineScheduleTracking.API_Test.Services.Children;
+using VaccineScheduleTracking.API_Test.Services.Vaccines;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +55,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<VaccineScheduleDbContext>(option =>
 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddScoped<IDailyScheduleRepository, SQLDailyScheduleRepository>();
+builder.Services.AddScoped<IDoctorRepository, SQLDoctorRepository>();
 builder.Services.AddScoped<ITimeSlotRepository, SQLTimeSlotRepository>();
 builder.Services.AddScoped<IAppointmentRepository, SQLAppointmentReopsitory>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();

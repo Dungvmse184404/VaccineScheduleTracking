@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Azure.Core;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
-using VaccineScheduleTracking.API_Test.Services;
-using VaccineScheduleTracking.API_Test.Repository;
+using VaccineScheduleTracking.API_Test.Services.Accounts;
+using VaccineScheduleTracking.API_Test.Repository.Accounts;
 
 namespace VaccineScheduleTracking.API.Controllers
 {

@@ -1,7 +1,7 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
+using VaccineScheduleTracking.API_Test.Repository.Children;
 
-namespace VaccineScheduleTracking.API_Test.Services
+namespace VaccineScheduleTracking.API_Test.Services.Children
 {
     public class ChildService : IChildService
     {
@@ -10,6 +10,17 @@ namespace VaccineScheduleTracking.API_Test.Services
         public ChildService(IChildRepository childRepository)
         {
             this.childRepository = childRepository;
+        }
+        public async Task<Child?> GetChildById(int id)
+        {
+            if (id == null)
+                throw new Exception("Chưa nhập ID");
+            var child = await childRepository.GetChildById(id);
+
+            if (child == null)
+                throw new Exception($"Không tìm thấy ID: {id}");
+
+            return child;
         }
 
         public async Task<List<Child>> GetParentChildren(int parentID)

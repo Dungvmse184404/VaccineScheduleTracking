@@ -6,7 +6,7 @@ using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
+namespace VaccineScheduleTracking.API_Test.Repository.Accounts
 {
     public class SQLAccountRepository : IAccountRepository
     {

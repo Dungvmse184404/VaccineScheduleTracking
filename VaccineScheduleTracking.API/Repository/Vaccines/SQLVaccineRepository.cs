@@ -2,10 +2,9 @@
 using Microsoft.Identity.Client;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
 
-namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
+namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
 {
     public class SQLVaccineRepository : IVaccineRepository
     {
@@ -146,6 +145,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
         {
             return await dbContext.VaccineTypes.ToListAsync();
         }
-        
+
     }
 }

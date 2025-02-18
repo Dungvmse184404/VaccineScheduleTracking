@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
 
-namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
+namespace VaccineScheduleTracking.API_Test.Repository.Children
 {
     public class SQLChildRepository : IChildRepository
     {

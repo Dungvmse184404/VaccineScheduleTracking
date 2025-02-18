@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
 
-namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
+namespace VaccineScheduleTracking.API_Test.Repository
 {
     public class SQLDoctorRepository : IDoctorRepository
     {
@@ -17,6 +16,13 @@ namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
         public async Task<List<Doctor>> GetAllDoctorAsync()
         {
             return await _dbContext.Doctors.ToListAsync();
+        }
+
+        public async Task<Doctor?> GetDoctorByIDAsync(int doctorID)
+        {
+            return await _dbContext.Doctors
+                .Include(d => d.Account)
+                .FirstOrDefaultAsync(d => d.DoctorID == doctorID);
         }
 
         public Task<Doctor?> GetSuitableDoctor(int slot, DateTime time)

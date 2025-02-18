@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
-using VaccineScheduleTracking.API_Test.Services;
+using VaccineScheduleTracking.API_Test.Services.Vaccines;
 
 namespace VaccineScheduleTracking.API.Controllers
 {

@@ -1,6 +1,6 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 
-namespace VaccineScheduleTracking.API.Repository
+namespace VaccineScheduleTracking.API_Test.Repository
 {
     public interface IDailyScheduleRepository
     {

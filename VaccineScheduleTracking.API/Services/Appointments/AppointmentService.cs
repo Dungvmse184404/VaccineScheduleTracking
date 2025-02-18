@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
+using VaccineScheduleTracking.API_Test.Repository;
+using VaccineScheduleTracking.API_Test.Repository.Appointments;
+using VaccineScheduleTracking.API_Test.Repository.Children;
+using VaccineScheduleTracking.API_Test.Repository.Vaccines;
+using VaccineScheduleTracking.API_Test.Services.Appointments;
 
-namespace VaccineScheduleTracking.API_Test.Services
+namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
     public class AppointmentService : IAppointmentService
     {
@@ -19,12 +16,22 @@ namespace VaccineScheduleTracking.API_Test.Services
         private readonly IDoctorRepository _doctorRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IVaccineRepository _vaccineRepository;
+        private readonly IChildRepository _childRepository;
         private readonly IMapper _mapper;
-        public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IVaccineRepository vaccineRepository, ITimeSlotRepository timeSlotRepository)
+
+        public AppointmentService(
+            IAppointmentRepository appointmentRepository,
+            IMapper mapper,
+            IVaccineRepository vaccineRepository,
+            ITimeSlotRepository timeSlotRepository,
+            IDoctorRepository doctorRepository,
+            IChildRepository childRepository)
         {
             _appointmentRepository = appointmentRepository;
             _vaccineRepository = vaccineRepository;
             _timeSlotRepository = timeSlotRepository;
+            _doctorRepository = doctorRepository;
+            _childRepository = childRepository;
             _mapper = mapper;
         }
 
@@ -68,26 +75,45 @@ namespace VaccineScheduleTracking.API_Test.Services
             return await _appointmentRepository.CreateAppointmentAsync(appointment);
         }
 
-        public async Task<List<Appointment>> GetAppointmentListByIDAsync(int id, string role)
+        public async Task<List<AppointmentDto>> GetAppointmentListByIDAsync(int id, string role)
         {
-            if (role == null)
+            if (string.IsNullOrEmpty(role))
             {
-                throw new Exception($"role can't be empty");
+                throw new Exception("Role can't be empty");
             }
             if (id == 0)
             {
-                throw new Exception($"Id can't be empty");
+                throw new Exception("ID can't be empty");
             }
 
+            List<Appointment> appointmentList;
             switch (role.ToLower().Trim())
             {
                 case "child":
-                    return await _appointmentRepository.GetAppointmentListByChildIDAsync(id);
+                    appointmentList = await _appointmentRepository.GetAppointmentListByChildIDAsync(id);
+                    break;
                 case "doctor":
-                    return await _appointmentRepository.GetAppointmentListByDoctorIDAsync(id);
+                    appointmentList = await _appointmentRepository.GetAppointmentListByDoctorIDAsync(id);
+                    break;
                 default:
                     throw new Exception("Invalid role specified");
             }
+            List<AppointmentDto> appointmentDtoList = new List<AppointmentDto>();
+            foreach (var appointment in appointmentList)
+            {
+                var appointmentDto = new AppointmentDto
+                {
+                    AppointmentID = appointment.AppointmentID,
+                    Child = $"{appointment.Child.Firstname} {appointment.Child.Lastname}",
+                    Doctor = $"{appointment.Doctor.Account.Firstname} {appointment.Doctor.Account.Lastname}",
+                    VaccineType = appointment.VaccineType.Name,
+                    Date = appointment.TimeSlots.DailySchedule.AppointmentDate,
+                    Status = appointment.Status
+                };
+                appointmentDtoList.Add(appointmentDto);
+            }
+
+            return appointmentDtoList;
         }
 
         public async Task<Appointment?> UpdateAppointmentAsync(UpdateAppointmentDto modifyAppointment)

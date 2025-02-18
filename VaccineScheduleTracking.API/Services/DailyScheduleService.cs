@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
+using VaccineScheduleTracking.API_Test.Repository;
 
 namespace VaccineScheduleTracking.API_Test.Services
 {

@@ -1,7 +1,7 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
 
-namespace VaccineScheduleTracking.API_Test.Services
+namespace VaccineScheduleTracking.API_Test.Services.Vaccines
 {
     public interface IVaccineService
     {

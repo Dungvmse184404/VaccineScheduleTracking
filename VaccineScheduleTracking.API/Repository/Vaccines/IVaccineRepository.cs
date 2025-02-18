@@ -2,7 +2,7 @@
 using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
 
-namespace VaccineScheduleTracking.API.Repository
+namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
 {
     public interface IVaccineRepository
     {
@@ -10,8 +10,9 @@ namespace VaccineScheduleTracking.API.Repository
         Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto);
         Task<Vaccine?> GetVaccineByIDAsync(int id);
         Task<Vaccine?> GetVaccineByNameAsync(string name);
-        Task<Vaccine> AddVaccineAsync(Vaccine vaccine);
         Task<Vaccine> GetSutableVaccine(int Age, string TypeName);
+        Task<Vaccine> AddVaccineAsync(Vaccine vaccine);
+        
         Task<Vaccine> UpdateVaccineAsync(Vaccine vaccine);
         Task<Vaccine> DeleteVaccineAsync(Vaccine vaccine);
         // VaccineType function

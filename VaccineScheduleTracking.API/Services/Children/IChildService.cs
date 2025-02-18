@@ -1,6 +1,6 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 
-namespace VaccineScheduleTracking.API_Test.Services
+namespace VaccineScheduleTracking.API_Test.Services.Children
 {
     public interface IChildService
     {

@@ -11,5 +11,6 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Appointments
         public DateOnly Date { get; set; }
         public string Status { get; set; }
 
+
     }
 }

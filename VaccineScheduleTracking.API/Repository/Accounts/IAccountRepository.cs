@@ -1,7 +1,7 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 
-namespace VaccineScheduleTracking.API_Test.Repository
+namespace VaccineScheduleTracking.API_Test.Repository.Accounts
 {
     public interface IAccountRepository
     {

@@ -2,9 +2,8 @@
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
 
-namespace VaccineScheduleTracking.API.Repository
+namespace VaccineScheduleTracking.API_Test.Repository.Appointments
 {
     public class SQLAppointmentReopsitory : IAppointmentRepository
     {
@@ -56,6 +55,7 @@ namespace VaccineScheduleTracking.API.Repository
                    .ThenInclude(d => d.Account)
                .Include(a => a.VaccineType)
                .Include(a => a.TimeSlots)
+                    .ThenInclude(s => s.DailySchedule)
                .ToListAsync();
         }
 
@@ -74,6 +74,7 @@ namespace VaccineScheduleTracking.API.Repository
                     .ThenInclude(d => d.Account)
                 .Include(a => a.VaccineType)
                 .Include(a => a.TimeSlots)
+                    .ThenInclude(s => s.DailySchedule)
                 .ToListAsync();
         }
 
