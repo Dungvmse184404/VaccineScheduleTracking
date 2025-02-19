@@ -4,5 +4,6 @@
     {
 
         //Task<bool> CheckSlotAsync(int slot, DateOnly Date);
+        Task GenerateTimeSlotsForDaysAsync(int numberOfDays);
     }
 }

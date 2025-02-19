@@ -12,6 +12,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
     public class AppointmentService : IAppointmentService
     {
+        private readonly ITimeSlotServices _timeSlotServices;
         private readonly ITimeSlotRepository _timeSlotRepository;
         private readonly IDoctorRepository _doctorRepository;
         private readonly IAppointmentRepository _appointmentRepository;
@@ -25,7 +26,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             IVaccineRepository vaccineRepository,
             ITimeSlotRepository timeSlotRepository,
             IDoctorRepository doctorRepository,
-            IChildRepository childRepository)
+            IChildRepository childRepository,
+            ITimeSlotServices timeSlotServices)
         {
             _appointmentRepository = appointmentRepository;
             _vaccineRepository = vaccineRepository;
@@ -33,11 +35,14 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             _doctorRepository = doctorRepository;
             _childRepository = childRepository;
             _mapper = mapper;
+            _timeSlotServices = timeSlotServices;
         }
 
         public async Task<Appointment?> CreateAppointmentAsync(CreateAppointmentDto createAppointment)
         {
-            //_slotRepository.GenerateSlotsForMonth(6);// tạo lịch độ dài 6 tháng để khách book
+            /// tạo lịch độ dài 6 tháng để khách book
+            await _timeSlotServices.GenerateTimeSlotsForDaysAsync(6);
+
             var appointment = _mapper.Map<Appointment>(createAppointment);
             //-------------------------------
 

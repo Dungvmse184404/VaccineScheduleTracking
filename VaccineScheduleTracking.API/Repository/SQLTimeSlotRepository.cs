@@ -2,6 +2,7 @@
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API;
 using VaccineScheduleTracking.API_Test.Models.Entities;
+using VaccineScheduleTracking.API.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Repository
 {
@@ -55,19 +56,34 @@ namespace VaccineScheduleTracking.API_Test.Repository
             return timeSlot;
         }
 
+        public async Task AddTimeSlotForDayAsync(TimeSlot timeSlots)
+        {
+            _dbContext.TimeSlots.Add(timeSlots);
+            await _dbContext.SaveChangesAsync();
 
-        /// <summary>
+        }
+
+        public Task GenerateTimeSlotsForDaysAsync(int numberOfDays)// hàm này để hết lõi thôi
+        {
+            throw new NotImplementedException();
+        }
+
         /// hàm này tạo timeslot thôi ko trả về gì cả
         /// </summary>
         /// <param name="date"> dd-MM-yyyy </param>
         /// <returns></returns>
         //public async Task GenerateDailyTimeSlotsAsync(DateOnly date)
         //{
-        //    bool exists = await _dbContext.TimeSlots.AnyAsync(t => t.AppointmentDate == date);
-        //    if (exists)
+        //    var daily = await _dbContext.DailySchedule.FirstOrDefaultAsync(t => t.AppointmentDate == date);
+
+        //    if (daily != null) return;
+
+        //    daily = new DailySchedule
         //    {
-        //        return;
-        //    }
+        //        AppointmentDate = date,
+        //        //TimeSlots = new List<TimeSlot>()
+        //    };
+
 
         //    List<TimeSlot> slots = new();
 
@@ -78,14 +94,15 @@ namespace VaccineScheduleTracking.API_Test.Repository
         //        slots.Add(new TimeSlot
         //        {
         //            StartTime = startTime,
-        //            AppointmentDate = date,
         //            SlotNumber = slotNumber,
-        //            Available = true
+        //            Available = true,
+        //            DailyScheduleID = daily.DailyScheduleID
         //        });
         //    }
 
         //    _dbContext.TimeSlots.AddRange(slots);
         //    await _dbContext.SaveChangesAsync();
+
         //}
 
 

@@ -29,7 +29,6 @@ namespace VaccineScheduleTracking.API.Controllers
         {
             try
             {
-
                 var appointment = await _appointmentService.CreateAppointmentAsync(createAppointment);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
 

@@ -6,5 +6,6 @@
         public int DoctorID { get; set; }
         public int DailyScheldueID { get; set; }
         public int WeeklyScheldueID { get; set; }
+
     }
 }

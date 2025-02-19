@@ -7,7 +7,10 @@ namespace VaccineScheduleTracking.API.Models.Entities
     {
         public int DailyScheduleID { get; set; }
         public DateOnly AppointmentDate { get; set; }
-        public List<TimeSlot> TimeSlots { get; set; }
 
+
+
+
+        //public List<TimeSlot> TimeSlots { get; set; }
     }
 }
