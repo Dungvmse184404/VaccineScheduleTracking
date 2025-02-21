@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
-using VaccineScheduleTracking.API_Test.Repository;
 using static System.Reflection.Metadata.BlobBuilder;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
+using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 
 namespace VaccineScheduleTracking.API.Controllers
 {

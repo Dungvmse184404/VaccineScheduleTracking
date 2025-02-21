@@ -2,7 +2,7 @@
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
 
-namespace VaccineScheduleTracking.API_Test.Repository
+namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
 {
     public class SQLDailyScheduleRepository : IDailyScheduleRepository
     {
@@ -23,7 +23,10 @@ namespace VaccineScheduleTracking.API_Test.Repository
         {
             throw new NotImplementedException();
         }
-
+        public async Task<List<DailySchedule>> GetAllDailyScheduleAsync()
+        {
+            return await _dbContext.DailySchedule.ToListAsync();
+        }
         public Task<List<DailySchedule>> GetAvailableSlotsAsync(DateTime date)
         {
             throw new NotImplementedException();
@@ -47,12 +50,13 @@ namespace VaccineScheduleTracking.API_Test.Repository
 
         //public async Task<DailySchedule> DeleteDailyScheduleAsync()
         //{
-          
+
         //}
 
         public Task<DailySchedule?> GetSlotByID(int SlotID)
         {
             throw new NotImplementedException();
         }
+
     }
 }

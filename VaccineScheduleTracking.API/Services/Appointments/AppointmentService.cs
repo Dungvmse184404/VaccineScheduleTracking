@@ -1,17 +1,21 @@
 ﻿using AutoMapper;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
 using VaccineScheduleTracking.API_Test.Repository;
 using VaccineScheduleTracking.API_Test.Repository.Appointments;
 using VaccineScheduleTracking.API_Test.Repository.Children;
+using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
+using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 
 namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
     public class AppointmentService : IAppointmentService
     {
+        private readonly IDoctorServices _doctorServices;
         private readonly ITimeSlotServices _timeSlotServices;
         private readonly ITimeSlotRepository _timeSlotRepository;
         private readonly IDoctorRepository _doctorRepository;
@@ -27,7 +31,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             ITimeSlotRepository timeSlotRepository,
             IDoctorRepository doctorRepository,
             IChildRepository childRepository,
-            ITimeSlotServices timeSlotServices)
+            ITimeSlotServices timeSlotServices,
+            IDoctorServices doctorServices)
         {
             _appointmentRepository = appointmentRepository;
             _vaccineRepository = vaccineRepository;
@@ -36,12 +41,18 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             _childRepository = childRepository;
             _mapper = mapper;
             _timeSlotServices = timeSlotServices;
+            _doctorServices = doctorServices;
         }
 
         public async Task<Appointment?> CreateAppointmentAsync(CreateAppointmentDto createAppointment)
         {
-            /// tạo lịch độ dài 6 tháng để khách book
-            await _timeSlotServices.GenerateTimeSlotsForDaysAsync(6);
+            int Days = 6;
+            /// tạo lịch
+            await _timeSlotServices.GenerateCalanderAsync(Days);
+
+            /// tạo lịch làm vc cho bác sĩ
+            var doctorList = await _doctorRepository.GetAllDoctorAsync();
+            await _doctorServices.GenerateDoctorCalanderAsync(doctorList , Days);
 
             var appointment = _mapper.Map<Appointment>(createAppointment);
             //-------------------------------
