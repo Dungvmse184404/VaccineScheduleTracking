@@ -99,25 +99,41 @@ INSERT [dbo].[Accounts] ([Firstname], [Lastname], [Username], [Password], [Phone
 ('Hoang', 'Nguyen', 'hoangnguyen123', '123hoang', '0947568394', 'hoangnguyen1334@gmail.com', NULL, 'ACTIVE'),
 ('Lan', 'Nguyen', 'lannguyen123', '123lan', '0932568394', 'lannguyen13234@gmail.com', NULL, 'ACTIVE'),
 ('Quang', 'Nguyen', 'quangnguyen123', '123quang', '0932522394', 'quangnguyen13234@gmail.com', NULL, 'ACTIVE'),
-('Binh', 'Le', 'binhlew123', '123binh', '0345522394', 'binhle21@gmail.com', NULL, 'ACTIVE')
+('Binh', 'Le', 'binhlew123', '123binh', '0345522394', 'binhle21@gmail.com', NULL, 'ACTIVE'),
+('Minh', 'Pham', 'minhpham123', '123minh', '0912345678', 'minhpham123@gmail.com', NULL, 'ACTIVE'),
+('Hanh', 'Tran', 'hanhtran123', '123hanh', '0923456789', 'hanhtran123@gmail.com', NULL, 'ACTIVE'),
+('Duc', 'Vo', 'ducvo123', '123duc', '0934567890', 'ducvo123@gmail.com', NULL, 'ACTIVE'),
+('Tuan', 'Dang', 'tuandang123', '123tuan', '0945678901', 'tuandang123@gmail.com', NULL, 'ACTIVE'),
+('Ly', 'Ho', 'lyho123', '123ly', '0956789012', 'lyho123@gmail.com', NULL, 'ACTIVE'),
+('Anh', 'Nguyen', 'anguyen123', '123anh', '0912345679', 'anguyen123@gmail.com', NULL, 'ACTIVE'),
+('Mai', 'Tran', 'maitran123', '123mai', '0923456790', 'maitran123@gmail.com', NULL, 'ACTIVE'),
+('Tu', 'Le', 'tule123', '123tu', '0934567891', 'tule123@gmail.com', NULL, 'ACTIVE'),
+('Quyen', 'Nguyen', 'quyennguyen123', '123quyen', '0945678902', 'quyennguyen123@gmail.com', NULL, 'ACTIVE'),
+('Admin', 'System', 'admin123', 'adminpassword', '0987654321', 'admin123@vaccinesystem.com', NULL, 'ACTIVE');
 GO
+DBCC CHECKIDENT ('[Accounts]', RESEED, 0);
 
 /****** Insert:  Table [dbo].[Parent] ******/
-INSERT [dbo].[Parents] (AccountID) VALUES (1), (2)
+INSERT [dbo].[Parents] (AccountID) VALUES (1), (2), (3), (4), (5) ,(6), (7)
 
 /****** Insert:  Table [dbo].[Doctor] ******/
-INSERT [dbo].[Doctors] (AccountID) VALUES (3)
+INSERT [dbo].[Doctors] (AccountID) VALUES  (8), (9), (10), (11)
 
 /****** Insert:  Table [dbo].[Staff] ******/
-INSERT [dbo].[Staffs] (AccountID) VALUES (4)
+INSERT [dbo].[Staffs] (AccountID) VALUES  (12), (13), (14)
 
 /****** Insert:  Table [dbo].[Child] ******/
-INSERT [dbo].[Children] ([FirstName], [LastName], [Weight], [Heigth], [Gender], [DateOfBirth], [ParentID]) VALUES
+INSERT [dbo].[Children] ([FirstName], [LastName], [Weight], [Height], [Gender], [DateOfBirth], [ParentID]) VALUES
 ('Thuy', 'Nguyen', 11.3, 0.8, 'FEMALE', '2022-01-01', 1),
 ('Thu', 'Nguyen', 22.3, 1.23, 'FEMALE', '2022-12-25', 1),
-('Minh', 'Nguyen', 20.3, 1.1, 'MALE', '2022-1-1', 2)
+('Minh', 'Nguyen', 20.3, 1.1, 'MALE', '2022-1-1', 2),
+('Hoa', 'Tran', 15.2, 0.95, 'FEMALE', '2022-03-15', 3),
+('Kien', 'Pham', 18.5, 1.05, 'MALE', '2021-07-19', 3),
+('Lan', 'Le', 17.0, 1.1, 'FEMALE', '2022-04-30', 4),
+('Duy', 'Nguyen', 20.0, 1.15, 'MALE', '2022-08-10', 1),
+('Thao', 'Nguyen', 13.7, 0.95, 'FEMALE', '2022-02-20', 2);
 GO
-
+DBCC CHECKIDENT ('[Appointments]', RESEED, 0);
 /****** Insert:  Table [dbo].[VaccineTypes] ******/
 INSERT [dbo].[VaccineTypes] ([Name], [Description]) VALUES 
 ('COVID-19', 'COVID-19 (from English : corona virus disease 2019 meaning corona virus disease 2019 ) [ 10 ] is an acute infectious respiratory disease caused by the coronavirus SARS-CoV-2 and its variants . This is a virus discovered in an outbreak investigation originating from a large seafood and animal market in Wuhan , Hubei Province , China . The virus causes acute respiratory infections in humans and has been shown to spread from person to person. In addition to this newly discovered coronavirus, there are 6 other coronaviruses known today that can infect people from person to person . The disease was first discovered during the COVID-19 pandemic of 2019–2020.'), 
@@ -133,21 +149,146 @@ GO
 
 
 
-/******
+CREATE TABLE [dbo].[DailyScheldue] (
+	SlotID int IDENTITY(1,1) PRIMARY KEY,
+	StartTime datetime NOT NULL,
+	EndTime datetime NOT NULL,
+	Slot int NOT NULL
+)
+
+
+CREATE TABLE [dbo].[WeeklyScheldue](
+	WeeklyScheldueID int IDENTITY(1,1) PRIMARY KEY,
+	[Weekday] NVARCHAR NOT NULL, 
+)
+
+CREATE TABLE [dbo].[DoctorScheldue](
+	DocotrScheldueID int IDENTITY(1,1) PRIMARY KEY,
+	DoctorID int NOT NULL,
+	SlotID int,
+	WeeklyScheldueID int NOT NULL,
+	FOREIGN KEY ([WeeklyScheldueID]) REFERENCES [dbo].[WeeklyScheldue]([WeeklyScheldueID]),
+	FOREIGN KEY ([SlotID]) REFERENCES [dbo].[DailyScheldue]([SlotID]),
+	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID])
+)
+
+CREATE TABLE [dbo].[AppointmentScheldue](
+	[AppointmentScheldue] [int] IDENTITY(1,1) PRIMARY KEY,
+	DateTime Datetime not null,
+)
+
+CREATE TABLE  [dbo].[DailySchedule](
+	[DailyScheduleID] int IDENTITY(1,1) PRIMARY KEY,
+	[AppointmentDate] DATE NOT NULL
+)
+INSERT INTO [dbo].[DailySchedule]([AppointmentDate]) VALUES 
+('2025-2-17')
+
+CREATE TABLE [dbo].[TimeSlots](
+	[TimeSlotID] INT IDENTITY(1,1) PRIMARY KEY,
+	[StartTime] Time NOT NULL,
+    [SlotNumber] INT NOT NULL CHECK (SlotNumber BETWEEN 1 AND 20),
+	[DailyScheduleID] int NOT NULL,
+    [Available]  bit  NOT NULL,
+	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID])
+)
+INSERT INTO [dbo].[TimeSlots] ([StartTime], [SlotNumber], [Available], [DailyScheduleID])  
+VALUES  
+('07:00:00', 1, 1, 1),
+('07:45:00', 2, 1, 1),
+('08:30:00', 3, 1, 1),
+('09:15:00', 4, 1, 1),
+('10:00:00', 5, 1, 1),
+('10:45:00', 6, 1, 1),
+('11:30:00', 7, 1, 1),
+('12:15:00', 8, 1, 1),
+('13:00:00', 9, 1, 1),
+('13:45:00', 10, 1, 1),
+('14:30:00', 11, 1, 1),
+('15:15:00', 12, 1, 1),
+('16:00:00', 13, 1, 1),
+('16:45:00', 14, 1, 1),
+('17:30:00', 15, 1, 1),
+('18:15:00', 16, 1, 1),
+('19:00:00', 17, 1, 1),
+('19:45:00', 18, 1, 1),
+('20:30:00', 19, 1, 1),
+('21:15:00', 20, 1, 1);
+
+
+
 /****** Object:  Table [dbo].[Appointment] ******/
-CREATE TABLE [dbo].[Appointment](
+CREATE TABLE [dbo].[Appointments](
     [AppointmentID] [int] IDENTITY(1,1) PRIMARY KEY,
     [ChildID] [int] NOT NULL,
 	[DoctorID] [int] NOT NULL,
 	[VaccineTypeID] [int] NOT NULL,
-    [Time] [datetime] NOT NULL,
+	[TimeSlotID] int not null,
+--    [Time] [datetime] NOT NULL,
     [Status] [varchar](20) NOT NULL,
-    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Child]([ChildID]),
-	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Account]([AccountID]),
-	FOREIGN KEY ([VaccineTypeID]) REFERENCES [dbo].[VaccineType]([VaccineTypeID])
-)
+	FOREIGN KEY ([TimeSlotID]) REFERENCES [dbo].[TimeSlots]([TimeSlotID]),
+    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID]),
+	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Accounts]([AccountID]),
+	FOREIGN KEY ([VaccineTypeID]) REFERENCES [dbo].[VaccineTypes]([VaccineTypeID])
+)	
 GO
 
+EXEC sp_rename 'dbo.Appointments.TimeSlotsID', 'TimeSlotID', 'COLUMN';
+
+DBCC CHECKIDENT ('TimeSlots', RESEED, 0);
+
+
+-- data bảng Appointment
+INSERT INTO [dbo].[Appointments] ([ChildID], [DoctorID], [VaccineTypeID], [TimeSlotID], [Status])
+VALUES 
+(1, 2, 3, 1, 'Confirmed'),   -- 07:00
+(2, 3, 1, 5, 'Pending'),     -- 10:00
+(3, 1, 2, 10, 'Confirmed'),  -- 13:30
+(4, 2, 1, 3, 'Confirmed'),   -- 08:30
+(5, 3, 4, 7, 'Pending'),     -- 11:15
+(6, 1, 2, 12, 'Canceled'),  -- 14:00
+(7, 2, 5, 6, 'Confirmed'),   -- 09:30
+(8, 3, 3, 18, 'Pending');    -- 16:30
+
+
+
+-- data bảng TimeSlots
+DECLARE @StartTime TIME = '07:00:00'
+DECLARE @SlotNumber INT = 1
+
+WHILE @SlotNumber <= 20
+BEGIN
+    INSERT INTO [dbo].[TimeSlots] ([StartTime], [AppointmentDate], [SlotNumber], [Available])
+    VALUES (@StartTime, '2025-02-15', @SlotNumber, 'Available')
+
+    -- Cộng thêm 45 phút cho slot tiếp theo
+    SET @StartTime = DATEADD(MINUTE, 45, @StartTime)
+    SET @SlotNumber = @SlotNumber + 1
+END
+
+/**
+CREATE TRIGGER trg_UpdateTimeSlotStatus
+ON Appointment
+AFTER INSERT
+AS
+BEGIN
+    UPDATE TimeSlot
+    SET Available = 0
+    WHERE TimeSlotID IN (SELECT TimeSlotsID FROM inserted);
+END;
+
+CREATE TRIGGER trg_ResetTimeSlotStatus
+ON Appointment
+AFTER DELETE
+AS
+BEGIN
+    UPDATE TimeSlot
+    SET Available = 1
+    WHERE TimeSlotID IN (SELECT TimeSlotsID FROM deleted);
+END;
+**/
+
+/****
 /****** Object:  Table [dbo].[Package] ******/
 CREATE TABLE Package(
 	[PackageID] [int] IDENTITY(1,1) PRIMARY KEY,

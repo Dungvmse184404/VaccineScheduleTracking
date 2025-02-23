@@ -1,10 +1,12 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Mappings;
+using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Repository;
@@ -55,12 +57,14 @@ option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection
 builder.Services.AddScoped<ITimeSlotRepository, SQLTimeSlotRepository>();
 builder.Services.AddScoped<IAppointmentRepository, SQLAppointmentReopsitory>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVaccineRepository, SQLVaccineRepository>();
 builder.Services.AddScoped<IVaccineService, VaccineService>();
 builder.Services.AddScoped<IChildRepository, SQLChildRepository>();
 builder.Services.AddScoped<IChildService, ChildService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
