@@ -65,8 +65,10 @@ builder.Services.AddScoped<IVaccineService, VaccineService>();
 builder.Services.AddScoped<IChildRepository, SQLChildRepository>();
 builder.Services.AddScoped<IChildService, ChildService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+builder.Services.AddScoped<IImageRepository, SQLImageRepository>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddAuthentication(options =>
 {

@@ -8,6 +8,7 @@ using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 using VaccineScheduleTracking.API_Test.Services;
 using VaccineScheduleTracking.API_Test.Repository;
 using System.Security.Principal;
+using VaccineScheduleTracking.API_Test.Models.DTOs;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -20,14 +21,16 @@ namespace VaccineScheduleTracking.API.Controllers
         private readonly IAccountService accountService;
         private readonly JwtHelper jwtHelper;
         private readonly IEmailService emailService;
+        private readonly IImageService imageService;
 
-        public AccountController(IAccountRepository accountRepository, IMapper mapper, IAccountService accountService, JwtHelper jwtHelper, IEmailService emailService)
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, IAccountService accountService, JwtHelper jwtHelper, IEmailService emailService, IImageService imageService)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;
             this.accountService = accountService;
             this.jwtHelper = jwtHelper;
             this.emailService = emailService;
+            this.imageService = imageService;
         }
 
         [HttpPost("login")]
@@ -52,10 +55,15 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [HttpPost("register-parent")]
-        public async Task<IActionResult> Register([FromBody] RegisterAccountDto registerAccount)
+        public async Task<IActionResult> Register([FromBody] RegisterAccountDto registerAccount, [FromForm] ImageUploadDto imageUpload)
         {
             try
             {
+                if (imageUpload != null)
+                {
+                    var image = await imageService.Upload(imageUpload);
+                    registerAccount.Avatar = image.FilePath;
+                }
                 var account = await accountService.RegisterAsync(registerAccount);
                 return Ok(mapper.Map<AccountDto>(account));
             }
@@ -126,7 +134,6 @@ namespace VaccineScheduleTracking.API.Controllers
                 });
             }
 
-            // Cập nhật trạng thái xác minh email
             account.Status = "ACTIVE";
             await accountRepository.UpdateAccountAsync(mapper.Map<UpdateAccountDto>(account));
 
@@ -139,7 +146,7 @@ namespace VaccineScheduleTracking.API.Controllers
 
         [Authorize]
         [HttpPut("update-account")]
-        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto updateAccount)
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto updateAccount, [FromForm] ImageUploadDto imageUpload)
         {
             try
             {
@@ -148,7 +155,13 @@ namespace VaccineScheduleTracking.API.Controllers
                 {
                     return BadRequest("You can't modifile account of another person.");
                 }
+                
                 var account = await accountService.UpdateAccountAsync(updateAccount);
+                if (imageUpload != null)
+                {
+                    var image = await imageService.Upload(imageUpload);
+                    account.Avatar = image.FilePath;
+                }
 
                 return Ok(mapper.Map<AccountDto>(account));
             }
