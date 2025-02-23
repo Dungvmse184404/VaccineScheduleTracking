@@ -19,11 +19,13 @@ namespace VaccineScheduleTracking.API_Test.Repository
             return await _dbContext.Doctors.ToListAsync();
         }
 
-        public async Task<List<DoctorTimeSlot>> GetDoctorTimeSlotsForDayAsync(int doctorID, int dailyScheduleID)
+        public async Task<List<DoctorTimeSlot>> GetDoctorTimeSlotsForDayAsync(int doctorID, DateOnly date)
         {
-            return await _dbContext.DoctorTimeSlots
-                .Where(Ds => Ds.DoctorID == doctorID && Ds.DailyScheduleID == dailyScheduleID)
+            var timeSlots = await _dbContext.DoctorTimeSlots
+                .Where(Ds => Ds.DoctorID == doctorID && Ds.DailySchedule.AppointmentDate == date)
                 .ToListAsync();
+
+            return timeSlots;
         }
         public async Task<Doctor?> GetDoctorByIDAsync(int doctorID)
         {
@@ -42,5 +44,27 @@ namespace VaccineScheduleTracking.API_Test.Repository
         {
             throw new NotImplementedException();
         }
+
+        public async Task<DoctorTimeSlot> GetDoctorTimeSlotByIDAsync(int doctorTimeSlotID)
+        {
+            return await _dbContext.DoctorTimeSlots
+                .FirstOrDefaultAsync(ts => ts.DoctorTimeSlotID == doctorTimeSlotID);
+        }
+
+        public async Task UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot)
+        {
+            var slot = await GetDoctorTimeSlotByIDAsync(doctorSlot.DoctorTimeSlotID);
+
+            slot.DoctorID = doctorSlot.DoctorID;
+            slot.SlotNumber = doctorSlot.SlotNumber;
+            slot.Available = doctorSlot.Available;
+            slot.DailyScheduleID = doctorSlot.DailyScheduleID;
+
+            await _dbContext.SaveChangesAsync();
+
+        }
+        
+
+
     }
 }

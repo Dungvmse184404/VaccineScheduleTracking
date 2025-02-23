@@ -12,7 +12,13 @@ namespace VaccineScheduleTracking.API.Mappings
         public AutoMapperProfiles()
         {
 
-            CreateMap<Appointment, AppointmentDto>();
+            CreateMap<Appointment, AppointmentDto>()
+                .ForMember(dest => dest.AppointmentID, opt => opt.MapFrom(src => src.AppointmentID))
+                .ForMember(dest => dest.Child, opt => opt.MapFrom(src => $"{src.Child.Firstname} {src.Child.Lastname}"))
+                .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => $"{src.Doctor.Account.Firstname} {src.Doctor.Account.Lastname}"))
+                .ForMember(dest => dest.VaccineType, opt => opt.MapFrom(src => src.VaccineType.Name))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.TimeSlots.DailySchedule.AppointmentDate))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
             CreateMap<Appointment, CreateAppointmentDto>().ReverseMap();
             CreateMap<Account, AccountDto>().ReverseMap();
             CreateMap<Account, RegisterAccountDto>().ReverseMap();

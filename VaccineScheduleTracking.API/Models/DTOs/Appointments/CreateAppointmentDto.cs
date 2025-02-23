@@ -9,10 +9,10 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Appointments
         [Required]
         public int ChildID { get; set; }
         [Required]
-        public int VaccineName { get; set; }
+        public int VaccineID { get; set; }
         [Required]
         public DateOnly Date { get; set; }
         [Required]
-        public int TimeSlot { get; set; }
+        public int SlotNumber { get; set; }
     }
 }

@@ -13,6 +13,11 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
             this.dbContext = dbContext;
         }
 
+        public async Task<Child> GetChildByIDAsync(int ChildID)
+        {
+            return await dbContext.Children.FirstOrDefaultAsync(x => x.ChildID == ChildID);
+        }
+
         public async Task<List<Child>> GetChildrenByParentID(int parentID)
         {
             return await dbContext.Children.AsQueryable().Where(x => x.ParentID == parentID).ToListAsync();

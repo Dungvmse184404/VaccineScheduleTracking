@@ -107,6 +107,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
             return await vaccineRepository.UpdateVaccineAsync(vaccine);
         }
 
+
         public async Task<Vaccine?> DeleteVaccineAsync(int id)
         {
             if (id == null)
@@ -119,6 +120,21 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
                 throw new Exception($"VaccineID {id} not found!");
             }
             return await vaccineRepository.DeleteVaccineAsync(vaccine);
+        }
+
+
+
+        public async Task<Vaccine?> GetSutableVaccineAsync(int age, int typeID)
+        {
+            var vaccineList = await vaccineRepository.GetVaccineByTypeIDAsync(typeID);
+            foreach (var vaccine in vaccineList)
+            {
+                if (age >= vaccine.FromAge && age <= vaccine.ToAge)
+                {
+                    return vaccine;
+                }
+            }
+            return null;
         }
 
         // VaccineType function

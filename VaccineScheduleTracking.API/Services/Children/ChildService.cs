@@ -11,11 +11,12 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
         {
             this.childRepository = childRepository;
         }
+
         public async Task<Child?> GetChildById(int id)
         {
             if (id == null)
                 throw new Exception("Chưa nhập ID");
-            var child = await childRepository.GetChildById(id);
+            var child = await childRepository.GetChildByIDAsync(id);
 
             if (child == null)
                 throw new Exception($"Không tìm thấy ID: {id}");
@@ -40,7 +41,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
 
         public async Task<Child> DeleteChild(int id)
         {
-            var child = await childRepository.GetChildById(id);
+            var child = await childRepository.GetChildByIDAsync(id);
             if (child == null)
             {
                 throw new Exception($"Không tìm thấy ID: {id}");

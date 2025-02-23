@@ -19,10 +19,10 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
             throw new NotImplementedException();
         }
 
-        public Task<List<DailySchedule>> GetAllSlotAsync(DateTime date)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<List<DailySchedule>> GetAllSlotAsync(DateTime date)
+        //{
+        //    throw new NotImplementedException();
+        //}
         public async Task<List<DailySchedule>> GetAllDailyScheduleAsync()
         {
             return await _dbContext.DailySchedule.ToListAsync();
@@ -53,10 +53,10 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
 
         //}
 
-        public Task<DailySchedule?> GetSlotByID(int SlotID)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<DailySchedule?> GetSlotByID(int SlotID)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
     }
 }

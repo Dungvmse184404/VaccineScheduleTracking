@@ -63,6 +63,22 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
 
         }
 
-    }
+        public async Task<TimeSlot> UpdateTimeSlotAsync(TimeSlot timeSlots)
+        {
+            var slot = await GetTimeSlotByIDAsync(timeSlots.TimeSlotID);
+            if (slot == null)
+            {
+                return null;
+            }
+            slot.StartTime = timeSlots.StartTime;
+            slot.SlotNumber = timeSlots.SlotNumber;
+            slot.Available = timeSlots.Available;
+            slot.DailyScheduleID = timeSlots.DailyScheduleID;
+            await _dbContext.SaveChangesAsync();
+            return slot;
+        }
 
+
+
+    }
 }

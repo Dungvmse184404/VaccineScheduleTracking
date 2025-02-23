@@ -1,5 +1,6 @@
 ﻿
 using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
 {
@@ -7,5 +8,6 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
     {
         //Task GenerateTimeSlotsAsync(int dailyScheduleID);
         Task GenerateCalanderAsync(int numberOfDays);
+        Task<TimeSlot> UpdateTimeSlotAsync(TimeSlot timeSlot);
     }
 }

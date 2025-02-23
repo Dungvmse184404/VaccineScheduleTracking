@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 
 namespace VaccineScheduleTracking.API_Test.Services.Accounts

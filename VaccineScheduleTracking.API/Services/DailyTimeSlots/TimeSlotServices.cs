@@ -10,6 +10,9 @@ using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Helpers;
 using Microsoft.IdentityModel.Tokens;
+using VaccineScheduleTracking.API.Helpers;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
+using VaccineScheduleTracking.API_Test.Repository.Vaccines;
 
 namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
 {
@@ -34,7 +37,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
 
         public async Task GenerateDailyScheduleAsync(DateOnly date)
         {
-            if (!await ExistingScheduleAsync(date) || !await TimeSlotHelper.ExcludedDayAsync(date))
+            if (!await ExistingScheduleAsync(date) || !TimeSlotHelper.ExcludedDay(date))
             {
                 return;
             }
@@ -76,6 +79,29 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
             }
         }
 
+        public async Task<TimeSlot> UpdateTimeSlotAsync(TimeSlot timeSlot)
+        {
+            var slot = await _timeSlotRepository.GetTimeSlotByIDAsync(timeSlot.TimeSlotID);
+            if (slot == null)
+            {
+                throw new Exception($"không tìm thấy timeSlot có ID {timeSlot.TimeSlotID}");
+            }
+            slot.StartTime = ValidationHelper.NullValidator(timeSlot.StartTime)
+                ? timeSlot.StartTime
+                : slot.StartTime;
+            slot.SlotNumber = ValidationHelper.NullValidator(timeSlot.SlotNumber)
+                ? timeSlot.SlotNumber
+                : slot.SlotNumber;
+            slot.Available = ValidationHelper.NullValidator(timeSlot.Available)
+                ? timeSlot.Available
+                : slot.Available;
+            slot.DailyScheduleID = ValidationHelper.NullValidator(timeSlot.DailyScheduleID)
+                ? timeSlot.DailyScheduleID
+                : slot.DailyScheduleID;
+            return await _timeSlotRepository.UpdateTimeSlotAsync(slot);
+        }
+
+        
 
         /// mốt làm thêm hàm tự sửa slot thiếu trong ngày
 

@@ -25,6 +25,11 @@ namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
             return await dbContext.Vaccines.FirstOrDefaultAsync(x => x.Name == name);
         }
 
+        public async Task<List<Vaccine>> GetVaccineByTypeIDAsync(int typeID)
+        {
+            return await dbContext.Vaccines.Where(x => x.VaccineTypeID == typeID).ToListAsync();
+        }
+
         public async Task<Vaccine> AddVaccineAsync(Vaccine vaccine)
         {
             await dbContext.Vaccines.AddAsync(vaccine);
@@ -39,11 +44,11 @@ namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
         /// <param name="Age"> tuổi của child </param>
         /// <param name="TypeName"> TypeName của vaccine </param>
         /// <returns> Danh sách vaccine phù hợp </returns>
-        public async Task<Vaccine> GetSutableVaccine(int Age, string TypeName)
-        {
-            var vaccine = dbContext.Vaccines.Where(v => v.FromAge <= Age && v.ToAge >= Age && v.Stock > 0);
-            return await vaccine.OrderBy(v => v.FromAge).FirstOrDefaultAsync();
-        }
+        //public async Task<Vaccine> GetSutableVaccineAsync(int Age, string TypeName)
+        //{
+        //    var vaccine = dbContext.Vaccines.Where(v => v.FromAge <= Age && v.ToAge >= Age && v.Stock > 0);
+        //    return await vaccine.OrderBy(v => v.FromAge).FirstOrDefaultAsync();
+        //}
 
 
         // Vaccine function
@@ -85,7 +90,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
             if (vaccine == null) { return null; }
 
             vaccine.Name = UpdateVaccine.Name;
-            //vaccine.VaccineTypeID = UpdateVaccine.VaccineTypeID;
+            vaccine.VaccineTypeID = UpdateVaccine.VaccineTypeID;
             vaccine.Manufacturer = UpdateVaccine.Manufacturer;
             vaccine.Stock = UpdateVaccine.Stock;
             vaccine.Price = UpdateVaccine.Price;
@@ -100,6 +105,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
 
             return vaccine;
         }
+
+
+
         // VaccineType function
         public async Task<VaccineType?> GetVaccineTypeByNameAsync(string name)
         {
@@ -145,6 +153,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
         {
             return await dbContext.VaccineTypes.ToListAsync();
         }
+
 
     }
 }

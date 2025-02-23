@@ -6,6 +6,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
     public interface IVaccineService
     {
         // Vaccine funtion
+        Task<Vaccine> GetSutableVaccineAsync(int Age, int TypeID);
         Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto);
         Task<Vaccine?> CreateVaccineAsync(AddVaccineDto addVaccineDto);
         Task<Vaccine?> UpdateVaccineAsync(int id, UpdateVaccineDto updateVaccineDto);

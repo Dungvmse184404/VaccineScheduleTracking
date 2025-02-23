@@ -62,11 +62,11 @@ builder.Services.AddScoped<IDailyScheduleService, DailyScheduleService>();
 builder.Services.AddScoped<ITimeSlotServices, TimeSlotServices>();
 builder.Services.AddScoped<ITimeSlotRepository, SQLTimeSlotRepository>();
 builder.Services.AddScoped<IDoctorServices, DoctorServices>();
-
-builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IDoctorRepository, SQLDoctorRepository>();
 builder.Services.AddScoped<IAppointmentRepository, SQLAppointmentReopsitory>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+
+
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVaccineRepository, SQLVaccineRepository>();

@@ -2,6 +2,7 @@
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Services;
+using VaccineScheduleTracking.API_Test.Helpers;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
 using VaccineScheduleTracking.API_Test.Repository;
 using VaccineScheduleTracking.API_Test.Repository.Appointments;
@@ -10,11 +11,13 @@ using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
+using VaccineScheduleTracking.API_Test.Services.Vaccines;
 
 namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
     public class AppointmentService : IAppointmentService
     {
+        private readonly IVaccineService _vaccineServices;
         private readonly IDoctorServices _doctorServices;
         private readonly ITimeSlotServices _timeSlotServices;
         private readonly ITimeSlotRepository _timeSlotRepository;
@@ -25,6 +28,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         private readonly IMapper _mapper;
 
         public AppointmentService(
+            IVaccineService vaccineServices,
             IAppointmentRepository appointmentRepository,
             IMapper mapper,
             IVaccineRepository vaccineRepository,
@@ -34,6 +38,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             ITimeSlotServices timeSlotServices,
             IDoctorServices doctorServices)
         {
+            _vaccineServices = vaccineServices;
             _appointmentRepository = appointmentRepository;
             _vaccineRepository = vaccineRepository;
             _timeSlotRepository = timeSlotRepository;
@@ -47,47 +52,68 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         public async Task<Appointment?> CreateAppointmentAsync(CreateAppointmentDto createAppointment)
         {
             int Days = 6;
+             
             /// tạo lịch
             await _timeSlotServices.GenerateCalanderAsync(Days);
 
             /// tạo lịch làm vc cho bác sĩ
             var doctorList = await _doctorRepository.GetAllDoctorAsync();
-            await _doctorServices.GenerateDoctorCalanderAsync(doctorList , Days);
+            await _doctorServices.GenerateDoctorCalanderAsync(doctorList, Days);
 
-            var appointment = _mapper.Map<Appointment>(createAppointment);
+            //var appointment = _mapper.Map<Appointment>(createAppointment);
             //-------------------------------
 
             ///check ca tiêm đặt chưa
-            var timeSlot = await _timeSlotRepository.GetTimeSlotAsync(createAppointment.TimeSlot, createAppointment.Date);
+
+            if (!TimeSlotHelper.ExcludedDay(createAppointment.Date))
+            {
+                throw new Exception("Chủ nhật hong có làm việc");
+            }
+            var timeSlot = await _timeSlotRepository.GetTimeSlotAsync(createAppointment.SlotNumber, createAppointment.Date);
             if (timeSlot.Available == false)
             {
                 throw new Exception("this slot is already taken.");
             }
 
-            /// check bác sĩ trùng slot
-            //var doctor = await _doctorRepository.GetSuitableDoctor(createAppointment.Slot, createAppointment.Time);
-            //if (doctor == null)
-            //{
-            //    throw new Exception("can't find sutable doctor");
-            //}
-
-
             /// check tuổi của child (chưa check phản ứng phụ)
-            var vaccine = await _vaccineRepository.GetSutableVaccine(appointment.Child.Age, appointment.VaccineType.Name);
+            
+            Child child = await _childRepository.GetChildByIDAsync(createAppointment.ChildID);
+            var vaccine = await _vaccineServices.GetSutableVaccineAsync(child.Age, createAppointment.VaccineID);
             if (vaccine == null)
             {
                 throw new Exception("No suitable vaccine available");
+            } 
+            
+            
+            /// check bác sĩ trùng slot
+            var doctor = await _doctorServices.GetSutableDoctorAsync(createAppointment.SlotNumber, createAppointment.Date);//đang lỗi ko tìm được doctor
+            if (doctor == null)
+            {
+                throw new Exception("can't find sutable doctor");
             }
 
 
             //-------------------------------
+            var appointment = new Appointment();
             appointment.ChildID = createAppointment.ChildID;
-            //appointment.DoctorID = doctor.DoctorID;
+            appointment.DoctorID = doctor.DoctorID;
             appointment.VaccineTypeID = vaccine.VaccineTypeID;
             appointment.TimeSlotID = timeSlot.TimeSlotID;
             appointment.Status = "PENDING";
 
-            timeSlot = await _timeSlotRepository.ChangeTimeSlotStatus(timeSlot.TimeSlotID, false);
+            ///set status của timeSlot 
+            timeSlot.Available = false;
+            timeSlot = await _timeSlotServices.UpdateTimeSlotAsync(timeSlot);
+
+            ///set status của doctorTimeSlot   - chắc ko cần nữa 
+            
+            //doctor = await _doctorRepository.UpdateDoctorTimeSlotAsync();
+
+            ///cập nhật lại số lượng vaccine
+            vaccine.Stock -= 1;
+            vaccine = await _vaccineRepository.UpdateVaccineAsync(vaccine);
+
+
             return await _appointmentRepository.CreateAppointmentAsync(appointment);
         }
 
@@ -131,6 +157,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             return appointmentDtoList;
         }
+
 
         public async Task<Appointment?> UpdateAppointmentAsync(UpdateAppointmentDto modifyAppointment)
         {

@@ -18,10 +18,9 @@
             return slotNumbers;
         }
 
-        public static async Task<bool> ExcludedDayAsync(DateOnly date)
-        {
-            return date.DayOfWeek != DayOfWeek.Sunday;
-        }
+        public static bool ExcludedDay(DateOnly date) 
+            => date.DayOfWeek != DayOfWeek.Sunday;
+        
 
 
     }
