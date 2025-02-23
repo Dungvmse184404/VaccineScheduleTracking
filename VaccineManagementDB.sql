@@ -266,6 +266,13 @@ BEGIN
     SET @SlotNumber = @SlotNumber + 1
 END
 
+CREATE TABLE [dbo].[Images] (
+	[ImageID] [int] IDENTITY(1,1) PRIMARY KEY,
+	[FileExtension][varchar](6) NOT NULL,
+	[FileSize][int] NOT NULL,
+	[FilePath][varchar] NOT NULL
+)
+
 /**
 CREATE TRIGGER trg_UpdateTimeSlotStatus
 ON Appointment
