@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
 {
@@ -14,23 +15,20 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
             _dbContext = dbContext;
         }
 
-        public Task<bool> BookSlotAsync(int slot)
-        {
-            throw new NotImplementedException();
-        }
-
-        //public Task<List<DailySchedule>> GetAllSlotAsync(DateTime date)
+        //public Task<bool> BookSlotAsync(int slot)
         //{
         //    throw new NotImplementedException();
         //}
+
+
         public async Task<List<DailySchedule>> GetAllDailyScheduleAsync()
         {
             return await _dbContext.DailySchedule.ToListAsync();
         }
-        public Task<List<DailySchedule>> GetAvailableSlotsAsync(DateTime date)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<List<DailySchedule>> GetAvailableSlotsAsync(DateTime date)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public async Task<DailySchedule?> GetDailyScheduleByID(int SlotID)
         {
@@ -41,6 +39,12 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
         {
             return await _dbContext.DailySchedule.FirstOrDefaultAsync(x => x.AppointmentDate == date);
         }
+        public async Task<DailySchedule?> GetDailyScheduleByIDAsync(int dailyScheduleID)
+        {
+            return await _dbContext.DailySchedule.FirstOrDefaultAsync(x => x.DailyScheduleID == dailyScheduleID);
+        }
+
+
 
         public async Task AddDailyScheduleAsync(DailySchedule dailySchedule)
         {
@@ -48,15 +52,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
             await _dbContext.SaveChangesAsync();
         }
 
-        //public async Task<DailySchedule> DeleteDailyScheduleAsync()
-        //{
-
-        //}
-
-        //public Task<DailySchedule?> GetSlotByID(int SlotID)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
     }
 }

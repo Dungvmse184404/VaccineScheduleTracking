@@ -19,6 +19,12 @@ namespace VaccineScheduleTracking.API_Test.Repository
             return await _dbContext.Doctors.ToListAsync();
         }
 
+        public async Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorID, DateOnly date, int slot)
+        {
+            return await _dbContext.DoctorTimeSlots
+                .FirstOrDefaultAsync(Ds => Ds.DoctorID == doctorID && Ds.DailySchedule.AppointmentDate == date && Ds.SlotNumber == slot);
+        }
+
         public async Task<List<DoctorTimeSlot>> GetDoctorTimeSlotsForDayAsync(int doctorID, DateOnly date)
         {
             var timeSlots = await _dbContext.DoctorTimeSlots
@@ -61,7 +67,6 @@ namespace VaccineScheduleTracking.API_Test.Repository
             slot.DailyScheduleID = doctorSlot.DailyScheduleID;
 
             await _dbContext.SaveChangesAsync();
-
         }
         
 

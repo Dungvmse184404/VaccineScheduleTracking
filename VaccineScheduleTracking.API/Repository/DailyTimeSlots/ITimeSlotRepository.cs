@@ -9,6 +9,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
         Task<TimeSlot?> UpdateTimeSlotAsync(TimeSlot timeSlot);
         Task<TimeSlot?> GetTimeSlotAsync(int timeSlot, DateOnly date);
         Task AddTimeSlotForDayAsync(TimeSlot timeSlots);
+        Task<List<TimeSlot>> GetTimeSlotsByDateAsync(DateOnly date);
         //Task<List<TimeSlot>> GetAllAvailableTimeSlotAsync(int id);
     }
 }

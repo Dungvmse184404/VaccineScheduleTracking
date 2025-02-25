@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Repository.Children
 {
@@ -13,16 +14,19 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
             this.dbContext = dbContext;
         }
 
-        public async Task<Child> GetChildByIDAsync(int ChildID)
-        {
-            return await dbContext.Children.FirstOrDefaultAsync(x => x.ChildID == ChildID);
-        }
-
         public async Task<List<Child>> GetChildrenByParentID(int parentID)
         {
             return await dbContext.Children.AsQueryable().Where(x => x.ParentID == parentID).ToListAsync();
         }
+        public async Task<List<Child>> GetAllChildrenAsync()
+        {
+            return await dbContext.Children.ToListAsync();
+        }
 
+        public async Task<Child?> GetChildByID(int id)
+        {
+            return await dbContext.Children.FirstOrDefaultAsync(x => x.ChildID == id);
+        }
         public async Task<Child> AddChild(Child child)
         {
             await dbContext.Children.AddAsync(child);
@@ -31,14 +35,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
             return child;
         }
 
-        public async Task<Child?> GetChildById(int id)
-        {
-            return await dbContext.Children.FirstOrDefaultAsync(x => x.ChildID == id);
-        }
-
         public async Task<Child> UpdateChild(int id, Child updateChild)
         {
-            var child = await GetChildById(id);
+            var child = await GetChildByID(id);
             if (child == null)
             {
                 throw new Exception($"Can't find Child with id {id}!");
@@ -66,6 +65,49 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
             return child;
         }
 
+        //-----------------childTimeSlot-------------------
 
+
+        public Task<List<ChildTimeSlot>> GetChildTimeSlotsForDayAsync(int childID, DateOnly appointmentDate)
+        {
+            return dbContext.ChildTimeSlots
+                .Include(x => x.DailySchedule)
+                .Where(x => x.ChildID == childID && x.DailySchedule.AppointmentDate == appointmentDate)
+                .ToListAsync();
+        }
+
+        public Task<ChildTimeSlot> GetChildTimeSlotsByID(int id)
+        {
+            return dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.ChildTimeSlotID == id);
+        }
+
+        public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int slotNumber, DateOnly date)
+        {
+            return await dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.SlotNumber == slotNumber && x.DailySchedule.AppointmentDate == date);
+        }
+
+        public async Task<ChildTimeSlot> AddChildTimeSlotAsync(ChildTimeSlot childTimeSlot)
+        {
+            await dbContext.ChildTimeSlots.AddAsync(childTimeSlot);
+            await dbContext.SaveChangesAsync();
+            return childTimeSlot;
+        }
+
+
+        public async Task UpdateChildTimeSlotsAsync(ChildTimeSlot slot)
+        {
+
+            var childTimeSlot = await GetChildTimeSlotsByID(slot.ChildTimeSlotID);
+            if (childTimeSlot == null)
+            {
+                throw new Exception($"Can't find TimeSlotID {slot.ChildTimeSlotID} for child {slot.ChildID}!");
+            }
+            slot.ChildID = childTimeSlot.ChildID;
+            slot.SlotNumber = childTimeSlot.SlotNumber;
+            slot.Available = childTimeSlot.Available;
+            slot.DailyScheduleID = childTimeSlot.DailyScheduleID;
+
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

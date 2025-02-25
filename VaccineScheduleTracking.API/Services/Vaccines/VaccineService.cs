@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Helpers;
+using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 using System.Reflection.PortableExecutable;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
@@ -20,6 +20,11 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
         }
 
         // Vaccine funtion
+        public async Task<Vaccine?> GetVaccineByIDAsync(int id)
+        {
+            ValidateInput(id, "ID vaccine không được để trống");
+            return await vaccineRepository.GetVaccineByIDAsync(id);
+        }
         public async Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto)
         {
             return await vaccineRepository.GetVaccinesAsync(filterVaccineDto);
@@ -63,44 +68,40 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
         /// <returns></returns>
         public async Task<Vaccine?> UpdateVaccineAsync(int id, UpdateVaccineDto updateVaccine)
         {
-            if (id == null)
-            {
-                throw new Exception("id can't be empty");
-            }
             var vaccine = await vaccineRepository.GetVaccineByIDAsync(id);
             if (vaccine == null)
             {
                 throw new Exception($"Can't find vaccine with ID {id}");
             }
-            vaccine.Name = ValidationHelper.NullValidator(updateVaccine.Name)
+            vaccine.Name = NullValidator(updateVaccine.Name)
                 ? updateVaccine.Name
                 : vaccine.Name;
             //vaccine.VaccineTypeID = updateVaccine.VaccineTypeID ?? vaccine.VaccineTypeID;
-            vaccine.Manufacturer = ValidationHelper.NullValidator(updateVaccine.Manufacturer)
+            vaccine.Manufacturer = NullValidator(updateVaccine.Manufacturer)
                 ? updateVaccine.Manufacturer
                 : vaccine.Manufacturer;
-            vaccine.Stock = ValidationHelper.NullValidator(updateVaccine.Stock)
+            vaccine.Stock = NullValidator(updateVaccine.Stock)
                 ? updateVaccine.Stock
                 : vaccine.Stock;
-            vaccine.Price = ValidationHelper.NullValidator(updateVaccine.Price)
+            vaccine.Price = NullValidator(updateVaccine.Price)
                 ? updateVaccine.Price
                 : vaccine.Price;
-            vaccine.Description = ValidationHelper.NullValidator(updateVaccine.Description)
+            vaccine.Description = NullValidator(updateVaccine.Description)
                 ? updateVaccine.Description
                 : vaccine.Description;
-            vaccine.FromAge = ValidationHelper.NullValidator(updateVaccine.FromAge)
+            vaccine.FromAge = NullValidator(updateVaccine.FromAge)
                 ? updateVaccine.FromAge
                 : vaccine.FromAge;
-            vaccine.ToAge = ValidationHelper.NullValidator(updateVaccine.ToAge)
+            vaccine.ToAge = NullValidator(updateVaccine.ToAge)
                 ? updateVaccine.ToAge
                 : vaccine.ToAge;
-            vaccine.Period = ValidationHelper.NullValidator(updateVaccine.Period)
+            vaccine.Period = NullValidator(updateVaccine.Period)
                 ? updateVaccine.Period
                 : vaccine.Period;
-            vaccine.DosesRequired = ValidationHelper.NullValidator(updateVaccine.DosesRequired)
+            vaccine.DosesRequired = NullValidator(updateVaccine.DosesRequired)
                 ? updateVaccine.DosesRequired
                 : vaccine.DosesRequired;
-            vaccine.Priority = ValidationHelper.NullValidator(updateVaccine.Priority)
+            vaccine.Priority = NullValidator(updateVaccine.Priority)
                 ? updateVaccine.Priority
                 : vaccine.Priority;
 
@@ -123,18 +124,24 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
         }
 
 
-
-        public async Task<Vaccine?> GetSutableVaccineAsync(int age, int typeID)
+        public async Task<List<Vaccine>> GetSutableVaccineAsync(int age, int typeID)
         {
+            ValidateInput(age, "Tuổi của trẻ đang trống!!! (có thể là lỗi BE)");
+            ValidateInput(typeID, "Chưa điền ID loại vaccine cần tìm");
+
             var vaccineList = await vaccineRepository.GetVaccineByTypeIDAsync(typeID);
+            List<Vaccine> result = new List<Vaccine>();
+
             foreach (var vaccine in vaccineList)
             {
                 if (age >= vaccine.FromAge && age <= vaccine.ToAge)
                 {
-                    return vaccine;
+                    result.Add(vaccine);
                 }
             }
-            return null;
+            ValidateInput(result, $"không tìm thấy vaccine loại {typeID} phù hợp với trẻ {age} tuổi");
+
+            return result;
         }
 
         // VaccineType function
@@ -163,10 +170,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
             {
                 throw new Exception($"vaccineType with ID {id} not found!");
             }
-            vaccineType.Name = ValidationHelper.NullValidator(updateVaccineType.Name)
+            vaccineType.Name = NullValidator(updateVaccineType.Name)
                 ? updateVaccineType.Name
                 : vaccineType.Name;
-            vaccineType.Description = ValidationHelper.NullValidator(updateVaccineType.Description)
+            vaccineType.Description = NullValidator(updateVaccineType.Description)
                 ? updateVaccineType.Description
                 : vaccineType.Description;
 
@@ -191,5 +198,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
         {
             return await vaccineRepository.GetVaccinesTypeAsync();
         }
+
     }
 }

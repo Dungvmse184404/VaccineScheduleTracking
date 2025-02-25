@@ -11,7 +11,7 @@ namespace VaccineScheduleTracking.API.Data
 
         }
 
-
+        public DbSet<ChildTimeSlot> ChildTimeSlots { get; set; }
         public DbSet<DoctorTimeSlot> DoctorTimeSlots { get; set; }
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<DailySchedule> DailySchedule { get; set; }

@@ -16,6 +16,11 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
             _dbContext = dbContext;
         }
 
+        public async Task<List<TimeSlot>> GetTimeSlotsByDateAsync(DateOnly date)
+        {
+            return await _dbContext.TimeSlots.Where(ts => ts.DailySchedule.AppointmentDate == date).ToListAsync();
+        }
+
         public async Task<TimeSlot?> GetTimeSlotAsync(int slot, DateOnly date)
         {
             return await _dbContext.TimeSlots.FirstOrDefaultAsync(s => s.SlotNumber == slot && s.DailySchedule.AppointmentDate == date);
@@ -78,7 +83,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
             return slot;
         }
 
-
-
+       
     }
 }

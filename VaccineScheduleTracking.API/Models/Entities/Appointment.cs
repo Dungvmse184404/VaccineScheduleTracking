@@ -11,8 +11,8 @@ namespace VaccineScheduleTracking.API.Models.Entities
 
         public int DoctorID { get; set; }
         public Doctor Doctor { get; set; }
-        public int VaccineTypeID { get; set; }
-        public VaccineType VaccineType { get; set; }
+        public int VaccineID { get; set; }
+        public Vaccine Vaccine { get; set; }
 
         public int TimeSlotID { get; set; }
         public TimeSlot? TimeSlots { get; set; }

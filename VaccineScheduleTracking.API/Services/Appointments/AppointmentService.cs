@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using VaccineScheduleTracking.API.Helpers;
+using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
+using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Helpers;
@@ -10,106 +11,103 @@ using VaccineScheduleTracking.API_Test.Repository.Children;
 using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
+using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Services.Vaccines;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
     public class AppointmentService : IAppointmentService
     {
-        private readonly IVaccineService _vaccineServices;
+        private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IChildRepository _childRepository;
+        private readonly IDoctorRepository _doctorRepository;
+        private readonly ITimeSlotRepository _timeSlotRepository;
+        private readonly IVaccineRepository _vaccineRepository;
+        private readonly IDailyScheduleRepository _dailyScheduleRepository;
+
+        private readonly IChildService _childServices;
         private readonly IDoctorServices _doctorServices;
         private readonly ITimeSlotServices _timeSlotServices;
-        private readonly ITimeSlotRepository _timeSlotRepository;
-        private readonly IDoctorRepository _doctorRepository;
-        private readonly IAppointmentRepository _appointmentRepository;
-        private readonly IVaccineRepository _vaccineRepository;
-        private readonly IChildRepository _childRepository;
+        private readonly IVaccineService _vaccineServices;
+
         private readonly IMapper _mapper;
 
         public AppointmentService(
-            IVaccineService vaccineServices,
             IAppointmentRepository appointmentRepository,
-            IMapper mapper,
-            IVaccineRepository vaccineRepository,
-            ITimeSlotRepository timeSlotRepository,
-            IDoctorRepository doctorRepository,
             IChildRepository childRepository,
+            IDoctorRepository doctorRepository,
+            ITimeSlotRepository timeSlotRepository,
+            IVaccineRepository vaccineRepository,
+            IDailyScheduleRepository dailyScheduleRepository,
+
+            IChildService childServices,
+            IDoctorServices doctorServices,
             ITimeSlotServices timeSlotServices,
-            IDoctorServices doctorServices)
+            IVaccineService vaccineServices,
+
+            IMapper mapper)
         {
-            _vaccineServices = vaccineServices;
             _appointmentRepository = appointmentRepository;
-            _vaccineRepository = vaccineRepository;
-            _timeSlotRepository = timeSlotRepository;
-            _doctorRepository = doctorRepository;
             _childRepository = childRepository;
-            _mapper = mapper;
-            _timeSlotServices = timeSlotServices;
+            _doctorRepository = doctorRepository;
+            _timeSlotRepository = timeSlotRepository;
+            _vaccineRepository = vaccineRepository;
+            _dailyScheduleRepository = dailyScheduleRepository;
+
+            _childServices = childServices;
             _doctorServices = doctorServices;
+            _timeSlotServices = timeSlotServices;
+            _vaccineServices = vaccineServices;
+
+            _mapper = mapper;
         }
 
+        /// <summary>
+        /// hàm tạo lịch hẹn
+        /// </summary>
+        /// <param name="createAppointment"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<Appointment?> CreateAppointmentAsync(CreateAppointmentDto createAppointment)
         {
-            int Days = 6;
-             
-            /// tạo lịch
-            await _timeSlotServices.GenerateCalanderAsync(Days);
-
-            /// tạo lịch làm vc cho bác sĩ
-            var doctorList = await _doctorRepository.GetAllDoctorAsync();
-            await _doctorServices.GenerateDoctorCalanderAsync(doctorList, Days);
-
-            //var appointment = _mapper.Map<Appointment>(createAppointment);
-            //-------------------------------
-
-            ///check ca tiêm đặt chưa
-
-            if (!TimeSlotHelper.ExcludedDay(createAppointment.Date))
-            {
-                throw new Exception("Chủ nhật hong có làm việc");
-            }
-            var timeSlot = await _timeSlotRepository.GetTimeSlotAsync(createAppointment.SlotNumber, createAppointment.Date);
+            ///check trạng thái của slot - đã xong
+            var timeSlot = await _timeSlotServices.GetTimeSlotAsync(createAppointment.SlotNumber, createAppointment.Date);
             if (timeSlot.Available == false)
             {
-                throw new Exception("this slot is already taken.");
+                throw new Exception("Slot này không khả dụng.");
             }
 
-            /// check tuổi của child (chưa check phản ứng phụ)
-            
-            Child child = await _childRepository.GetChildByIDAsync(createAppointment.ChildID);
-            var vaccine = await _vaccineServices.GetSutableVaccineAsync(child.Age, createAppointment.VaccineID);
-            if (vaccine == null)
-            {
-                throw new Exception("No suitable vaccine available");
-            } 
-            
-            
+
+
+            ///tạo ChildTimeSlot - đã xong
+            var childTimeSlot = await _childServices.CreateChildTimeSlot(createAppointment.SlotNumber, createAppointment.Date, createAppointment.ChildID);
+
+
+
             /// check bác sĩ trùng slot
-            var doctor = await _doctorServices.GetSutableDoctorAsync(createAppointment.SlotNumber, createAppointment.Date);//đang lỗi ko tìm được doctor
+            var doctor = await _doctorServices.GetSutableDoctorAsync(createAppointment.SlotNumber, createAppointment.Date);
             if (doctor == null)
             {
-                throw new Exception("can't find sutable doctor");
+                throw new Exception($"Đã hết bác sĩ làm ca {createAppointment.SlotNumber} ");
             }
 
-
-            //-------------------------------
+            //------------------- trạng thái cho các field liên quan ------------------
             var appointment = new Appointment();
             appointment.ChildID = createAppointment.ChildID;
             appointment.DoctorID = doctor.DoctorID;
-            appointment.VaccineTypeID = vaccine.VaccineTypeID;
+            appointment.VaccineID = createAppointment.VaccineID;
             appointment.TimeSlotID = timeSlot.TimeSlotID;
             appointment.Status = "PENDING";
 
-            ///set status của timeSlot 
-            timeSlot.Available = false;
-            timeSlot = await _timeSlotServices.UpdateTimeSlotAsync(timeSlot);
-
-            ///set status của doctorTimeSlot   - chắc ko cần nữa 
-            
-            //doctor = await _doctorRepository.UpdateDoctorTimeSlotAsync();
+            ///cập nhật timeslot Doctor
+            var doctorTimeSlot = await _doctorServices.FindDoctorTimeSlotAsync(doctor.DoctorID, createAppointment.Date, createAppointment.SlotNumber);
+            doctorTimeSlot.Available = false;
+            await _doctorServices.UpdateDoctorScheduleAsync(doctorTimeSlot);
 
             ///cập nhật lại số lượng vaccine
+            var vaccine = await _vaccineServices.GetVaccineByIDAsync(createAppointment.VaccineID);
             vaccine.Stock -= 1;
             vaccine = await _vaccineRepository.UpdateVaccineAsync(vaccine);
 
@@ -117,6 +115,14 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             return await _appointmentRepository.CreateAppointmentAsync(appointment);
         }
 
+
+        /// <summary>
+        /// hàm lấy danh sách lịch hẹn theo ID và role
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<List<AppointmentDto>> GetAppointmentListByIDAsync(int id, string role)
         {
             if (string.IsNullOrEmpty(role))
@@ -148,7 +154,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                     AppointmentID = appointment.AppointmentID,
                     Child = $"{appointment.Child.Firstname} {appointment.Child.Lastname}",
                     Doctor = $"{appointment.Doctor.Account.Firstname} {appointment.Doctor.Account.Lastname}",
-                    VaccineType = appointment.VaccineType.Name,
+                    VaccineID = appointment.VaccineID,
                     Date = appointment.TimeSlots.DailySchedule.AppointmentDate,
                     Status = appointment.Status
                 };
@@ -158,35 +164,68 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             return appointmentDtoList;
         }
 
+        public async Task SetOverdueAppointmentAsync()
+        {
+            var dailySchedules = await _dailyScheduleRepository.GetAllDailyScheduleAsync();
+            var allAppointments = await _appointmentRepository.GetAllAppointmentsAsync();
 
+            foreach (var date in dailySchedules)
+            {
+                int dateStatus = CompareNowTime(date.AppointmentDate);
+                var filteredAppointments = allAppointments.Where(a => a.TimeSlots.DailySchedule.AppointmentDate == date.AppointmentDate).ToList();
+
+                if (dateStatus == -1) // Ngày đã qua
+                {
+                    foreach (var appointment in filteredAppointments)
+                    {
+                        if (appointment.Status == "PENDING")
+                        {
+                            appointment.Status = "OVERDUE";
+                            await _appointmentRepository.UpdateAppointmentAsync(appointment);
+                        }
+                    }
+                }
+                else if (dateStatus == 0) // Ngày hôm nay, kiểm tra giờ
+                {
+                    foreach (var appointment in filteredAppointments)
+                    {
+                        if (CompareNowTime(appointment.TimeSlots.StartTime) == -1 && appointment.Status == "PENDING") // Giờ đã qua
+                        {
+                            appointment.Status = "OVERDUE";
+                            await _appointmentRepository.UpdateAppointmentAsync(appointment);
+                        }
+                    }
+                }
+            }
+
+        }
         public async Task<Appointment?> UpdateAppointmentAsync(UpdateAppointmentDto modifyAppointment)
         {
-            var appointment = await _appointmentRepository.UpdateAppointmentAsync(modifyAppointment);
+            var appointment = await _appointmentRepository.GetAppointmentByID(modifyAppointment.AppointmentID);
             if (appointment == null)
             {
                 throw new Exception("Appointment does not exist!");
             }
-            appointment.ChildID = ValidationHelper.NullValidator(modifyAppointment.ChildID)
+            appointment.ChildID = NullValidator(modifyAppointment.ChildID)
                 ? modifyAppointment.ChildID
                 : appointment.ChildID;
 
-            appointment.DoctorID = ValidationHelper.NullValidator(modifyAppointment.DoctorID)
+            appointment.DoctorID = NullValidator(modifyAppointment.DoctorID)
                 ? modifyAppointment.DoctorID
                 : appointment.DoctorID;
 
-            appointment.VaccineTypeID = ValidationHelper.NullValidator(modifyAppointment.VaccineTypeID)
-                ? modifyAppointment.VaccineTypeID
-                : appointment.VaccineTypeID;
-            /// đang chạy không đúng dự tínhq
-            //appointment.Slot = ValidationHelper.NullValidator(modifyAppointment.Slot)
-            //  ? modifyAppointment.Slot
-            //  : appointment.Slot;
-
-            appointment.Status = ValidationHelper.NullValidator(modifyAppointment.Status)
+            appointment.VaccineID = NullValidator(modifyAppointment.VaccineID)
+                ? modifyAppointment.VaccineID
+                : appointment.VaccineID;
+            /// chưa test chức năng này
+            appointment.TimeSlotID = NullValidator(modifyAppointment.TimeSlotID)
+              ? modifyAppointment.TimeSlotID
+              : appointment.TimeSlotID;
+            appointment.Status = NullValidator(modifyAppointment.Status)
                 ? modifyAppointment.Status
                 : appointment.Status;
 
-            return appointment;
+            return await _appointmentRepository.UpdateAppointmentAsync(appointment);
         }
     }
 }

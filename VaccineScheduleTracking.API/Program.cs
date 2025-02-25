@@ -12,6 +12,7 @@ using VaccineScheduleTracking.API_Test.Repository.Appointments;
 using VaccineScheduleTracking.API_Test.Repository.Children;
 using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
+using VaccineScheduleTracking.API_Test.Services;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Children;
@@ -66,7 +67,6 @@ builder.Services.AddScoped<IDoctorRepository, SQLDoctorRepository>();
 builder.Services.AddScoped<IAppointmentRepository, SQLAppointmentReopsitory>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
-
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVaccineRepository, SQLVaccineRepository>();
@@ -106,6 +106,10 @@ builder.Services.AddCors(options =>
                         .AllowAnyMethod()
                         .AllowAnyHeader());
 });
+
+
+builder.Services.AddHostedService<StartupServices>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

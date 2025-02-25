@@ -1,5 +1,6 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.Entities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaccineScheduleTracking.API_Test.Repository
 {
@@ -15,6 +16,6 @@ namespace VaccineScheduleTracking.API_Test.Repository
         Task UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot);
         Task<List<DoctorTimeSlot>> GetDoctorTimeSlotsForDayAsync(int doctorID, DateOnly date);
         Task<DoctorTimeSlot> GetDoctorTimeSlotByIDAsync(int doctorTimeSlotID);
-        
+        Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorID, DateOnly date, int slotNumber);
     }
 }

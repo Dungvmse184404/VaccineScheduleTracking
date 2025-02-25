@@ -13,6 +13,20 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         {
             _dbContext = dbContext;
         }
+
+
+        public async Task<List<Appointment>> GetAllAppointmentsAsync()
+        {
+            return await _dbContext.Appointments
+           .Include(a => a.Child)
+           .Include(a => a.Doctor)
+               .ThenInclude(d => d.Account)
+           .Include(a => a.Vaccine)
+           .Include(a => a.TimeSlots)
+               .ThenInclude(s => s.DailySchedule)
+           .ToListAsync();
+        }
+
         /// <summary>
         /// tổng hợp các hàm Get (Chắc cũng ko dùng nhiều)
         /// </summary>
@@ -53,7 +67,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
                .Include(a => a.Child)
                .Include(a => a.Doctor)
                    .ThenInclude(d => d.Account)
-               .Include(a => a.VaccineType)
+               .Include(a => a.Vaccine)
                .Include(a => a.TimeSlots)
                     .ThenInclude(s => s.DailySchedule)
                .ToListAsync();
@@ -72,7 +86,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
                 .Include(a => a.Child)
                 .Include(a => a.Doctor)
                     .ThenInclude(d => d.Account)
-                .Include(a => a.VaccineType)
+                .Include(a => a.Vaccine)
                 .Include(a => a.TimeSlots)
                     .ThenInclude(s => s.DailySchedule)
                 .ToListAsync();
@@ -126,7 +140,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
 
 
 
-        public async Task<Appointment?> UpdateAppointmentAsync(UpdateAppointmentDto appointmentDto)
+        public async Task<Appointment?> UpdateAppointmentAsync(Appointment appointmentDto)
         {
             var appointment = await GetAppointmentByID(appointmentDto.AppointmentID);
             if (appointment == null)
@@ -135,7 +149,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             }
             appointment.ChildID = appointmentDto.ChildID;
             appointment.DoctorID = appointmentDto.DoctorID;
-            appointment.VaccineTypeID = appointmentDto.VaccineTypeID;
+            appointment.VaccineID = appointmentDto.VaccineID;
             appointment.Status = appointmentDto.Status;
 
             await _dbContext.SaveChangesAsync();

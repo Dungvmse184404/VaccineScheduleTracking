@@ -7,11 +7,14 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
     {
         Task AddDailyScheduleAsync(DailySchedule daily);
         Task<List<DailySchedule>> GetAllDailyScheduleAsync();
-        Task<DailySchedule> GetDailyScheduleByDateAsync(DateOnly date);
+        
         //Task<DailySchedule?> GetSlotByID(int SlotID);
         //Task<List<DailySchedule>> GetAllSlotAsync(DateTime date);
         //Task<List<DailySchedule>> GetAvailableSlotsAsync(DateTime date);
         //Task<bool> BookSlotAsync(int slot);
-        
+
+        Task<DailySchedule?> GetDailyScheduleByDateAsync(DateOnly date);
+        Task<DailySchedule?> GetDailyScheduleByIDAsync(int dailyScheduleID);
+
     }
 }

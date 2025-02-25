@@ -21,15 +21,14 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
             _mapper = mapper;
         }
 
-        //public async Task<DailySchedule?> GetSlotByID(int SlotID)
-        //{
+        public async Task<DailySchedule?> GetDailyScheduleByIDAsync(int dailyScheduleID)
+        {
+            return await _dailyScheduleRepository.GetDailyScheduleByIDAsync(dailyScheduleID);
+        }
 
-        //    var slot = await _timeSlotRepository.GetTimeSlotByIDAsync(SlotID);
-        //    if (slot == null)
-        //    {
-        //        throw new Exception("SlotID does not exist!");
-        //    }
-        //    return slot;
-        //}
+        public async Task<DailySchedule?> GetDailyScheduleByDateAsync(DateOnly date)
+        {
+            return await _dailyScheduleRepository.GetDailyScheduleByDateAsync(date);
+        }
     }
 }
