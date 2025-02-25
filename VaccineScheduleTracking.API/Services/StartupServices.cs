@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using static VaccineScheduleTracking.API_Test.Helpers.ExceptionHelper;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository;
 using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Services.Children;
+using System.Reflection.Metadata;
 
 
 namespace VaccineScheduleTracking.API_Test.Services
@@ -44,12 +46,7 @@ namespace VaccineScheduleTracking.API_Test.Services
             }
             catch (Exception ex)
             {
-                var errorMessage = ex.Message;
-                if (ex.InnerException != null)
-                {
-                    errorMessage += $"\nInner Exception: {ex.InnerException.Message}";
-                }
-                Console.WriteLine($"An error occurred during startup: {errorMessage}");
+                HandleException(ex);
             }
         }
 

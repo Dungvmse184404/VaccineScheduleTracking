@@ -90,6 +90,12 @@ namespace VaccineScheduleTracking.API.Services
             }
         }
 
+        /// <summary>
+        /// tìm bác sĩ phù hợp dựa trên slot và ngày là việc 
+        /// </summary>
+        /// <param name="slotNumber"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public async Task<Doctor?> GetSutableDoctorAsync(int slotNumber, DateOnly date)
         {
             var doctorList = await _doctorRepository.GetAllDoctorAsync();

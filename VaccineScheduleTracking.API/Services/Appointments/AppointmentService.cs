@@ -21,9 +21,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
     public class AppointmentService : IAppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
-        private readonly IChildRepository _childRepository;
-        private readonly IDoctorRepository _doctorRepository;
-        private readonly ITimeSlotRepository _timeSlotRepository;
         private readonly IVaccineRepository _vaccineRepository;
         private readonly IDailyScheduleRepository _dailyScheduleRepository;
 
@@ -36,9 +33,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
-            IChildRepository childRepository,
-            IDoctorRepository doctorRepository,
-            ITimeSlotRepository timeSlotRepository,
             IVaccineRepository vaccineRepository,
             IDailyScheduleRepository dailyScheduleRepository,
 
@@ -50,11 +44,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             IMapper mapper)
         {
             _appointmentRepository = appointmentRepository;
-            _childRepository = childRepository;
-            _doctorRepository = doctorRepository;
-            _timeSlotRepository = timeSlotRepository;
-            _vaccineRepository = vaccineRepository;
             _dailyScheduleRepository = dailyScheduleRepository;
+            _vaccineRepository = vaccineRepository;
 
             _childServices = childServices;
             _doctorServices = doctorServices;
@@ -79,8 +70,11 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 throw new Exception("Slot này không khả dụng.");
             }
 
-
-
+            var child = await _childServices.GetChildByIDAsync(createAppointment.ChildID);
+            if (child == null)
+            {
+                throw new Exception($"Không tìm thấy trẻ có ID {createAppointment.ChildID}");
+            }
             ///tạo ChildTimeSlot - đã xong
             var childTimeSlot = await _childServices.CreateChildTimeSlot(createAppointment.SlotNumber, createAppointment.Date, createAppointment.ChildID);
 
@@ -95,7 +89,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             //------------------- trạng thái cho các field liên quan ------------------
             var appointment = new Appointment();
-            appointment.ChildID = createAppointment.ChildID;
+            appointment.ChildID = child.ChildID;
             appointment.DoctorID = doctor.DoctorID;
             appointment.VaccineID = createAppointment.VaccineID;
             appointment.TimeSlotID = timeSlot.TimeSlotID;

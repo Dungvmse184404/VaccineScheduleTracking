@@ -16,7 +16,7 @@ namespace VaccineScheduleTracking.API_Test.Repository
 
         public async Task<List<Doctor>> GetAllDoctorAsync()
         {
-            return await _dbContext.Doctors.ToListAsync();
+            return await _dbContext.Doctors.Include(a => a.Account).ToListAsync();
         }
 
         public async Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorID, DateOnly date, int slot)
