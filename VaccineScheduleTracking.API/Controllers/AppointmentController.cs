@@ -1,15 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
-using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Repository;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
-using VaccineScheduleTracking.API_Test.Services;
 using static System.Reflection.Metadata.BlobBuilder;
+using static VaccineScheduleTracking.API_Test.Helpers.ExceptionHelper;
+using VaccineScheduleTracking.API_Test.Services.Appointments;
+using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -35,12 +30,14 @@ namespace VaccineScheduleTracking.API.Controllers
         {
             try
             {
-
                 var appointment = await _appointmentService.CreateAppointmentAsync(createAppointment);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
 
             }
-            catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
 
@@ -52,7 +49,27 @@ namespace VaccineScheduleTracking.API.Controllers
                 var Appointment = await _appointmentRepository.GetAppointmentListByIDAsync(id, role);
                 return Ok(_mapper.Map<List<AppointmentDto>>(Appointment));
             }
-            catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [HttpPut("update-appointment")]
+        public async Task<IActionResult> UpdateAppointment([FromQuery] UpdateAppointmentDto updateAppointment)
+        {
+            try
+            {
+                var appointment = await _appointmentService.UpdateAppointmentAsync(updateAppointment);
+                return Ok(_mapper.Map<AppointmentDto>(appointment));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
     }
 }

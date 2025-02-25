@@ -9,6 +9,8 @@ using VaccineScheduleTracking.API_Test.Services;
 using VaccineScheduleTracking.API_Test.Repository;
 using System.Security.Principal;
 using VaccineScheduleTracking.API_Test.Models.DTOs;
+using VaccineScheduleTracking.API_Test.Services.Accounts;
+using VaccineScheduleTracking.API_Test.Repository.Accounts;
 
 namespace VaccineScheduleTracking.API.Controllers
 {

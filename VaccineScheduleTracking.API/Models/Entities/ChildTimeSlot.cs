@@ -2,18 +2,15 @@
 
 namespace VaccineScheduleTracking.API_Test.Models.Entities
 {
-    public class TimeSlot
+    public class ChildTimeSlot
     {
-        public int TimeSlotID { get; set; }
-        public TimeOnly StartTime { get; set; }
+        public int ChildTimeSlotID { get; set; }
+        public int ChildID { get; set; }
         public int SlotNumber { get; set; }
-        public bool Available { get; set; }
         public int DailyScheduleID { get; set; }
         public DailySchedule DailySchedule { get; set; }
-
-
-
+        public bool Available { get; set; }
+        
     }
-
-
 }
+

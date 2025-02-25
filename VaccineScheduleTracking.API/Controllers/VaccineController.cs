@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
-using VaccineScheduleTracking.API_Test.Services;
+using VaccineScheduleTracking.API_Test.Services.Vaccines;
+using System;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -25,9 +26,30 @@ namespace VaccineScheduleTracking.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetVaccines([FromQuery] FilterVaccineDto filterVaccineDto)
         {
-            var vaccines = await vaccineService.GetVaccinesAsync(filterVaccineDto);
+            try
+            {
+                var vaccines = await vaccineService.GetVaccinesAsync(filterVaccineDto);
+                return Ok(mapper.Map<List<VaccineDto>>(vaccines));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
 
-            return Ok(mapper.Map<List<VaccineDto>>(vaccines));
+        }
+
+        [HttpGet("get-sutable-vaccine")]
+        public async Task<IActionResult> GetSutableVaccine(int Age, int TypeID)
+        {
+            try
+            {
+                var vaccines = await vaccineService.GetSutableVaccineAsync(Age, TypeID);
+                return Ok(mapper.Map<List<VaccineDto>>(vaccines));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         //VaccineType
@@ -69,7 +91,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 var vaccineType = await vaccineService.UpdateVaccineTypeAsync(id, updateVaccineType);
                 return Ok($"Đã cập nhật loại Vaccine {vaccineType.Name}");
             }
-            catch (Exception ex) { return BadRequest( new { Message = ex.Message } ); }
+            catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
         }
 
 
@@ -82,7 +104,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 var vaccineType = await vaccineService.DeleteVaccineTypeAsync(id);
                 return Ok($"Đã xóa loại Vaccine {vaccineType.Name} ");
             }
-            catch (Exception ex) { return BadRequest( new { Message = ex.Message } ); }
+            catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
         }
 
         //Vaccine 
@@ -97,7 +119,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest( new { Message = ex.Message } );
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -114,7 +136,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest( new { Message = ex.Message } );
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
