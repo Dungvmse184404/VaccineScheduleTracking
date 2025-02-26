@@ -57,15 +57,10 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [HttpPost("register-parent")]
-        public async Task<IActionResult> Register([FromBody] RegisterAccountDto registerAccount, [FromForm] ImageUploadDto imageUpload)
+        public async Task<IActionResult> Register([FromBody] RegisterAccountDto registerAccount)
         {
             try
             {
-                if (imageUpload != null)
-                {
-                    var image = await imageService.Upload(imageUpload);
-                    registerAccount.Avatar = image.FilePath;
-                }
                 var account = await accountService.RegisterAsync(registerAccount);
                 return Ok(mapper.Map<AccountDto>(account));
             }
@@ -148,7 +143,7 @@ namespace VaccineScheduleTracking.API.Controllers
 
         [Authorize]
         [HttpPut("update-account")]
-        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto updateAccount, [FromForm] ImageUploadDto imageUpload)
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto updateAccount)
         {
             try
             {
@@ -159,11 +154,6 @@ namespace VaccineScheduleTracking.API.Controllers
                 }
                 
                 var account = await accountService.UpdateAccountAsync(updateAccount);
-                if (imageUpload != null)
-                {
-                    var image = await imageService.Upload(imageUpload);
-                    account.Avatar = image.FilePath;
-                }
 
                 return Ok(mapper.Map<AccountDto>(account));
             }

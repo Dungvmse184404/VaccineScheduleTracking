@@ -15,7 +15,7 @@ namespace VaccineScheduleTracking.API_Test.Services
 
         public async Task<Image> Upload(ImageUploadDto imageUpload)
         {
-            var allowExtension = new string[] { ".jpg", "jped", "png" };
+            var allowExtension = new string[] { ".jpg", ".jped", ".png" };
             if (!allowExtension.Contains(Path.GetExtension(imageUpload.File.FileName)))
             {
                 throw new Exception("Unsupported file extenstion");
@@ -29,7 +29,7 @@ namespace VaccineScheduleTracking.API_Test.Services
             {
                 File = imageUpload.File,
                 FileExtension = Path.GetExtension(imageUpload.File.FileName),
-                FileSize = imageUpload.File.Length
+                FileSize = (int) imageUpload.File.Length
             };
 
             await imageRepository.Upload(image);

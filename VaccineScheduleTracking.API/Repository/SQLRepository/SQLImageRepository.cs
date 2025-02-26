@@ -1,4 +1,5 @@
-﻿using VaccineScheduleTracking.API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Repository.IRepository;
 
@@ -19,17 +20,24 @@ namespace VaccineScheduleTracking.API_Test.Repository.SQLRepository
 
         public async Task<Image> Upload(Image image)
         {
-            var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images",
-                image.File.FileName, image.FileExtension);
+            var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", image.File.FileName);
 
             using var stream = new FileStream(localFilePath, FileMode.Create);
             await image.File.CopyToAsync(stream);
 
-            var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{image.File.FileName}.{image.FileExtension}";
+            var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{image.File.FileName}";
             image.FilePath = urlFilePath;
 
             await dbContext.Images.AddAsync(image);
-            await dbContext.SaveChangesAsync();
+            try
+            {
+                await dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"EF Core Error: {ex.InnerException?.Message}");
+                throw;
+            }
 
             return image;
         }
