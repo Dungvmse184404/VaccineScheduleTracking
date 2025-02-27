@@ -41,29 +41,26 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [HttpGet("get-appointment-list")]
-        public async Task<IActionResult> GetAppointmentByID(int id, string role)
+        [HttpGet("get-appointment-list/{Id}")]
+        public async Task<IActionResult> GetAppointmentByID([FromRoute]int Id, string role)
         {
             try
             {
-                var Appointment = await _appointmentRepository.GetAppointmentListByIDAsync(id, role);
+                var Appointment = await _appointmentRepository.GetAppointmentListByIDAsync(Id, role);
                 return Ok(_mapper.Map<List<AppointmentDto>>(Appointment));
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    Message = ex.Message
-                });
+                return HandleException(ex);
             }
         }
 
-        [HttpPut("update-appointment")]
-        public async Task<IActionResult> UpdateAppointment([FromQuery] UpdateAppointmentDto updateAppointment)
+        [HttpPut("update-appointment/{Id}")]
+        public async Task<IActionResult> UpdateAppointment([FromRoute] int Id, [FromQuery] UpdateAppointmentDto updateAppointment)
         {
             try
             {
-                var appointment = await _appointmentService.UpdateAppointmentAsync(updateAppointment);
+                var appointment = await _appointmentService.UpdateAppointmentAsync(Id, updateAppointment);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
             catch (Exception ex)
@@ -71,5 +68,21 @@ namespace VaccineScheduleTracking.API.Controllers
                 return HandleException(ex);
             }
         }
+
+
+        //[HttpDelete("cancel-appointment")]
+        //public async Task<IActionResult> CancelAppointment(int id)
+        //{
+        //    try
+        //    {
+        //        var appointment = await _appointmentService.CancelAppointmentAsync(id);
+        //        return Ok(_mapper.Map<AppointmentDto>(appointment));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex);
+        //    }
+        //}
+
     }
 }

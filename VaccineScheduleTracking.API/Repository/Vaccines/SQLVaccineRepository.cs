@@ -17,7 +17,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
 
         public async Task<Vaccine?> GetVaccineByIDAsync(int id)
         {
-            return await dbContext.Vaccines.FirstOrDefaultAsync(x => x.VaccineID == id);
+            return await dbContext.Vaccines.Where(x => x.VaccineID == id)
+                                           .Include(x => x.VaccineType)
+                                           .FirstOrDefaultAsync();
         }
 
         public async Task<Vaccine?> GetVaccineByNameAsync(string name)

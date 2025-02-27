@@ -49,7 +49,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
             return await dbContext.Accounts.Include(x => x.Parent).
                                             Include(x => x.Doctor).
                                             Include(x => x.Staff).FirstOrDefaultAsync(user => user.Username == username);
-        }
+            }
 
         public async Task<Account> AddAccountAsync(Account account)
         {

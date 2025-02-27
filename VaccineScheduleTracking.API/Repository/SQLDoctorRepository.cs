@@ -57,7 +57,7 @@ namespace VaccineScheduleTracking.API_Test.Repository
                 .FirstOrDefaultAsync(ts => ts.DoctorTimeSlotID == doctorTimeSlotID);
         }
 
-        public async Task UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot)
+        public async Task<DoctorTimeSlot> UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot)
         {
             var slot = await GetDoctorTimeSlotByIDAsync(doctorSlot.DoctorTimeSlotID);
 
@@ -66,7 +66,9 @@ namespace VaccineScheduleTracking.API_Test.Repository
             slot.Available = doctorSlot.Available;
             slot.DailyScheduleID = doctorSlot.DailyScheduleID;
 
-            await _dbContext.SaveChangesAsync();
+             await _dbContext.SaveChangesAsync();
+
+            return slot;
         }
         
 

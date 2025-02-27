@@ -11,5 +11,6 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
         Task<TimeSlot> UpdateTimeSlotAsync(TimeSlot timeSlot);
         Task <TimeSlot?> GetTimeSlotAsync(int SlotNumber, DateOnly Date);
         Task SetOverdueTimeSlotAsync();
+        Task<TimeSlot?> GetTimeSlotByIDAsync(int timeSlotID);
     }
 }

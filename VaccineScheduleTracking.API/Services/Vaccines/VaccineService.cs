@@ -124,7 +124,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
         }
 
 
-        public async Task<List<Vaccine>> GetSutableVaccineAsync(int age, int typeID)
+        public async Task<List<Vaccine?>> GetVaccineListByAgeAsync(int age, int typeID)
         {
             ValidateInput(age, "Tuổi của trẻ đang trống!!! (có thể là lỗi BE)");
             ValidateInput(typeID, "Chưa điền ID loại vaccine cần tìm");
@@ -139,7 +139,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
                     result.Add(vaccine);
                 }
             }
-            ValidateInput(result, $"không tìm thấy vaccine loại {typeID} phù hợp với trẻ {age} tuổi");
+            //ValidateInput(result, $"không tìm thấy vaccine loại {typeID} phù hợp với trẻ {age} tuổi");
 
             return result;
         }

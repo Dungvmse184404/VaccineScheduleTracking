@@ -66,8 +66,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
         }
 
         //-----------------childTimeSlot-------------------
-
-
         public Task<List<ChildTimeSlot>> GetChildTimeSlotsForDayAsync(int childID, DateOnly appointmentDate)
         {
             return dbContext.ChildTimeSlots

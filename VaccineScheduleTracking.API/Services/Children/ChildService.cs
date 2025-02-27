@@ -59,17 +59,14 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
                 throw new Exception($"Không tìm thấy ID: {id}");
             }
             return await childRepository.DeleteChildAsync(child);
-
         }
 
-        //đang thi công
         public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int slotNumber, DateOnly date)
         {
             ValidateInput(slotNumber, "Chưa chọn slot");
             ValidateInput(date, "Chưa nhập ngày");
 
-            var childTimeSlot = await childRepository.GetChildTimeSlotBySlotNumberAsync(slotNumber, date);
-            return childTimeSlot;
+             return await childRepository.GetChildTimeSlotBySlotNumberAsync(slotNumber, date);
         }
 
 
@@ -87,11 +84,11 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
             ValidateInput(date, "Chưa nhập ngày");
             ValidateInput(childID, "Chưa nhập ID");
 
-            var childSchedule = await GetChildTimeSlotBySlotNumberAsync(slotNumber, date);
-            if (childSchedule != null)
-            {
-                throw new Exception("Slot đã được đặt");
-            }
+            //var childSchedule = await GetChildTimeSlotBySlotNumberAsync(slotNumber, date);
+            //if (childSchedule != null)
+            //{
+            //    throw new Exception("Slot đã được đặt");
+            //}
 
             var dailySchedule = await dailyScheduleService.GetDailyScheduleByDateAsync(date);
 
@@ -106,7 +103,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
             return await childRepository.AddChildTimeSlotAsync(childTimeSlot);
         }
 
-        public async Task SetOverdueChildScheduleAsync()
+         
+
+        public async Task SetOverdueChildScheduleAsync()//sửa lại như Appointment
         {
             var Children = await GetAllChildrenAsync();
             var dailySchedules = await dailyScheduleRepository.GetAllDailyScheduleAsync();

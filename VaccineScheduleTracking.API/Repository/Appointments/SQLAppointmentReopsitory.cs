@@ -51,7 +51,15 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         /// <returns> appointment có ID tương ứng </returns>
         public async Task<Appointment?> GetAppointmentByID(int id)
         {
-            return await _dbContext.Appointments.FirstOrDefaultAsync(appointment => appointment.AppointmentID == id);
+            return await _dbContext.Appointments
+                .Where(appointment => appointment.AppointmentID == id)
+                .Include(a => a.Child)
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.Account)
+                .Include(a => a.Vaccine)
+                .Include(a => a.TimeSlots)
+                    .ThenInclude(s => s.DailySchedule)
+                .FirstOrDefaultAsync();
         }
 
 

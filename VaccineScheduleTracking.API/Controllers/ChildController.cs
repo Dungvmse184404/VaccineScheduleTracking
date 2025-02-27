@@ -34,14 +34,14 @@ namespace VaccineScheduleTracking.API.Controllers
         public async Task<IActionResult> CreateChildProfile([FromBody] AddChildDto addChild)
         {
             var child = mapper.Map<Child>(addChild);
-            var currentUserID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var currentUserID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);//lỗi đây
             child.ParentID = currentUserID;
             child = await childService.AddChild(child);
             return Ok(child);
         }
 
-        [Authorize]
-        [HttpPut("update-child{id}")]
+        //[Authorize]
+        [HttpPut("update-child/{id}")]
         public async Task<IActionResult> ModifileChildProfile(int id, [FromBody] UpdateChildDto updateChild)
         {
             try
@@ -56,13 +56,13 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [Authorize]
-        [HttpDelete("delete-child{id}")]
-        public async Task<IActionResult> DeleteChildProfile(int ChildId)
+        //[Authorize]
+        [HttpDelete("delete-child/{id}")]
+        public async Task<IActionResult> DeleteChildProfile([FromRoute] int id)
         {
             try
             {
-                var deleteChild = await childService.DeleteChild(ChildId);
+                var deleteChild = await childService.DeleteChild(id);
                 return Ok($"Child name {deleteChild.Firstname} has been deleted!");
             }
             catch (Exception ex)
