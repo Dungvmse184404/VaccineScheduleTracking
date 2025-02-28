@@ -119,33 +119,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             return appointment;
         }
 
-        /// <summary>
-        /// lấy tất cả appointment cuả 1 parent cần sửa
-        /// </summary>
-        /// <param name="appointmentDto"></param>
-        /// <returns></returns>
-        //public async Task<List<Appointment>> GetAllAppointmentAsync(AppointmentDto appointmentDto)
-        //{
-        //    var query = _dbContext.Appointments.Include(i => i.Doctor)
-        //                                                 .Include(i => i.Child)
-        //                                                 .Include(i => i.VaccineType).AsQueryable();
-        //    if (appointmentDto.AppointmentID.HasValue)
-        //    {
-        //        query = query.Where(i => i.AppointmentID == appointmentDto.AppointmentID);
-        //    }
-        //    if (appointmentDto.Time.HasValue)
-        //    {
-        //        query = query.Where(i => i.Time == appointmentDto.Time);
-        //    }
-        //    if (!string.IsNullOrEmpty(appointmentDto.Status))
-        //    {
-        //        query = query.Where(i => i.Status == appointmentDto.Status);
-        //    }
-
-        //    return await query.ToListAsync();
-        //}
-        ///
-
 
 
         public async Task<Appointment?> UpdateAppointmentAsync(Appointment appointmentDto)
@@ -158,6 +131,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             appointment.ChildID = appointmentDto.ChildID;
             appointment.DoctorID = appointmentDto.DoctorID;
             appointment.VaccineID = appointmentDto.VaccineID;
+            appointment.TimeSlotID = appointmentDto.TimeSlotID;
             appointment.Status = appointmentDto.Status;
 
             await _dbContext.SaveChangesAsync();

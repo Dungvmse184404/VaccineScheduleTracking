@@ -55,12 +55,12 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [HttpPut("update-appointment/{Id}")]
-        public async Task<IActionResult> UpdateAppointment([FromRoute] int Id, [FromQuery] UpdateAppointmentDto updateAppointment)
+        [HttpPut("update-appointment/{appointmentId}")]
+        public async Task<IActionResult> UpdateAppointment([FromRoute] int appointmentId, UpdateAppointmentDto updateAppointment)
         {
             try
             {
-                var appointment = await _appointmentService.UpdateAppointmentAsync(Id, updateAppointment);
+                var appointment = await _appointmentService.UpdateAppointmentAsync(appointmentId, updateAppointment);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
             catch (Exception ex)

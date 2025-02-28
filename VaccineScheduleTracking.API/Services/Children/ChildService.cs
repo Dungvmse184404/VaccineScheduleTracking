@@ -61,12 +61,12 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
             return await childRepository.DeleteChildAsync(child);
         }
 
-        public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int slotNumber, DateOnly date)
+        public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int childId, int slotNumber, DateOnly date)
         {
             ValidateInput(slotNumber, "Chưa chọn slot");
             ValidateInput(date, "Chưa nhập ngày");
 
-             return await childRepository.GetChildTimeSlotBySlotNumberAsync(slotNumber, date);
+             return await childRepository.GetChildTimeSlotBySlotNumberAsync(childId, slotNumber, date);
         }
 
 

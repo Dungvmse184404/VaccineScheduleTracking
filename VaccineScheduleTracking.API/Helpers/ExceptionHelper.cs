@@ -16,5 +16,21 @@ namespace VaccineScheduleTracking.API_Test.Helpers
                 Message = errorMessage
             });
         }
+
+        public static void WriteLog(string message)
+        {
+            string logFilePath = @"E:\Backup\SWP391\VaccineScheduleTracking_Test\Log.txt";
+            string logMessage = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {message}{Environment.NewLine}";
+
+            try
+            {
+                File.AppendAllText(logFilePath, logMessage);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi ghi log: {ex.Message}");
+            }
+        }
+
     }
 }

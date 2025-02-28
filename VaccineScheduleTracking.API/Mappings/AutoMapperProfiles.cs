@@ -18,6 +18,7 @@ namespace VaccineScheduleTracking.API.Mappings
                 .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => $"{src.Doctor.Account.Firstname} {src.Doctor.Account.Lastname}"))
                 .ForMember(dest => dest.VaccineID, opt => opt.MapFrom(src => src.VaccineID))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.TimeSlots.DailySchedule.AppointmentDate))
+                .ForMember(dest => dest.SlotNumber, opt => opt.MapFrom(src => src.TimeSlots.SlotNumber))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
             CreateMap<Appointment, CreateAppointmentDto>().ReverseMap();

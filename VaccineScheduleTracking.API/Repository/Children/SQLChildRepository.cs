@@ -79,9 +79,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
             return dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.ChildTimeSlotID == id);
         }
 
-        public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int slotNumber, DateOnly date)
+        public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int childId, int slotNumber, DateOnly date)
         {
-            return await dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.SlotNumber == slotNumber && x.DailySchedule.AppointmentDate == date);
+            return await dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.ChildID == childId && x.SlotNumber == slotNumber && x.DailySchedule.AppointmentDate == date);
         }
 
         public async Task<ChildTimeSlot> AddChildTimeSlotAsync(ChildTimeSlot childTimeSlot)
