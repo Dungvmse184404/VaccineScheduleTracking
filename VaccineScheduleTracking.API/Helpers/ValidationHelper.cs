@@ -13,7 +13,7 @@
 
         public static void ValidateInput<T>(T input, string errorMessage)
         {
-            if (EqualityComparer<T>.Default.Equals(input, default(T)))
+            if (EqualityComparer<T>.Default.Equals(input, default))
             {
                 throw new ArgumentException(errorMessage);
             }

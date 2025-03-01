@@ -1,4 +1,5 @@
-﻿using VaccineScheduleTracking.API.Models.Entities;
+﻿using VaccineScheduleTracking.API.Helpers;
+using VaccineScheduleTracking.API.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Models.DTOs.Appointments
 {

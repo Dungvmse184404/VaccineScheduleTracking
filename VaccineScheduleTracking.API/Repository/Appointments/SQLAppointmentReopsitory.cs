@@ -49,7 +49,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         /// </summary>
         /// <param name="id"> Cho ID zô </param>
         /// <returns> appointment có ID tương ứng </returns>
-        public async Task<Appointment?> GetAppointmentByID(int id)
+        public async Task<Appointment?> GetAppointmentByIDAsync(int id)
         {
             return await _dbContext.Appointments
                 .Where(appointment => appointment.AppointmentID == id)
@@ -106,6 +106,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             return await _dbContext.Appointments.Where(Appmt => Appmt.Status == status).ToListAsync();
         }
 
+
         /// <summary>
         /// hàm này dùng để save appointment xuống Database
         /// </summary>
@@ -123,7 +124,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
 
         public async Task<Appointment?> UpdateAppointmentAsync(Appointment appointmentDto)
         {
-            var appointment = await GetAppointmentByID(appointmentDto.AppointmentID);
+            var appointment = await GetAppointmentByIDAsync(appointmentDto.AppointmentID);
             if (appointment == null)
             {
                 return null;

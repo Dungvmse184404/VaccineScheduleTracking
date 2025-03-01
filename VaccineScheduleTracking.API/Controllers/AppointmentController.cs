@@ -41,12 +41,12 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [HttpGet("get-appointment-list/{Id}")]
-        public async Task<IActionResult> GetAppointmentByID([FromRoute]int Id, string role)
+        [HttpGet("get-appointment-list/{id}")]
+        public async Task<IActionResult> GetAppointmentByID([FromRoute]int id, string role)
         {
             try
             {
-                var Appointment = await _appointmentRepository.GetAppointmentListByIDAsync(Id, role);
+                var Appointment = await _appointmentRepository.GetAppointmentListByIDAsync(id, role);
                 return Ok(_mapper.Map<List<AppointmentDto>>(Appointment));
             }
             catch (Exception ex)
@@ -70,19 +70,19 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        //[HttpDelete("cancel-appointment")]
-        //public async Task<IActionResult> CancelAppointment(int id)
-        //{
-        //    try
-        //    {
-        //        var appointment = await _appointmentService.CancelAppointmentAsync(id);
-        //        return Ok(_mapper.Map<AppointmentDto>(appointment));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return HandleException(ex);
-        //    }
-        //}
+        [HttpDelete("cancel-appointment/{id}")]
+        public async Task<IActionResult> CancelAppointment([FromRoute]int id)
+        {
+            try
+            {
+                var appointment = await _appointmentService.CancelAppointmentAsync(id);
+                return Ok(_mapper.Map<AppointmentDto>(appointment));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
+        }
 
     }
 }

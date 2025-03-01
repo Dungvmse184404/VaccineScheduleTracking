@@ -14,8 +14,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
 
         //-----------------ChildTimeSlot-----------------
         Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int childId, int slotNumber, DateOnly date);
+        Task<ChildTimeSlot?> GetChildTimeSlotByIDAsync(int childTimSlotId);
         Task<ChildTimeSlot> AddChildTimeSlotAsync(ChildTimeSlot childTimeSlot);
         Task<List<ChildTimeSlot>> GetChildTimeSlotsForDayAsync(int childID, DateOnly appointmentDate);
-        Task UpdateChildTimeSlotsAsync(ChildTimeSlot slot);
+        Task<ChildTimeSlot> UpdateChildTimeSlotsAsync(ChildTimeSlot slot);
     }
 }
