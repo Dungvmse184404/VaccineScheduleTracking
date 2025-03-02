@@ -22,6 +22,10 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines
         [Required]
         public int Period { get; set; }
         [Required]
-        public string VaccineType { get; set; }
+        public int DosesRequired { get; set; }
+        [Required]
+        public int Priority { get; set; }
+        [Required]
+        public int VaccineTypeID { get; set; }
     }
 }

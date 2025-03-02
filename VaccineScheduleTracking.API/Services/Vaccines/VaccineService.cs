@@ -43,19 +43,32 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
             {
                 throw new Exception($"{addVaccineDto.Name} đã tồn tại ");
             }
-            var vaccineType = await vaccineRepository.GetVaccineTypeByNameAsync(addVaccineDto.VaccineType);
+            var vaccineType = await vaccineRepository.GetVaccineTypeByIDAsync(addVaccineDto.VaccineTypeID);
             if (vaccineType == null)
             {
-                throw new Exception($"{addVaccineDto.VaccineType} không khả dụng");
+                throw new Exception($"{addVaccineDto.VaccineTypeID} không tồn tại");
             }
-            if (vaccine.FromAge >= vaccine.ToAge)
+            if (addVaccineDto.Stock < 0)
             {
-                throw new Exception("Invalid age limit!");
+                throw new Exception("Số lượng vaccine không thể <0 (hint: Stock >= 0)!");
             }
-            if (vaccine.Period == 0)
+            if (addVaccineDto.FromAge >= addVaccineDto.ToAge)
             {
-                throw new Exception("The period is invalid!");
+                throw new Exception("Độ tuổi không hợp lệ (hint: FromAge <= ToAge)!");
             }
+            if (addVaccineDto.Period <= 0)
+            {
+                throw new Exception("The period is invalid! (hint: Period > 0)");
+            }
+            if (addVaccineDto.DosesRequired <= 0)
+            {
+                throw new Exception("The DosesRequired is invalid! (hint: DosesRequired > 0)");
+            }
+            if (addVaccineDto.Priority <= 0)
+            {
+                throw new Exception("The Priority is invalid! (hint: Priority > 0)");
+            }
+
 
             vaccine = new Vaccine
             {
@@ -68,7 +81,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
                 FromAge = addVaccineDto.FromAge,
                 ToAge = addVaccineDto.ToAge,
                 Period = addVaccineDto.Period,
-                VaccineType = vaccineType
+                DosesRequired = addVaccineDto.DosesRequired,
+                Priority = addVaccineDto.Priority,
             };
             await vaccineRepository.AddVaccineAsync(vaccine);
             return vaccine;
