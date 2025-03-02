@@ -48,7 +48,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize]
-        [HttpPut("update-child{id}")]
+        [HttpPut("update-child/{id}")]
         public async Task<IActionResult> ModifileChildProfile(int id, [FromBody] UpdateChildDto updateChild)
         {
             try
@@ -64,12 +64,12 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("delete-child{id}")]
-        public async Task<IActionResult> DeleteChildProfile(int ChildId)
+        [HttpDelete("delete-child/{id}")]
+        public async Task<IActionResult> DeleteChildProfile(int id)
         {
             try
             {
-                var deleteChild = await childService.DeleteChild(ChildId);
+                var deleteChild = await childService.DeleteChild(id);
                 return Ok($"Child name {deleteChild.Firstname} has been deleted!");
             }
             catch (Exception ex)
