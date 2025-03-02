@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API.Mappings
 {
@@ -31,7 +33,7 @@ namespace VaccineScheduleTracking.API.Mappings
             CreateMap<Child, ChildDto>().ReverseMap();
             CreateMap<Child, AddChildDto>().ReverseMap();
             CreateMap<Child, UpdateChildDto>().ReverseMap();
-            
+            CreateMap<VaccineRecord, VaccineRecordDto>().ReverseMap();
         }
     }
 }

@@ -23,16 +23,14 @@ namespace VaccineScheduleTracking.API.Controllers
         private readonly IAccountService accountService;
         private readonly JwtHelper jwtHelper;
         private readonly IEmailService emailService;
-        private readonly IImageService imageService;
 
-        public AccountController(IAccountRepository accountRepository, IMapper mapper, IAccountService accountService, JwtHelper jwtHelper, IEmailService emailService, IImageService imageService)
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, IAccountService accountService, JwtHelper jwtHelper, IEmailService emailService)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;
             this.accountService = accountService;
             this.jwtHelper = jwtHelper;
             this.emailService = emailService;
-            this.imageService = imageService;
         }
 
         [HttpPost("login")]

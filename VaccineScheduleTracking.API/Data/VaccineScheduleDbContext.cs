@@ -24,5 +24,6 @@ namespace VaccineScheduleTracking.API.Data
         public DbSet<Vaccine> Vaccines { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<VaccineRecord> VaccineRecords { get; set; }  
     }
 }
