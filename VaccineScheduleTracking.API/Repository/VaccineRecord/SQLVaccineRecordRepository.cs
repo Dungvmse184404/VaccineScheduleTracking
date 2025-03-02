@@ -56,7 +56,11 @@ namespace VaccineScheduleTracking.API_Test.Repository.Record
         public async Task<VaccineRecord?> DeleteRecord(int recordID)
         {
             var deletedRecord = await GetRecordByID(recordID);
-            await dbContext.SaveChangesAsync();
+            if (deletedRecord != null)
+            {
+                dbContext.VaccineRecords.Remove(deletedRecord);
+                await dbContext.SaveChangesAsync();
+            }
 
             return deletedRecord;
         }
