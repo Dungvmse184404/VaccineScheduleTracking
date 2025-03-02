@@ -175,7 +175,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        //[Authorize(Roles = "Doctor, Staff")]
+        [Authorize(Roles = "Doctor, Staff")]
         [HttpDelete("delete-vaccine")]
         public async Task<IActionResult> DeleteVaccine(int id)
         {
