@@ -52,7 +52,7 @@ public class ScheduledTaskService : BackgroundService
             catch (Exception ex)
             {
                 HandleException(ex);
-                WriteLog($"Lỗi: {ex.Message}");
+                //WriteLog($"Lỗi: {ex.Message}");
             }
 
             // Chờ 45 phút trước khi chạy lại

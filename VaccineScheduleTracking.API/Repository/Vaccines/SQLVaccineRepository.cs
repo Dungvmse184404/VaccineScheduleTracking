@@ -21,7 +21,12 @@ namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
                                            .Include(x => x.VaccineType)
                                            .FirstOrDefaultAsync();
         }
-
+        public async Task<List<Vaccine>> GetVaccineListByVaccineTypeAsync(int id)
+        {
+            return await dbContext.Vaccines.Include(x => x.VaccineType)
+                                           .Where(x => x.VaccineTypeID == id)
+                                           .ToListAsync();
+        }
         public async Task<Vaccine?> GetVaccineByNameAsync(string name)
         {
             return await dbContext.Vaccines.FirstOrDefaultAsync(x => x.Name == name);

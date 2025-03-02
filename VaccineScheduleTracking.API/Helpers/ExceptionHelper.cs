@@ -4,6 +4,12 @@ namespace VaccineScheduleTracking.API_Test.Helpers
 {
     public static class ExceptionHelper
     {
+        private static IConfiguration _configuration;
+
+        public static void Configure(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public static IActionResult HandleException(Exception ex)
         {
             var errorMessage = ex.Message;
@@ -19,7 +25,7 @@ namespace VaccineScheduleTracking.API_Test.Helpers
 
         public static void WriteLog(string message)
         {
-            string logFilePath = @"E:\Backup\SWP391\VaccineScheduleTracking_Test\Log.txt";
+            string logFilePath = _configuration["Logging:LogFilePath"];
             string logMessage = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {message}{Environment.NewLine}";
 
             try

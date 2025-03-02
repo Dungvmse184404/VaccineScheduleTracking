@@ -44,6 +44,7 @@ GO
 CREATE TABLE [dbo].[Doctors](
 	[DoctorID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[AccountID] [int] NOT NULL,
+	[DoctorTimeSlots]  VARCHAR(50) NOT NULL,
 	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
 )
 GO
@@ -90,9 +91,63 @@ CREATE TABLE [dbo].[Vaccines](
 	[FromAge] [int] NOT NULL,
 	[ToAge] [int] NOT NULL,
 	[Period] [int] NOT NULL,
+	[DosesRequired] int NOT NULL,
+	[Priority] int NOT NULL,
 	FOREIGN KEY ([VaccineTypeID]) REFERENCES [dbo].[VaccineTypes]([VaccineTypeID])
 )
 GO
+
+CREATE TABLE  [dbo].[DailySchedule](
+	[DailyScheduleID] int IDENTITY(1,1) PRIMARY KEY,
+	[AppointmentDate] DATE NOT NULL
+)
+
+
+CREATE TABLE [dbo].[TimeSlots](
+	[TimeSlotID] INT IDENTITY(1,1) PRIMARY KEY,
+	[StartTime] Time NOT NULL,
+    [SlotNumber] INT NOT NULL CHECK (SlotNumber BETWEEN 1 AND 20),
+	[DailyScheduleID] int NOT NULL,
+    [Available]  bit  NOT NULL,
+	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID])
+)
+
+/****** Object:  Table [dbo].[Appointment] ******/
+CREATE TABLE [dbo].[Appointments](
+    [AppointmentID] [int] IDENTITY(1,1) PRIMARY KEY,
+    [ChildID] [int] NOT NULL,
+	[DoctorID] [int] NOT NULL,
+	[VaccineID] [int] NOT NULL,
+	[TimeSlotID] int not null,
+    [Status] [varchar](20) NOT NULL,
+	FOREIGN KEY ([TimeSlotID]) REFERENCES [dbo].[TimeSlots]([TimeSlotID]),
+    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID]),
+	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Accounts]([AccountID]),
+	FOREIGN KEY ([VaccineID]) REFERENCES [dbo].[Vaccines]([VaccineID])
+)	
+GO
+
+
+CREATE TABLE [dbo].[DoctorTimeSlots](
+	DoctorTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
+	DoctorID int NOT NULL,
+	SlotNumber int NOT NULL,
+	Available bit NOT NULL,
+	DailyScheduleID int NOT NULL,
+	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
+	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID])
+)
+
+CREATE TABLE [dbo].[ChildTimeSlots] (
+    ChildTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
+    ChildID INT NOT NULL,
+    SlotNumber INT NOT NULL,
+    DailyScheduleID INT NOT NULL,
+    Available BIT NOT NULL,
+	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
+    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID])
+);
+
 
 /****** Insert:  Table [dbo].[Account] ******/
 INSERT [dbo].[Accounts] ([Firstname], [Lastname], [Username], [Password], [PhoneNumber], [Email], [Avatar], [Status]) VALUES
@@ -117,7 +172,7 @@ DBCC CHECKIDENT ('[Accounts]', RESEED, 0);
 INSERT [dbo].[Parents] (AccountID) VALUES (1), (2), (3), (4), (5) ,(6), (7)
 
 /****** Insert:  Table [dbo].[Doctor] ******/
-INSERT [dbo].[Doctors] (AccountID) VALUES  (8), (9), (10), (11)
+INSERT [dbo].[Doctors] (AccountID, DoctorTimeSlots) VALUES  (8, '2,3,4,5,6,12,13,14,15,16'), (9, '1,2,3,4,5,11,12,13,14,15'), (10, '6,7,8,9,10,16,17,18,19,20'), (11, '5,6,7,8,9,10,11,12,13,14,15')
 
 /****** Insert:  Table [dbo].[Staff] ******/
 INSERT [dbo].[Staffs] (AccountID) VALUES  (12), (13), (14)
@@ -131,169 +186,45 @@ INSERT [dbo].[Children] ([FirstName], [LastName], [Weight], [Height], [Gender], 
 ('Kien', 'Pham', 18.5, 1.05, 'MALE', '2021-07-19', 3),
 ('Lan', 'Le', 17.0, 1.1, 'FEMALE', '2022-04-30', 4),
 ('Duy', 'Nguyen', 20.0, 1.15, 'MALE', '2022-08-10', 1),
-('Thao', 'Nguyen', 13.7, 0.95, 'FEMALE', '2022-02-20', 2);
+('Thao', 'Nguyen', 13.7, 0.95, 'FEMALE', '2022-02-20', 2),
+('Hao', 'Nguyen', 20.0, 1.15, 'MALE', '2022-08-10', 5);
 GO
-DBCC CHECKIDENT ('[Appointments]', RESEED, 0);
+
+
 /****** Insert:  Table [dbo].[VaccineTypes] ******/
-INSERT [dbo].[VaccineTypes] ([Name], [Description]) VALUES 
-('COVID-19', 'COVID-19 (from English : corona virus disease 2019 meaning corona virus disease 2019 ) [ 10 ] is an acute infectious respiratory disease caused by the coronavirus SARS-CoV-2 and its variants . This is a virus discovered in an outbreak investigation originating from a large seafood and animal market in Wuhan , Hubei Province , China . The virus causes acute respiratory infections in humans and has been shown to spread from person to person. In addition to this newly discovered coronavirus, there are 6 other coronaviruses known today that can infect people from person to person . The disease was first discovered during the COVID-19 pandemic of 2019–2020.'), 
-('Rota virus', 'Rotaviruses are the most common cause of diarrhoeal disease among infants and young children.[1] Nearly every child in the world is infected with a rotavirus at least once by the age of five.[2] Immunity develops with each infection, so subsequent infections are less severe. Adults are rarely affected.[3] Rotavirus is a genus of double-stranded RNA viruses in the family Reoviridae. There are nine species of the genus, referred to as A, B, C, D, F, G, H, I and J. Rotavirus A is the most common species, and these rotaviruses cause more than 90% of rotavirus infections in humans.'), 
-('Influenza seasonal', 'Flu season is an annually recurring time period characterized by the prevalence of an outbreak of influenza (flu). The season occurs during the cold half of the year in each hemisphere. It takes approximately two days to show symptoms. Influenza activity can sometimes be predicted and even tracked geographically. While the beginning of major flu activity in each season varies by location, in any specific location these minor epidemics usually take about three weeks to reach its pinnacle, and another three weeks to significantly diminish.')
-GO
+INSERT INTO VaccineTypes ([Name], [Description]) 
+VALUES 
+('COVID-19', 'Vaccine phòng chống COVID-19'),
+('Cúm mùa', 'Vaccine phòng chống cúm mùa'),
+('Viêm gan B', 'Vaccine phòng chống viêm gan B'),
+('bại liệt', 'Vaccine tiêm phòng bại liệt'),
+('Bạch hầu - Ho gà - Uốn ván', 'Vaccine kết hợp phòng bệnh bạch hầu, ho gà và uốn ván');
 
 /****** Insert:  Table [dbo].[Vaccines] ******/
-INSERT [dbo].[Vaccines] ([Name], [VaccineTypeID], [Manufacturer], [Stock], [Price], [Description], [FromAge], [ToAge], [Period]) VALUES
-('AZD1222', 1, 'AstraZeneca', 100, 100000, 'In April 2021, the Medicines and Healthcare products Regulatory Agency (MHRA) confirmed a possible link between the AstraZeneca Covid-19 vaccine and these rare blood clots, but emphasised that the benefits of the vaccine continued to outweigh the risks for the vast majority of people.', 60, 200, 10),
-('VAXIGRIP TETRA', 2, 'Sanofi Pasteur (France)', 100, 356000, 'Vaxigrip Tetra is a vaccine. This vaccine helps to protect you or your child against influenza (flu). Vaxigrip Tetra is used to prevent flu in persons of 6 months of age and older. If you are pregnant, one dose of vaccine given to you during pregnancy may protect your baby from birth to less than 6 months of age.', 6, 200, 4)
-GO
+INSERT INTO Vaccines ([Name], [VaccineTypeID], [Manufacturer], [Stock], [Price], [Description], [FromAge], [ToAge], [Period], [DosesRequired], [Priority]) 
+VALUES 
+('Pfizer-BioNTech', 1, 'Pfizer', 100, 250000, 'Vaccine mRNA phòng COVID-19', 12, 99, 6, 1, 1),
+('Moderna', 1, 'Moderna', 150, 230000, 'Vaccine mRNA phòng COVID-19', 6, 99, 6, 2, 1),
+('Vaxigrip Tetra', 2, 'Sanofi', 200, 180000, 'Vaccine phòng cúm mùa', 6, 99, 12, 1, 2),
+('Engerix-B', 3, 'GSK', 80, 300000, 'Vaccine phòng viêm gan B', 0, 99, 6, 1, 2),
+('ComBE Five', 5, 'Biological E. Limited', 350, 200000, 'Vaccine phòng bạch hầu, ho gà, uốn ván', 2, 12, 2, 3, 2),
+('Pentaxim', 5, 'Sanofi Pasteur', 250, 500000, 'Vaccine 5 trong 1 phòng bạch hầu, ho gà, uốn ván, bại liệt và Hib', 2, 12, 2, 4, 1),
+('MMR II', 3, 'Merck', 450, 400000, 'Vaccine phòng sởi, quai bị, rubella', 3, 99, 12, 2, 3),
+('Varilrix', 3, 'GlaxoSmithKline', 200, 600000, 'Vaccine phòng thủy đậu', 12, 99, 12, 1, 3),
+('OPV (Oral Polio Vaccine)', 4, 'WHO', 500, 0, 'Vaccine uống phòng bại liệt', 0, 5, 2, 3, 1),
+('IPV (Inactivated Polio Vaccine)', 4, 'Sanofi Pasteur', 300, 350000, 'Vaccine tiêm phòng bại liệt', 2, 99, 2, 2, 1);
 
 
-
-CREATE TABLE [dbo].[DailyScheldue] (
-	SlotID int IDENTITY(1,1) PRIMARY KEY,
-	StartTime datetime NOT NULL,
-	EndTime datetime NOT NULL,
-	Slot int NOT NULL
-)
-
-
-CREATE TABLE [dbo].[WeeklyScheldue](
-	WeeklyScheldueID int IDENTITY(1,1) PRIMARY KEY,
-	[Weekday] NVARCHAR NOT NULL, 
-)
-
-CREATE TABLE [dbo].[DoctorScheldue](
-	DocotrScheldueID int IDENTITY(1,1) PRIMARY KEY,
-	DoctorID int NOT NULL,
-	SlotID int,
-	WeeklyScheldueID int NOT NULL,
-	FOREIGN KEY ([WeeklyScheldueID]) REFERENCES [dbo].[WeeklyScheldue]([WeeklyScheldueID]),
-	FOREIGN KEY ([SlotID]) REFERENCES [dbo].[DailyScheldue]([SlotID]),
-	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID])
-)
-
-CREATE TABLE [dbo].[AppointmentScheldue](
-	[AppointmentScheldue] [int] IDENTITY(1,1) PRIMARY KEY,
-	DateTime Datetime not null,
-)
-
-CREATE TABLE  [dbo].[DailySchedule](
-	[DailyScheduleID] int IDENTITY(1,1) PRIMARY KEY,
-	[AppointmentDate] DATE NOT NULL
-)
-INSERT INTO [dbo].[DailySchedule]([AppointmentDate]) VALUES 
-('2025-2-17')
-
-CREATE TABLE [dbo].[TimeSlots](
-	[TimeSlotID] INT IDENTITY(1,1) PRIMARY KEY,
-	[StartTime] Time NOT NULL,
-    [SlotNumber] INT NOT NULL CHECK (SlotNumber BETWEEN 1 AND 20),
-	[DailyScheduleID] int NOT NULL,
-    [Available]  bit  NOT NULL,
-	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID])
-)
-INSERT INTO [dbo].[TimeSlots] ([StartTime], [SlotNumber], [Available], [DailyScheduleID])  
-VALUES  
-('07:00:00', 1, 1, 1),
-('07:45:00', 2, 1, 1),
-('08:30:00', 3, 1, 1),
-('09:15:00', 4, 1, 1),
-('10:00:00', 5, 1, 1),
-('10:45:00', 6, 1, 1),
-('11:30:00', 7, 1, 1),
-('12:15:00', 8, 1, 1),
-('13:00:00', 9, 1, 1),
-('13:45:00', 10, 1, 1),
-('14:30:00', 11, 1, 1),
-('15:15:00', 12, 1, 1),
-('16:00:00', 13, 1, 1),
-('16:45:00', 14, 1, 1),
-('17:30:00', 15, 1, 1),
-('18:15:00', 16, 1, 1),
-('19:00:00', 17, 1, 1),
-('19:45:00', 18, 1, 1),
-('20:30:00', 19, 1, 1),
-('21:15:00', 20, 1, 1);
-
-
-
-/****** Object:  Table [dbo].[Appointment] ******/
-CREATE TABLE [dbo].[Appointments](
-    [AppointmentID] [int] IDENTITY(1,1) PRIMARY KEY,
-    [ChildID] [int] NOT NULL,
-	[DoctorID] [int] NOT NULL,
-	[VaccineTypeID] [int] NOT NULL,
-	[TimeSlotID] int not null,
---    [Time] [datetime] NOT NULL,
-    [Status] [varchar](20) NOT NULL,
-	FOREIGN KEY ([TimeSlotID]) REFERENCES [dbo].[TimeSlots]([TimeSlotID]),
-    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID]),
-	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Accounts]([AccountID]),
-	FOREIGN KEY ([VaccineTypeID]) REFERENCES [dbo].[VaccineTypes]([VaccineTypeID])
-)	
-GO
-
-EXEC sp_rename 'dbo.Appointments.TimeSlotsID', 'TimeSlotID', 'COLUMN';
-
+DBCC CHECKIDENT ('Appointments', RESEED, 0);
 DBCC CHECKIDENT ('TimeSlots', RESEED, 0);
 
-
--- data bảng Appointment
-INSERT INTO [dbo].[Appointments] ([ChildID], [DoctorID], [VaccineTypeID], [TimeSlotID], [Status])
-VALUES 
-(1, 2, 3, 1, 'Confirmed'),   -- 07:00
-(2, 3, 1, 5, 'Pending'),     -- 10:00
-(3, 1, 2, 10, 'Confirmed'),  -- 13:30
-(4, 2, 1, 3, 'Confirmed'),   -- 08:30
-(5, 3, 4, 7, 'Pending'),     -- 11:15
-(6, 1, 2, 12, 'Canceled'),  -- 14:00
-(7, 2, 5, 6, 'Confirmed'),   -- 09:30
-(8, 3, 3, 18, 'Pending');    -- 16:30
+DBCC CHECKIDENT ('DailySchedule', RESEED, 0);
+DBCC CHECKIDENT ('DoctorTimeSlots', RESEED, 0);
+DBCC CHECKIDENT ('ChildTimeSlots', RESEED, 0);
 
 
 
--- data bảng TimeSlots
-DECLARE @StartTime TIME = '07:00:00'
-DECLARE @SlotNumber INT = 1
 
-WHILE @SlotNumber <= 20
-BEGIN
-    INSERT INTO [dbo].[TimeSlots] ([StartTime], [AppointmentDate], [SlotNumber], [Available])
-    VALUES (@StartTime, '2025-02-15', @SlotNumber, 'Available')
-
-    -- Cộng thêm 45 phút cho slot tiếp theo
-    SET @StartTime = DATEADD(MINUTE, 45, @StartTime)
-    SET @SlotNumber = @SlotNumber + 1
-END
-
-CREATE TABLE [dbo].[Images] (
-	[ImageID] [int] IDENTITY(1,1) PRIMARY KEY,
-	[FileExtension][varchar](6) NOT NULL,
-	[FileSize][int] NOT NULL,
-	[FilePath][varchar] NOT NULL
-)
-
-/**
-CREATE TRIGGER trg_UpdateTimeSlotStatus
-ON Appointment
-AFTER INSERT
-AS
-BEGIN
-    UPDATE TimeSlot
-    SET Available = 0
-    WHERE TimeSlotID IN (SELECT TimeSlotsID FROM inserted);
-END;
-
-CREATE TRIGGER trg_ResetTimeSlotStatus
-ON Appointment
-AFTER DELETE
-AS
-BEGIN
-    UPDATE TimeSlot
-    SET Available = 1
-    WHERE TimeSlotID IN (SELECT TimeSlotsID FROM deleted);
-END;
-**/
 
 /****
 /****** Object:  Table [dbo].[Package] ******/
