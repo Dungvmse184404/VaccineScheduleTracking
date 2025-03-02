@@ -18,13 +18,15 @@ using VaccineScheduleTracking.API_Test.Repository.Accounts;
 using VaccineScheduleTracking.API_Test.Repository.Appointments;
 using VaccineScheduleTracking.API_Test.Repository.Children;
 using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
-using VaccineScheduleTracking.API_Test.Repository.IRepository;
-using VaccineScheduleTracking.API_Test.Repository.SQLRepository;
+using VaccineScheduleTracking.API_Test.Repository.Record;
+using VaccineScheduleTracking.API_Test.Repository.VaccinePackage;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
+using VaccineScheduleTracking.API_Test.Services.Record;
+using VaccineScheduleTracking.API_Test.Services.VaccinePackage;
 using VaccineScheduleTracking.API_Test.Services.Vaccines;
 using VaccineScheduleTracking.API_Test.Helpers;
 
@@ -86,8 +88,10 @@ builder.Services.AddScoped<IChildService, ChildService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-builder.Services.AddScoped<IImageRepository, SQLImageRepository>();
-builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IVaccineRecordRepository, SQLVaccineRecordRepository>();
+builder.Services.AddScoped<IVaccineRecordService, VaccineRecordService>();
+builder.Services.AddScoped<IVaccineComboRepository, SQLVaccineComboRepository>();
+builder.Services.AddScoped<IVaccineComboService, VaccineComboService>();
 
 builder.Services.AddAuthentication(options =>
 {

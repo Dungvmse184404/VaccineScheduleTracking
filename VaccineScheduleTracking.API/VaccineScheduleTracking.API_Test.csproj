@@ -53,6 +53,7 @@
 
   <ItemGroup>
     <Folder Include="Images\" />
+    <Folder Include="Repository\VaccineContainer\" />
   </ItemGroup>
 
 </Project>

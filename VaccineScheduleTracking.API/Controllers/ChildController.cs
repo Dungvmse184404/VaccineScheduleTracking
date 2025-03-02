@@ -48,7 +48,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize]
-        [HttpPut("update-child{id}")]
+        [HttpPut("update-child/{id}")]
         public async Task<IActionResult> ModifileChildProfile(int id, [FromBody] UpdateChildDto updateChild)
         {
             try
@@ -64,7 +64,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("delete-child{id}")]
+        [HttpDelete("delete-child/{id}")]
         public async Task<IActionResult> DeleteChildProfile(int ChildId)
         {
             try

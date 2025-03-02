@@ -1,4 +1,6 @@
-﻿namespace VaccineScheduleTracking.API.Models.Entities
+﻿using VaccineScheduleTracking.API_Test.Models.Entities;
+
+namespace VaccineScheduleTracking.API.Models.Entities
 {
     public class Vaccine
     {
