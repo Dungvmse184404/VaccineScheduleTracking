@@ -110,7 +110,6 @@ builder.Services.AddCors(options =>
 });
 
 //đăng kí chạy background
-//builder.Services.AddHostedService<StartupServices>();
 builder.Services.AddHostedService<ScheduledTaskService>();
 builder.Host.UseWindowsService();
 
