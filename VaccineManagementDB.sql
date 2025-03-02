@@ -97,6 +97,58 @@ CREATE TABLE [dbo].[Vaccines](
 )
 GO
 
+CREATE TABLE  [dbo].[DailySchedule](
+	[DailyScheduleID] int IDENTITY(1,1) PRIMARY KEY,
+	[AppointmentDate] DATE NOT NULL
+)
+
+
+CREATE TABLE [dbo].[TimeSlots](
+	[TimeSlotID] INT IDENTITY(1,1) PRIMARY KEY,
+	[StartTime] Time NOT NULL,
+    [SlotNumber] INT NOT NULL CHECK (SlotNumber BETWEEN 1 AND 20),
+	[DailyScheduleID] int NOT NULL,
+    [Available]  bit  NOT NULL,
+	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID])
+)
+
+/****** Object:  Table [dbo].[Appointment] ******/
+CREATE TABLE [dbo].[Appointments](
+    [AppointmentID] [int] IDENTITY(1,1) PRIMARY KEY,
+    [ChildID] [int] NOT NULL,
+	[DoctorID] [int] NOT NULL,
+	[VaccineID] [int] NOT NULL,
+	[TimeSlotID] int not null,
+    [Status] [varchar](20) NOT NULL,
+	FOREIGN KEY ([TimeSlotID]) REFERENCES [dbo].[TimeSlots]([TimeSlotID]),
+    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID]),
+	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Accounts]([AccountID]),
+	FOREIGN KEY ([VaccineID]) REFERENCES [dbo].[Vaccines]([VaccineID])
+)	
+GO
+
+
+CREATE TABLE [dbo].[DoctorTimeSlots](
+	DoctorTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
+	DoctorID int NOT NULL,
+	SlotNumber int NOT NULL,
+	Available bit NOT NULL,
+	DailyScheduleID int NOT NULL,
+	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
+	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID])
+)
+
+CREATE TABLE [dbo].[ChildTimeSlots] (
+    ChildTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
+    ChildID INT NOT NULL,
+    SlotNumber INT NOT NULL,
+    DailyScheduleID INT NOT NULL,
+    Available BIT NOT NULL,
+	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
+    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID])
+);
+
+
 /****** Insert:  Table [dbo].[Account] ******/
 INSERT [dbo].[Accounts] ([Firstname], [Lastname], [Username], [Password], [PhoneNumber], [Email], [Avatar], [Status]) VALUES
 ('Hoang', 'Nguyen', 'hoangnguyen123', '123hoang', '0947568394', 'hoangnguyen1334@gmail.com', NULL, 'ACTIVE'),
@@ -162,58 +214,6 @@ VALUES
 ('OPV (Oral Polio Vaccine)', 4, 'WHO', 500, 0, 'Vaccine uống phòng bại liệt', 0, 5, 2, 3, 1),
 ('IPV (Inactivated Polio Vaccine)', 4, 'Sanofi Pasteur', 300, 350000, 'Vaccine tiêm phòng bại liệt', 2, 99, 2, 2, 1);
 
-
-CREATE TABLE [dbo].[DoctorTimeSlots](
-	DoctorTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
-	DoctorID int NOT NULL,
-	SlotNumber int NOT NULL,
-	Available bit NOT NULL,
-	DailyScheduleID int NOT NULL,
-	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
-	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID])
-)
-
-CREATE TABLE [dbo].[ChildTimeSlots] (
-    ChildTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
-    ChildID INT NOT NULL,
-    SlotNumber INT NOT NULL,
-    DailyScheduleID INT NOT NULL,
-    Available BIT NOT NULL,
-	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
-    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID])
-);
-
-
-
-CREATE TABLE  [dbo].[DailySchedule](
-	[DailyScheduleID] int IDENTITY(1,1) PRIMARY KEY,
-	[AppointmentDate] DATE NOT NULL
-)
-
-
-CREATE TABLE [dbo].[TimeSlots](
-	[TimeSlotID] INT IDENTITY(1,1) PRIMARY KEY,
-	[StartTime] Time NOT NULL,
-    [SlotNumber] INT NOT NULL CHECK (SlotNumber BETWEEN 1 AND 20),
-	[DailyScheduleID] int NOT NULL,
-    [Available]  bit  NOT NULL,
-	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID])
-)
-
-/****** Object:  Table [dbo].[Appointment] ******/
-CREATE TABLE [dbo].[Appointments](
-    [AppointmentID] [int] IDENTITY(1,1) PRIMARY KEY,
-    [ChildID] [int] NOT NULL,
-	[DoctorID] [int] NOT NULL,
-	[VaccineID] [int] NOT NULL,
-	[TimeSlotID] int not null,
-    [Status] [varchar](20) NOT NULL,
-	FOREIGN KEY ([TimeSlotID]) REFERENCES [dbo].[TimeSlots]([TimeSlotID]),
-    FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID]),
-	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Accounts]([AccountID]),
-	FOREIGN KEY ([VaccineID]) REFERENCES [dbo].[Vaccines]([VaccineID])
-)	
-GO
 
 DBCC CHECKIDENT ('Appointments', RESEED, 0);
 DBCC CHECKIDENT ('TimeSlots', RESEED, 0);
