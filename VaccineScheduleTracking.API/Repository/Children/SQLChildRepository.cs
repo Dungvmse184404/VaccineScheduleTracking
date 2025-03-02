@@ -66,8 +66,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
         }
 
         //-----------------childTimeSlot-------------------
-
-
         public Task<List<ChildTimeSlot>> GetChildTimeSlotsForDayAsync(int childID, DateOnly appointmentDate)
         {
             return dbContext.ChildTimeSlots
@@ -76,14 +74,14 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
                 .ToListAsync();
         }
 
-        public Task<ChildTimeSlot> GetChildTimeSlotsByID(int id)
+        public async Task<ChildTimeSlot?> GetChildTimeSlotByIDAsync(int id)
         {
-            return dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.ChildTimeSlotID == id);
+            return await dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.ChildTimeSlotID == id);
         }
 
-        public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int slotNumber, DateOnly date)
+        public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int childId, int slotNumber, DateOnly date)
         {
-            return await dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.SlotNumber == slotNumber && x.DailySchedule.AppointmentDate == date);
+            return await dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.ChildID == childId && x.SlotNumber == slotNumber && x.DailySchedule.AppointmentDate == date);
         }
 
         public async Task<ChildTimeSlot> AddChildTimeSlotAsync(ChildTimeSlot childTimeSlot)
@@ -94,10 +92,10 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
         }
 
 
-        public async Task UpdateChildTimeSlotsAsync(ChildTimeSlot slot)
+        public async Task<ChildTimeSlot> UpdateChildTimeSlotsAsync(ChildTimeSlot slot)
         {
 
-            var childTimeSlot = await GetChildTimeSlotsByID(slot.ChildTimeSlotID);
+            var childTimeSlot = await GetChildTimeSlotByIDAsync(slot.ChildTimeSlotID);
             if (childTimeSlot == null)
             {
                 throw new Exception($"Can't find TimeSlotID {slot.ChildTimeSlotID} for child {slot.ChildID}!");
@@ -107,7 +105,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
             slot.Available = childTimeSlot.Available;
             slot.DailyScheduleID = childTimeSlot.DailyScheduleID;
 
-            await dbContext.SaveChangesAsync();
+             await dbContext.SaveChangesAsync();
+            return slot;
         }
+
     }
 }

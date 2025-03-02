@@ -7,24 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\Attributes\**" />
     <Compile Remove="Repository\Child\**" />
     <Compile Remove="Repository\Vaccine\**" />
     <Compile Remove="Services\Account\**" />
     <Compile Remove="Services\Child\**" />
     <Compile Remove="Services\DailySchedule\**" />
     <Compile Remove="Services\IServices\**" />
+    <Content Remove="Helpers\Attributes\**" />
     <Content Remove="Repository\Child\**" />
     <Content Remove="Repository\Vaccine\**" />
     <Content Remove="Services\Account\**" />
     <Content Remove="Services\Child\**" />
     <Content Remove="Services\DailySchedule\**" />
     <Content Remove="Services\IServices\**" />
+    <EmbeddedResource Remove="Helpers\Attributes\**" />
     <EmbeddedResource Remove="Repository\Child\**" />
     <EmbeddedResource Remove="Repository\Vaccine\**" />
     <EmbeddedResource Remove="Services\Account\**" />
     <EmbeddedResource Remove="Services\Child\**" />
     <EmbeddedResource Remove="Services\DailySchedule\**" />
     <EmbeddedResource Remove="Services\IServices\**" />
+    <None Remove="Helpers\Attributes\**" />
     <None Remove="Repository\Child\**" />
     <None Remove="Repository\Vaccine\**" />
     <None Remove="Services\Account\**" />
@@ -34,11 +38,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="background_task.bat" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MailKit" Version="4.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 

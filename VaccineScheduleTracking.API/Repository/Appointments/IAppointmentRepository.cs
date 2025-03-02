@@ -7,7 +7,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
     {
         Task<List<Appointment>> GetAppointmentListByDoctorIDAsync(int id);
         Task<List<Appointment>> GetAppointmentListByChildIDAsync(int id);
-        Task<Appointment> GetAppointmentByID(int id);
+        Task<Appointment?> GetAppointmentByIDAsync(int id);
         Task<List<Appointment>> GetAppointmentListByStatus(string status);
         Task<Appointment?> CreateAppointmentAsync(Appointment Appointment);
         Task<List<Appointment>> SearchAppointmentByKeyword(string keyword);

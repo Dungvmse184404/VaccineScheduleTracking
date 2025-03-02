@@ -1,0 +1,19 @@
+
+create Window services
+
+1. open CMD(Admin) and access to .csproj or .slm file
+Ex: E:\Backup\SWP391\VaccineScheduleTracking_Test
+or: E:\Backup\SWP391\VaccineScheduleTracking_Test\VaccineScheduleTracking.API
+
+2. Run in Powershell(Admin)
+New-Service -Name "MyScheduledTaskService" -BinaryPathName "E:\Backup\SWP391\VaccineScheduleTracking_Test\VaccineScheduleTracking.API\bin\Release\net8.0\VaccineScheduleTracking.API_Test.exe" -DisplayName "Scheduled Task Service" -StartupType Automatic
+
+3. Start Service
+Start-Service -Name "MyScheduledTaskService"
+
+   View Status
+Get-Service -Name "MyScheduledTaskService"
+
+4. start and stop MyScheduledTaskService by CMD (Admin)
+net stop MyScheduledTaskService
+net start MyScheduledTaskService

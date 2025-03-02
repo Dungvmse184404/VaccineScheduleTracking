@@ -41,8 +41,8 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [HttpGet("get-appointment-list")]
-        public async Task<IActionResult> GetAppointmentByID(int id, string role)
+        [HttpGet("get-appointment-list/{id}")]
+        public async Task<IActionResult> GetAppointmentByID([FromRoute]int id, string role)
         {
             try
             {
@@ -51,19 +51,16 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    Message = ex.Message
-                });
+                return HandleException(ex);
             }
         }
 
-        [HttpPut("update-appointment")]
-        public async Task<IActionResult> UpdateAppointment([FromQuery] UpdateAppointmentDto updateAppointment)
+        [HttpPut("update-appointment/{appointmentId}")]
+        public async Task<IActionResult> UpdateAppointment([FromRoute] int appointmentId, UpdateAppointmentDto updateAppointment)
         {
             try
             {
-                var appointment = await _appointmentService.UpdateAppointmentAsync(updateAppointment);
+                var appointment = await _appointmentService.UpdateAppointmentAsync(appointmentId, updateAppointment);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
             catch (Exception ex)
@@ -71,5 +68,21 @@ namespace VaccineScheduleTracking.API.Controllers
                 return HandleException(ex);
             }
         }
+
+
+        [HttpDelete("cancel-appointment/{id}")]
+        public async Task<IActionResult> CancelAppointment([FromRoute]int id)
+        {
+            try
+            {
+                var appointment = await _appointmentService.CancelAppointmentAsync(id);
+                return Ok(_mapper.Map<AppointmentDto>(appointment));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
+        }
+
     }
 }

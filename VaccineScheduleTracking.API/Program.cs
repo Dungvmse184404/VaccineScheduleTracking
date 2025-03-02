@@ -1,4 +1,6 @@
 using System.Text;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Mappings;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Services;
+using VaccineScheduleTracking.API_Test.Services;
 using VaccineScheduleTracking.API_Test.Repository;
 using VaccineScheduleTracking.API_Test.Repository.Accounts;
 using VaccineScheduleTracking.API_Test.Repository.Appointments;
@@ -17,7 +20,6 @@ using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.IRepository;
 using VaccineScheduleTracking.API_Test.Repository.SQLRepository;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
-using VaccineScheduleTracking.API_Test.Services;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Children;
@@ -115,8 +117,9 @@ builder.Services.AddCors(options =>
                         .AllowAnyHeader());
 });
 
-
-builder.Services.AddHostedService<StartupServices>();
+//đăng kí chạy background
+builder.Services.AddHostedService<ScheduledTaskService>();
+builder.Host.UseWindowsService();
 
 var app = builder.Build();
 

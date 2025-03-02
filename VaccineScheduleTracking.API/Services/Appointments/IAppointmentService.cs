@@ -6,8 +6,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
     public interface IAppointmentService
     {
         Task<Appointment?> CreateAppointmentAsync(CreateAppointmentDto appointment);
-        Task<List<AppointmentDto>> GetAppointmentListByIDAsync(int id, string role);
-        Task<Appointment?> UpdateAppointmentAsync(UpdateAppointmentDto appointment);
+        Task<List<Appointment>> GetAppointmentListByIDAsync(int id, string role);
+        Task<Appointment?> UpdateAppointmentAsync(int appointmentId, UpdateAppointmentDto appointment);
+
+        Task<Appointment?> CancelAppointmentAsync(int appointmentId);
         Task SetOverdueAppointmentAsync();
     }
 }

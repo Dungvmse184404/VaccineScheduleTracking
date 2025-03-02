@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Antiforgery;
-using System.ComponentModel.DataAnnotations;
-using VaccineScheduleTracking.API.Models.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using VaccineScheduleTracking.API_Test.Helpers;
 
 namespace VaccineScheduleTracking.API_Test.Models.DTOs.Appointments
 {
@@ -11,6 +10,7 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Appointments
         [Required]
         public int VaccineID { get; set; }
         [Required]
+        [ValidDate]
         public DateOnly Date { get; set; }
         [Required]
         public int SlotNumber { get; set; }

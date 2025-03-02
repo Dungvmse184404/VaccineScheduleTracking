@@ -1,4 +1,5 @@
-﻿using VaccineScheduleTracking.API.Models.Entities;
+﻿using VaccineScheduleTracking.API.Helpers;
+using VaccineScheduleTracking.API.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Models.DTOs.Appointments
 {
@@ -9,6 +10,7 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Appointments
         public string Doctor { get; set; }
         public int VaccineID { get; set; }
         public DateOnly Date { get; set; }
+        public int SlotNumber { get; set; }
         public string Status { get; set; }
 
 

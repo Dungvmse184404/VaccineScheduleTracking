@@ -13,7 +13,7 @@ namespace VaccineScheduleTracking.API_Test.Repository
 
         //Fuctions
         Task AddTimeSlotForDoctorAsync(DoctorTimeSlot doctorSlot);
-        Task UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot);
+        Task<DoctorTimeSlot> UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot);
         Task<List<DoctorTimeSlot>> GetDoctorTimeSlotsForDayAsync(int doctorID, DateOnly date);
         Task<DoctorTimeSlot> GetDoctorTimeSlotByIDAsync(int doctorTimeSlotID);
         Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorID, DateOnly date, int slotNumber);

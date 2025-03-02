@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Numerics;
+using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.Entities;
@@ -9,7 +10,8 @@ using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 namespace VaccineScheduleTracking.API.Services
 {
     public class DoctorServices : IDoctorServices
-    {        private readonly IDailyScheduleRepository _dailyScheduleRepository;
+    {
+        private readonly IDailyScheduleRepository _dailyScheduleRepository;
         private readonly IDoctorRepository _doctorRepository;
         private readonly IMapper _mapper;
 
@@ -33,24 +35,50 @@ namespace VaccineScheduleTracking.API.Services
             return await _doctorRepository.GetSpecificDoctorTimeSlotAsync(DoctorID, Date, SlotNumber);
         }
 
-
-        /// <summary>
-        /// loop qua các ngày
-        /// </summary>
-        /// <param name="doctor"></param>
-        /// <param name="numberOfDays"></param>
-        /// <returns></returns>
-        public async Task GenerateDoctorCalanderAsync(List<Doctor> doctorList, int numberOfDays)
+        public async Task<Doctor> GetDoctorByIDAsync(int doctorID)
         {
-            var dailyScheduleList = await _dailyScheduleRepository.GetAllDailyScheduleAsync();
-            foreach (var doctor in doctorList )
+            ValidateInput(doctorID, "ID của bác sĩ không thể để trống");
+            return await _doctorRepository.GetDoctorByIDAsync(doctorID);
+        }
+
+        public async Task<List<Doctor>> GetDoctorByTimeSlotAsync(int slotNumber, DateOnly date)
+        {
+            ValidateInput(slotNumber, "Slot không thể để trống");
+            ValidateInput(date, "Ngày không thể để trống");
+            var doctorList = await _doctorRepository.GetAllDoctorAsync();
+            List<Doctor> result = new List<Doctor>();
+            foreach (var doctor in doctorList)
             {
-                foreach (var day in dailyScheduleList)
+                var doctorSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(doctor.DoctorID, date);
+                if (doctorSlots.Any(ts => ts.SlotNumber == slotNumber && ts.Available))
                 {
-                    await GenerateDoctorScheduleAsync(doctor, day);
+                    result.Add(doctor);
                 }
             }
+            return result;
         }
+
+        public async Task<DoctorTimeSlot> SetDoctorTimeSlotAsync(DoctorTimeSlot docTimeSlot, bool status)
+        {
+            
+            if (docTimeSlot.Available == false && status == false)
+            {
+                throw new Exception($"không còn slot cho bác sĩ {docTimeSlot.DoctorID} vào ngày {docTimeSlot.DailySchedule.AppointmentDate} slot {docTimeSlot.SlotNumber}");
+            }
+            else if (docTimeSlot.Available != status)
+            {
+                docTimeSlot.Available = status;
+            }
+            else
+            {
+                throw new Exception($"Slot {docTimeSlot.SlotNumber} của bác sĩ {docTimeSlot.DoctorID} vào ngày {docTimeSlot.DailySchedule.AppointmentDate} đã được cập nhật trước đó");
+            }
+            return await UpdateDoctorScheduleAsync(docTimeSlot);
+
+        }
+
+
+
 
         /// <summary>
         /// kiểm tra xem các slot đã được tạo chưa
@@ -63,6 +91,86 @@ namespace VaccineScheduleTracking.API.Services
             var existingSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(doctor.DoctorID, day.AppointmentDate);
             return existingSlots.Any();
         }
+
+
+
+        /// <summary>
+        /// tìm bác sĩ phù hợp dựa trên slot và ngày là việc 
+        /// </summary>
+        /// <param name="slotNumber"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public async Task<Doctor?> GetSutableDoctorAsync(int slotNumber, DateOnly date)
+        {
+            var doctorList = await _doctorRepository.GetAllDoctorAsync();
+            Doctor? suitableDoctor = null;
+            int minSlotsOccupied = int.MaxValue;
+
+            foreach (var doctor in doctorList)
+            {
+                var doctorSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(doctor.DoctorID, date);
+                var availableSlot = doctorSlots.FirstOrDefault(ts => ts.SlotNumber == slotNumber && ts.Available);
+
+                if (availableSlot != null)
+                {
+                    int slotsOccupied = doctorSlots.Count(ts => !ts.Available);
+                    if (slotsOccupied < minSlotsOccupied)
+                    {
+                        minSlotsOccupied = slotsOccupied;
+                        suitableDoctor = doctor;
+                    }
+                }
+            }
+            return suitableDoctor;
+        }
+
+
+        public async Task<DoctorTimeSlot> UpdateDoctorScheduleAsync(DoctorTimeSlot doctorSlot)
+        {
+            var slot = await _doctorRepository.GetDoctorTimeSlotByIDAsync(doctorSlot.DoctorTimeSlotID);
+            if (slot == null)
+            {
+                throw new Exception($"không tìm thấy timeSlot có ID {doctorSlot.DoctorTimeSlotID}");
+            }
+
+            slot.DoctorID = NullValidator(doctorSlot.DoctorID)
+               ? doctorSlot.DoctorID
+               : slot.DoctorID;
+            slot.SlotNumber = NullValidator(doctorSlot.SlotNumber)
+                ? doctorSlot.SlotNumber
+                : slot.SlotNumber;
+            slot.Available = NullValidator(doctorSlot.Available)
+                ? doctorSlot.Available
+                : slot.Available;
+            slot.DailyScheduleID = NullValidator(doctorSlot.DailyScheduleID)
+                ? doctorSlot.DailyScheduleID
+                : slot.DailyScheduleID;
+
+           
+            return await _doctorRepository.UpdateDoctorTimeSlotAsync(slot);
+        }
+
+
+        //----------------------------- Các hàm tự tạo ------------------------------
+
+        /// <summary>
+        /// loop qua các ngày
+        /// </summary>
+        /// <param name="doctor"></param>
+        /// <param name="numberOfDays"></param>
+        /// <returns></returns>
+        public async Task GenerateDoctorCalanderAsync(List<Doctor> doctorList, int numberOfDays)
+        {
+            var dailyScheduleList = await _dailyScheduleRepository.GetAllDailyScheduleAsync();
+            foreach (var doctor in doctorList)
+            {
+                foreach (var day in dailyScheduleList)
+                {
+                    await GenerateDoctorScheduleAsync(doctor, day);
+                }
+            }
+        }
+
 
         /// <summary>
         /// tạo TimeSlot cho bác sĩ
@@ -90,57 +198,11 @@ namespace VaccineScheduleTracking.API.Services
             }
         }
 
-        public async Task<Doctor?> GetSutableDoctorAsync(int slotNumber, DateOnly date)
-        {
-            var doctorList = await _doctorRepository.GetAllDoctorAsync();
-            Doctor? suitableDoctor = null;
-            int minSlotsOccupied = int.MaxValue;
 
-            foreach (var doctor in doctorList)
-            {
-                var doctorSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(doctor.DoctorID, date);
-                var availableSlot = doctorSlots.FirstOrDefault(ts => ts.SlotNumber == slotNumber && ts.Available);
-
-                if (availableSlot != null)
-                {
-                    int slotsOccupied = doctorSlots.Count(ts => !ts.Available);
-                    if (slotsOccupied < minSlotsOccupied)
-                    {
-                        minSlotsOccupied = slotsOccupied;
-                        suitableDoctor = doctor;
-                    }
-                }
-
-            }
-            return suitableDoctor;
-
-        }
-
-        public async Task UpdateDoctorScheduleAsync(DoctorTimeSlot doctorSlot)
-        {
-            var slot = await _doctorRepository.GetDoctorTimeSlotByIDAsync(doctorSlot.DoctorTimeSlotID);
-            if (slot == null)
-            {
-                throw new Exception($"không tìm thấy timeSlot có ID {doctorSlot.DoctorTimeSlotID}");
-            }
-
-            slot.DoctorID = NullValidator(doctorSlot.DoctorID)
-               ? doctorSlot.DoctorID
-               : slot.DoctorID;
-            slot.SlotNumber = NullValidator(doctorSlot.SlotNumber)
-                ? doctorSlot.SlotNumber
-                : slot.SlotNumber;
-            slot.Available = NullValidator(doctorSlot.Available)
-                ? doctorSlot.Available
-                : slot.Available;
-            slot.DailyScheduleID = NullValidator(doctorSlot.DailyScheduleID)
-                ? doctorSlot.DailyScheduleID
-                : slot.DailyScheduleID;
-
-
-            await _doctorRepository.UpdateDoctorTimeSlotAsync(slot);
-        }
-
+        /// <summary>
+        /// lhàm này sẽ kiểm tra xem các slot đã quá hạn chưa
+        /// </summary>
+        /// <returns></returns>
         public async Task SetOverdueDoctorScheduleAsync()
         {
             var doctorList = await _doctorRepository.GetAllDoctorAsync();
@@ -182,15 +244,6 @@ namespace VaccineScheduleTracking.API.Services
             }
         }
 
-        private TimeOnly CalculateStartTime(int slotNumber)
-        {
-            return new TimeOnly(7, 0).AddMinutes((slotNumber - 1) * 45);
-        }
-
-
-
-
-
-
+       
     }
 }
