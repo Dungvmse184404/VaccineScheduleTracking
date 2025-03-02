@@ -38,15 +38,28 @@ namespace VaccineScheduleTracking.API.Controllers
 
         }
 
-        [HttpGet("get-vaccine-by-id/{Id}")]
-        public async Task<IActionResult> GetVaccineByID([FromRoute] int Id)
+        [HttpGet("get-vaccine-List-by-vaccineTypeId/{id}")]
+        public async Task<IActionResult> GetAllVaccineType([FromRoute] int id)
         {
             try
             {
-                var vaccine = await vaccineService.GetVaccineByIDAsync(Id);
+                var vaccineList = await vaccineService.GetVaccineListByVaccineType(id);
+                return Ok(mapper.Map<List<VaccineDto>>(vaccineList));
+            }
+            catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
+
+
+        }
+
+        [HttpGet("get-vaccine-by-id/{id}")]
+        public async Task<IActionResult> GetVaccineByID([FromRoute] int id)
+        {
+            try
+            {
+                var vaccine = await vaccineService.GetVaccineByIDAsync(id);
                 if (vaccine == null)
                 {
-                    return BadRequest($"Không tìm thấy vaccine có ID {Id}");
+                    return BadRequest($"Không tìm thấy vaccine có ID {id}");
                 }
                 return Ok(mapper.Map<VaccineDto>(vaccine));
             }

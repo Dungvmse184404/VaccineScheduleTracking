@@ -30,6 +30,12 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
             return await vaccineRepository.GetVaccinesAsync(filterVaccineDto);
         }
 
+        public async Task<List<Vaccine>> GetVaccineListByVaccineType(int id)
+        {
+            ValidateInput(id, "vaccineTypeID không được để trống");
+            return await vaccineRepository.GetVaccineListByVaccineTypeAsync(id);
+        }
+
         public async Task<Vaccine?> CreateVaccineAsync(AddVaccineDto addVaccineDto)
         {
             var vaccine = await vaccineRepository.GetVaccineByNameAsync(addVaccineDto.Name);

@@ -1,4 +1,5 @@
 using System.Text;
+using VaccineScheduleTracking.API_Test.BackgroundTasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +21,7 @@ using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Services.Vaccines;
+using VaccineScheduleTracking.API_Test.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +62,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<VaccineScheduleDbContext>(option =>
 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddScoped<IDailyScheduleRepository, SQLDailyScheduleRepository>();
 builder.Services.AddScoped<IDailyScheduleService, DailyScheduleService>();
 builder.Services.AddScoped<ITimeSlotServices, TimeSlotServices>();
@@ -109,9 +112,13 @@ builder.Services.AddCors(options =>
                         .AllowAnyHeader());
 });
 
+//set đường dẫn cho file log.txt (giống SQL DB)
+ExceptionHelper.Configure(builder.Configuration);
+
 //đăng kí chạy background
 builder.Services.AddHostedService<ScheduledTaskService>();
 builder.Host.UseWindowsService();
+
 
 var app = builder.Build();
 

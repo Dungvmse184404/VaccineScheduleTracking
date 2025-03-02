@@ -24,7 +24,7 @@ namespace VaccineScheduleTracking.API.Controllers
             _mapper = mapper;
         }
 
-
+        
         [HttpPost("create-appointment")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDto createAppointment)
         {
@@ -54,6 +54,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 return HandleException(ex);
             }
         }
+
 
         [HttpPut("update-appointment/{appointmentId}")]
         public async Task<IActionResult> UpdateAppointment([FromRoute] int appointmentId, UpdateAppointmentDto updateAppointment)

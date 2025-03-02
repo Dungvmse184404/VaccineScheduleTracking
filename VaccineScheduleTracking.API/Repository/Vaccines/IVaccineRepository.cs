@@ -12,17 +12,18 @@ namespace VaccineScheduleTracking.API_Test.Repository.Vaccines
         Task<List<Vaccine>> GetVaccinesAsync(FilterVaccineDto filterVaccineDto);
         Task<Vaccine?> GetVaccineByIDAsync(int id);
         Task<Vaccine?> GetVaccineByNameAsync(string name);
+        Task<List<Vaccine>> GetVaccineListByVaccineTypeAsync(int id);
         Task<Vaccine> AddVaccineAsync(Vaccine vaccine);
         Task<Vaccine> UpdateVaccineAsync(Vaccine vaccine);
         Task<Vaccine> DeleteVaccineAsync(Vaccine vaccine);
         // VaccineType function
         Task<VaccineType?> GetVaccineTypeByNameAsync(string name);
-       
+
         Task<VaccineType> GetVaccineTypeByIDAsync(int id);
         Task<VaccineType> AddVaccineTypeAsync(VaccineType vaccineType);
         Task<VaccineType> UpdateVaccineTypeAsync(VaccineType vaccineType);
         Task<VaccineType> DeleteVaccineTypeAsync(VaccineType vaccineType);
         Task<List<VaccineType>> GetVaccinesTypeAsync();
-        
+
     }
 }
