@@ -41,6 +41,22 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
+        [HttpGet("get-appointment-by-appointmentId/{appointmentId}")]
+        public async Task<IActionResult> GetAppointmentByAppointmentID([FromRoute] int appointmentId)
+        {
+            try
+            {
+                var Appointment = await _appointmentRepository.GetAppointmentByIDAsync(appointmentId);
+                return Ok(_mapper.Map<AppointmentDto>(Appointment));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
+        }
+
+
+
         [HttpGet("get-appointment-list/{id}")]
         public async Task<IActionResult> GetAppointmentByID([FromRoute]int id, string role)
         {
@@ -84,6 +100,8 @@ namespace VaccineScheduleTracking.API.Controllers
                 return HandleException(ex);
             }
         }
+
+
 
     }
 }

@@ -5261,23 +5261,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\koi22\\.nuget\\packages\\": {},
+    "C:\\Users\\dungv\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\koi22\\OneDrive\\Desktop\\Fpt-swp\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API_Test.csproj",
+      "projectUniqueName": "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API_Test.csproj",
       "projectName": "VaccineScheduleTracking.API_Test",
-      "projectPath": "C:\\Users\\koi22\\OneDrive\\Desktop\\Fpt-swp\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API_Test.csproj",
-      "packagesPath": "C:\\Users\\koi22\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\koi22\\OneDrive\\Desktop\\Fpt-swp\\VaccineScheduleTracking\\VaccineScheduleTracking.API\\obj\\",
+      "projectPath": "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\VaccineScheduleTracking.API_Test.csproj",
+      "packagesPath": "C:\\Users\\dungv\\.nuget\\packages\\",
+      "outputPath": "E:\\Backup\\SWP391\\VaccineScheduleTracking_Test\\VaccineScheduleTracking.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\koi22\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\dungv\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -5358,7 +5358,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

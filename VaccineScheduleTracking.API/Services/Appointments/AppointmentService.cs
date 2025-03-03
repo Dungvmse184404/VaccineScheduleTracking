@@ -55,6 +55,12 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             _mapper = mapper;
         }
 
+        public async Task<Appointment?> GetAppointmentByIDAsync(int appointmentID)
+        {
+            ValidateInput(appointmentID, "chưa nhập ID");
+            return await _appointmentRepository.GetAppointmentByIDAsync(appointmentID);
+        }
+
         public async Task<Appointment?> CancelAppointmentAsync(int appointmentId)
         {
             ValidateInput(appointmentId, "Id buổi hẹn không thể để trống");
@@ -109,6 +115,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
 
         }
+
 
         /// <summary>
         /// hàm tạo lịch hẹn
@@ -372,5 +379,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             return await _appointmentRepository.UpdateAppointmentAsync(appointment);
         }
+
+       
     }
 }
