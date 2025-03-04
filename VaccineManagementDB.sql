@@ -35,7 +35,7 @@ GO
 CREATE TABLE [dbo].[Doctors](
 	[DoctorID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[AccountID] [int] NOT NULL,
-	[DoctorTimeSlots]  VARCHAR(50) NOT NULL,
+	[DoctorTimeSlots]  VARCHAR(max) NOT NULL,
 	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
 )
 GO
@@ -92,7 +92,20 @@ GO
 INSERT [dbo].[Parents] (AccountID) VALUES (1), (2), (3), (4), (5) ,(6), (7)
 
 /****** Insert:  Table [dbo].[Doctor] ******/
+/*****
 INSERT [dbo].[Doctors] (AccountID, DoctorTimeSlots) VALUES  (8, '2,3,4,5,6,12,13,14,15,16'), (9, '1,2,3,4,5,11,12,13,14,15'), (10, '6,7,8,9,10,16,17,18,19,20'), (11, '5,6,7,8,9,10,11,12,13,14,15')
+****/
+
+INSERT [dbo].[Doctors] (AccountID, DoctorTimeSlots) VALUES  
+(8, 'Monday:1,2,3,4,5,10,11,12,13,14,15|Tuesday:6,7,8,9,10,16,17,18,19,20|Wednesday:1,2,3,4,5,10,11,12,13,14,15|Thursday:6,7,8,9,10,16,17,18,19,20|Friday:1,2,3,4,5,10,11,12,13,14,15|Saturday:6,7,8,9,10,16,17,18,19,20'),
+
+(9, 'Monday:6,7,8,9,10,16,17,18,19,20|Tuesday:1,2,3,4,5,10,11,12,13,14,15|Wednesday:6,7,8,9,10,16,17,18,19,20|Thursday:1,2,3,4,5,10,11,12,13,14,15|Friday:6,7,8,9,10,16,17,18,19,20|Saturday:1,2,3,4,5,10,11,12,13,14,15'),
+
+(10, 'Monday:1,2,3,4,5,6,7,8,9,10|Tuesday:11,12,13,14,15,16,17,18,19,20|Wednesday:1,2,3,4,5,6,7,8,9,10|Thursday:11,12,13,14,15,16,17,18,19,20|Friday:1,2,3,4,5,6,7,8,9,10|Saturday:11,12,13,14,15,16,17,18,19,20'),
+
+(11, 'Monday:11,12,13,14,15,16,17,18,19,20|Tuesday:1,2,3,4,5,6,7,8,9,10|Wednesday:11,12,13,14,15,16,17,18,19,20|Thursday:1,2,3,4,5,6,7,8,9,10|Friday:11,12,13,14,15,16,17,18,19,20|Saturday:1,2,3,4,5,6,7,8,9,10');
+
+
 
 /****** Insert:  Table [dbo].[Staff] ******/
 INSERT [dbo].[Staffs] (AccountID) VALUES  (12), (13)
@@ -109,6 +122,7 @@ INSERT [dbo].[Children] ([FirstName], [LastName], [Weight], [Height], [Gender], 
 ('Thao', 'Nguyen', 13.7, 0.95, 'FEMALE', '2022-02-20', 2),
 ('Hao', 'Nguyen', 20.0, 1.15, 'MALE', '2022-08-10', 5);
 GO
+
 
 
 /****** Object:  Table [dbo].[VaccineTypes] ******/

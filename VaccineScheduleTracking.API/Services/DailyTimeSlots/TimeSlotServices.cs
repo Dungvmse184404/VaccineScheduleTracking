@@ -111,7 +111,6 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
         {
             ValidateInput(SlotNumber, "Chưa chọn slot");
             ValidateInput(date, "Chưa nhập ngày");
-
             if (!ExcludedDay(date))
             {
                 throw new Exception("Chủ nhật hong có làm việc");

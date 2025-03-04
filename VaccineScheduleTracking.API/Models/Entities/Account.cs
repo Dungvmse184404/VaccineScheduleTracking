@@ -16,6 +16,6 @@
         public Doctor? Doctor { get; set; }
         public Staff? Staff { get; set; }
 
-        
+
     }
 }

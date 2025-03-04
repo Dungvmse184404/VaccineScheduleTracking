@@ -3,11 +3,12 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using static VaccineScheduleTracking.API_Test.Helpers.ExceptionHelper;
-using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
+using VaccineScheduleTracking.API_Test.Services.Doctors;
 
 public class ScheduledTaskService : BackgroundService
 {
@@ -36,10 +37,11 @@ public class ScheduledTaskService : BackgroundService
                     int days = 7;
 
                     /// Tạo lịch (TimeSlot)
-                    await timeSlotServices.GenerateCalanderAsync(days);
+                    await timeSlotServices.GenerateCalanderAsync(SetCalanderDate());
                     /// Tạo lịch làm việc cho bác sĩ
                     var doctorList = await doctorServices.GetAllDoctorAsync();
-                    await doctorServices.GenerateDoctorCalanderAsync(doctorList, days);
+                    await doctorServices.GenerateDoctorCalanderAsync(doctorList, SetCalanderDate());
+
                     /// Set false cho những TimeSlot trước ngày hôm nay
                     await timeSlotServices.SetOverdueTimeSlotAsync();
                     await doctorServices.SetOverdueDoctorScheduleAsync();

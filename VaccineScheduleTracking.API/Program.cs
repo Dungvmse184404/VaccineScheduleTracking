@@ -11,9 +11,7 @@ using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Mappings;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Services;
-using VaccineScheduleTracking.API_Test.Repository;
 using VaccineScheduleTracking.API_Test.Repository.Accounts;
 using VaccineScheduleTracking.API_Test.Repository.Appointments;
 using VaccineScheduleTracking.API_Test.Repository.Children;
@@ -29,6 +27,8 @@ using VaccineScheduleTracking.API_Test.Services.Record;
 using VaccineScheduleTracking.API_Test.Services.VaccinePackage;
 using VaccineScheduleTracking.API_Test.Services.Vaccines;
 using VaccineScheduleTracking.API_Test.Helpers;
+using VaccineScheduleTracking.API_Test.Repository.Doctors;
+using VaccineScheduleTracking.API_Test.Services.Doctors;
 
 var builder = WebApplication.CreateBuilder(args);
 

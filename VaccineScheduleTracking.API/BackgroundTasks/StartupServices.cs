@@ -4,11 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository;
-using VaccineScheduleTracking.API.Services;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
+using VaccineScheduleTracking.API_Test.Services.Doctors;
 
 namespace VaccineScheduleTracking.API_Test.BackgroundTasks
 {

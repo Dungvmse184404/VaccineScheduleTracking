@@ -18,7 +18,7 @@
             return slotNumbers;
         }
 
-        public static bool ExcludedDay(DateOnly date) 
+        public static bool ExcludedDay(DateOnly date)
             => date.DayOfWeek != DayOfWeek.Sunday;
 
         /// <summary>
@@ -37,9 +37,9 @@
                 DateOnly dateOnly => dateOnly.CompareTo(DateOnly.FromDateTime(DateTime.Now)) switch
                 {
                     0 => 0,
-                    var result => result 
+                    var result => result
                 },
-                _ => throw new ArgumentException("Unsupported type")
+                _ => throw new ArgumentException("(BE)err: Định dạng ngày truyền vào không hỗ trợ")
             };
         }
 
@@ -49,8 +49,48 @@
         /// <param name="slotNumber"></param>
         /// <returns></returns>
         public static TimeOnly CalculateStartTime(int slotNumber)
+            => new TimeOnly(7, 0).AddMinutes((slotNumber - 1) * 45);
+
+
+        /// <summary>
+        /// tính ra những timeSlot đươc tạo đến ngày nào
+        /// </summary>
+        /// <param name="NumberOfDate"></param>
+        /// <returns></returns>
+        public static DateOnly CaculateDate(int NumberOfDate)
+            => DateOnly.FromDateTime(DateTime.Now).AddDays(NumberOfDate);
+
+
+        /// <summary>
+        /// Set số ngày tạo timeSlot
+        /// </summary>
+        /// <returns></returns>
+        public static int SetCalanderDate() => 7;
+
+
+        /// <summary>
+        /// chuyển từ dạng DateOnly qua DayOfWeek
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns>return type: enum </returns>
+        public static string ConvertToWeekday(DateOnly date)
+            => date.DayOfWeek.ToString();
+
+
+        /// <summary>
+        /// hàm này để catch lỗi đặt lịch vào ngày chưa được tạo 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <exception cref="Exception"></exception>
+        public static void LimitDate(DateOnly date, string exceptionMsg)
         {
-            return new TimeOnly(7, 0).AddMinutes((slotNumber - 1) * 45);
+            DateOnly limitDate = CaculateDate(SetCalanderDate());
+            if (date >= limitDate)
+            {
+                throw new Exception($"err: {exceptionMsg} {limitDate.AddDays(-1)}");
+            }
+
         }
+
     }
 }

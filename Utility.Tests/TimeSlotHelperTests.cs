@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using VaccineScheduleTracking.API_Test.Helpers;
+using Xunit;
+
+
+namespace Utility.Tests
+{
+    public class TimeSlotHelperTests
+    {
+        [Theory]
+        [InlineData("1,2,3,4,5", new int[] { 1, 2, 3, 4, 5 })]
+        [InlineData(null, new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 })]
+        public void AllocateTimeSlotsAsync_ValidInput_ReturnsList(string input, int[] expected)
+        {
+            var result = TimeSlotHelper.AllocateTimeSlotsAsync(input);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("2024-03-03", false)] // Chủ Nhật
+        [InlineData("2024-03-04", true)]  // Thứ Hai
+        public void ExcludedDay_CheckSundayExclusion(string date, bool expected)
+        {
+            var dateOnly = DateOnly.Parse(date);
+            var result = TimeSlotHelper.ExcludedDay(dateOnly);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData(1, "07:00")]
+        [InlineData(5, "10:00")]
+        [InlineData(10, "14:45")] //13:45 mới đúng
+        public void CalculateStartTime_ValidSlot_ReturnsStartTime(int slotNumber, string expectedTime)
+        {
+            // Act
+            var result = TimeSlotHelper.CalculateStartTime(slotNumber);
+
+            // Assert
+            Assert.Equal(TimeOnly.Parse(expectedTime), result);
+        }
+
+        [Fact]
+        public void ConvertToWeekday_ValidDate_ReturnsWeekday()
+        {
+            var date = new DateOnly(2024, 3, 4); // Thứ Hai
+            var result = TimeSlotHelper.ConvertToWeekday(date);
+
+            Assert.Equal("Monday", result);
+        }
+
+
+
+        //[Fact]
+        //public void LimitDate_DateExceedsLimit_ThrowsException()
+        //{
+        //    var futureDate = TimeSlotHelper.CaculateDate(TimeSlotHelper.SetCalanderDate() + 1);
+        //    string expectedMessage = $"(BE)err: Lịch không hợp lệ {futureDate}";
+
+        //    var exception = Assert.Throws<Exception>(() => TimeSlotHelper.LimitDate(futureDate, "Lịch không hợp lệ"));
+        //    Assert.Equal(expectedMessage, exception.Message);
+        //}
+    }
+
+
+}

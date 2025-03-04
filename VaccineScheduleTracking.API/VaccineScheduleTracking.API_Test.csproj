@@ -9,6 +9,7 @@
   <ItemGroup>
     <Compile Remove="Helpers\Attributes\**" />
     <Compile Remove="Repository\Child\**" />
+    <Compile Remove="Repository\VaccineContainer\**" />
     <Compile Remove="Repository\Vaccine\**" />
     <Compile Remove="Services\Account\**" />
     <Compile Remove="Services\Child\**" />
@@ -16,6 +17,7 @@
     <Compile Remove="Services\IServices\**" />
     <Content Remove="Helpers\Attributes\**" />
     <Content Remove="Repository\Child\**" />
+    <Content Remove="Repository\VaccineContainer\**" />
     <Content Remove="Repository\Vaccine\**" />
     <Content Remove="Services\Account\**" />
     <Content Remove="Services\Child\**" />
@@ -23,6 +25,7 @@
     <Content Remove="Services\IServices\**" />
     <EmbeddedResource Remove="Helpers\Attributes\**" />
     <EmbeddedResource Remove="Repository\Child\**" />
+    <EmbeddedResource Remove="Repository\VaccineContainer\**" />
     <EmbeddedResource Remove="Repository\Vaccine\**" />
     <EmbeddedResource Remove="Services\Account\**" />
     <EmbeddedResource Remove="Services\Child\**" />
@@ -30,6 +33,7 @@
     <EmbeddedResource Remove="Services\IServices\**" />
     <None Remove="Helpers\Attributes\**" />
     <None Remove="Repository\Child\**" />
+    <None Remove="Repository\VaccineContainer\**" />
     <None Remove="Repository\Vaccine\**" />
     <None Remove="Services\Account\**" />
     <None Remove="Services\Child\**" />
@@ -53,7 +57,6 @@
 
   <ItemGroup>
     <Folder Include="Images\" />
-    <Folder Include="Repository\VaccineContainer\" />
   </ItemGroup>
 
 </Project>

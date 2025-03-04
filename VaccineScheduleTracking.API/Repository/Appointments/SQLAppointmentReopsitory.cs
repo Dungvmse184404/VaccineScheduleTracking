@@ -64,6 +64,22 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
 
 
         /// <summary>
+        /// lấy danh sách appointment hàng chờ của doctor
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<List<Appointment>> GetPendingDoctorAppointmentAsync(int doctorId)
+        {
+            return await _dbContext.Appointments
+                .Where(a => a.DoctorID == doctorId && a.Status == "PENDING")
+                .Include(a => a.TimeSlots)
+                    .ThenInclude(s => s.DailySchedule)
+                .ToListAsync();
+        }
+
+
+        /// <summary>
         /// Nhét vô ChildID lấy ra danh sách appointment 
         /// </summary>
         /// <param name="id"> ID của Child </param>
@@ -155,5 +171,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
 
             return appointment;
         }
+
+        
     }
 }

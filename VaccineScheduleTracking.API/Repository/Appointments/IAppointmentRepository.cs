@@ -1,4 +1,5 @@
-﻿using VaccineScheduleTracking.API.Models.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
 
 namespace VaccineScheduleTracking.API_Test.Repository.Appointments
@@ -9,6 +10,8 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         Task<List<Appointment>> GetAppointmentListByChildIDAsync(int id);
         Task<Appointment?> GetAppointmentByIDAsync(int id);
         Task<List<Appointment>> GetAppointmentListByStatus(string status);
+        Task<List<Appointment>> GetPendingDoctorAppointmentAsync(int doctorId);
+        
         Task<Appointment?> CreateAppointmentAsync(Appointment Appointment);
         Task<List<Appointment>> SearchAppointmentByKeyword(string keyword);
         Task<Appointment?> UpdateAppointmentAsync(Appointment appointment);
