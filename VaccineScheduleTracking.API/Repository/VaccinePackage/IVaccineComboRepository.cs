@@ -5,5 +5,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.VaccinePackage
     public interface IVaccineComboRepository
     {
         Task<List<VaccineCombo>> GetVaccineCombosAsync();
+        Task<VaccineCombo> AddVaccineComboAsync(VaccineCombo vaccineCombo);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API_Test.Models.DTOs;
@@ -19,12 +20,20 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("get-all-vaccine-combo")]
         public async Task<IActionResult> GetVaccineCombos()
         {
             var vaccineCombos = await vaccineComboService.GetVaccineCombosAsync();
 
             return Ok(mapper.Map<List<VaccineComboDto>>(vaccineCombos));
+        }
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPost("create-vaccine-combo")]
+        public async Task<IActionResult> CreateVaccineCombo([FromBody] CreateVaccineComboDto createVaccineCombo)
+        {
+            var vaccineCombo = await vaccineComboService.CreateVaccineComboAsync(createVaccineCombo);
+            return Ok(mapper.Map<VaccineComboDto>(vaccineCombo));
         }
     }
 }

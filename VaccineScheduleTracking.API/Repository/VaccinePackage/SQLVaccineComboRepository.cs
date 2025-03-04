@@ -13,6 +13,13 @@ namespace VaccineScheduleTracking.API_Test.Repository.VaccinePackage
             this.dbContext = dbContext;
         }
 
+        public async Task<VaccineCombo> AddVaccineComboAsync(VaccineCombo vaccineCombo)
+        {
+            await dbContext.VaccineCombos.AddAsync(vaccineCombo);
+            await dbContext.SaveChangesAsync();
+            return vaccineCombo;
+        }
+
         public async Task<List<VaccineCombo>> GetVaccineCombosAsync()
         {
             return await dbContext.VaccineCombos.Include(x => x.VaccineContainers)
