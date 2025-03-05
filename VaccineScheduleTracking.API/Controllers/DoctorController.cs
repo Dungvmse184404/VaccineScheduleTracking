@@ -75,6 +75,8 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         {
             try
             {
+
+
                 var appointment = await _appointmentService.SetAppointmentStatusAsync(appointmentId, status);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
@@ -88,21 +90,26 @@ namespace VaccineScheduleTracking.API_Test.Controllers
 
 
 
-        [HttpPut("change-doctor-slot")]
+        [HttpPut("change-doctor-schedule")]
         public async Task<IActionResult> ChangeDoctorTimeSlot(int doctorId, string doctorSchedule)
         {
             try
             {
-                ValidateInput(_doctorService.GetDoctorByIDAsync(doctorId), $"không tìm thấy bác sĩ có ID {doctorId}");
+                ValidateInput(await _doctorService.GetDoctorByIDAsync(doctorId), $"không tìm thấy bác sĩ có ID {doctorId}");
                 ValidateDoctorSchedule(doctorSchedule);
 
                 var appointmentList = await _appointmentService.GetPendingDoctorAppointmentAsync(doctorId);
 
 
-                var childSlotList = await _doctorService.ReassignDoctorAppointmentsAsync(doctorId, appointmentList);
+                var appointments = await _doctorService.ReassignDoctorAppointmentsAsync(doctorId, appointmentList);
+                foreach (var a in appointments)// truyền vô nhầm appontment
+                {
+
+                    _appointmentService.UpdateAppointmentAsync(a.AppointmentID, _mapper.Map<UpdateAppointmentDto>(a));
+                }
                 var doctor = await _doctorService.ManageDoctorScheduleServiceAsync(doctorId, doctorSchedule);
 
-                return Ok(_mapper.Map<List<ChildTimeSlotDto>>(childSlotList));
+                return Ok(_mapper.Map<List<AppointmentDto>>(appointments));
             }
             catch (Exception ex)
             {
@@ -110,12 +117,14 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [HttpDelete("delete-doctor-schedule/{Id}")]
-        public async Task<IActionResult> DeleteDoctor([FromRoute] int Id)
+
+
+        [HttpDelete("delete-doctor-schedule/{doctorId}")]
+        public async Task<IActionResult> DeleteDoctor([FromRoute] int doctorId)
         {
             try
             {
-                 await _doctorService.DeleteDoctorTimeSlotAsync(Id);
+                await _doctorService.DeleteDoctorTimeSlotAsync(doctorId);
                 return Ok();
             }
             catch (Exception ex)

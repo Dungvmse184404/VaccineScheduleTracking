@@ -1,4 +1,5 @@
-﻿using VaccineScheduleTracking.API_Test.Models.Entities;
+﻿using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API.Models.Entities
 {

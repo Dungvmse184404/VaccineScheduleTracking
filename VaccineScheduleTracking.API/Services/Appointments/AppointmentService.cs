@@ -70,7 +70,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
 
         /// <summary>
-        /// Chuyển trạng thái Appointment 
+        /// Chuyển trạng thái Appointment - đã xong
         /// </summary>
         /// <param name="appointmentId"></param>
         /// <param name="status"></param>
@@ -95,7 +95,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
         
         /// <summary>
-        /// hủy Appointment
+        /// hủy Appointment - đã xong
         /// </summary>
         /// <param name="appointmentId"></param>
         /// <returns></returns>
@@ -149,8 +149,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
 
 
+
         /// <summary>
-        /// hàm tạo lịch hẹn
+        /// hàm tạo lịch hẹn - đang sửa 
         /// </summary>
         /// <param name="createAppointment"></param>
         /// <returns></returns>
@@ -166,6 +167,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             {
                 throw new Exception("Format của date không đúng.");
             }
+
+
 
             ///catch lỗi đặt lịch vào ngày chưa được tạo TimeSlot
             LimitDate(createAppointment.Date, $"hiện tại chỉ có thể đặt lịch trước ngày ");
@@ -385,7 +388,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
 
 
-
+        /// <summary>
+        /// tự động chuyển các apointment thành OVERDUE khi bị quá hạn
+        /// </summary>
+        /// <returns></returns>
         public async Task SetOverdueAppointmentAsync()// đã xong - chưa tối ưu
         {
             var dailySchedules = await _dailyScheduleRepository.GetAllDailyScheduleAsync();

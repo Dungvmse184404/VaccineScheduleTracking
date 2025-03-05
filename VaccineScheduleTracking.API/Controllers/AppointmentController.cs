@@ -24,7 +24,7 @@ namespace VaccineScheduleTracking.API.Controllers
             _mapper = mapper;
         }
 
-        
+
         [HttpPost("create-appointment")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDto createAppointment)
         {
@@ -46,8 +46,12 @@ namespace VaccineScheduleTracking.API.Controllers
         {
             try
             {
-                var Appointment = await _appointmentRepository.GetAppointmentByIDAsync(appointmentId);
-                return Ok(_mapper.Map<AppointmentDto>(Appointment));
+                var appointment = await _appointmentRepository.GetAppointmentByIDAsync(appointmentId);
+                if (appointment == null)
+                {
+                    throw new Exception($"không tìm thấy Appointment có ID {appointmentId}");
+                }
+                return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
             catch (Exception ex)
             {
@@ -58,12 +62,12 @@ namespace VaccineScheduleTracking.API.Controllers
 
 
         [HttpGet("get-appointment-list/{id}")]
-        public async Task<IActionResult> GetAppointmentByID([FromRoute]int id, string role)
+        public async Task<IActionResult> GetAppointmentByID([FromRoute] int id, string role)
         {
             try
             {
                 var Appointment = await _appointmentRepository.GetAppointmentListByIDAsync(id, role);
-                return Ok(_mapper.Map<List<AppointmentDto>>(Appointment));
+                return Ok(Appointment);
             }
             catch (Exception ex)
             {
@@ -88,7 +92,7 @@ namespace VaccineScheduleTracking.API.Controllers
 
 
         [HttpDelete("cancel-appointment/{id}")]
-        public async Task<IActionResult> CancelAppointment([FromRoute]int id)
+        public async Task<IActionResult> CancelAppointment([FromRoute] int id)
         {
             try
             {

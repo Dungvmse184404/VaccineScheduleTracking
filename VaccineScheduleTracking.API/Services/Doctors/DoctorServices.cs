@@ -9,6 +9,7 @@ using VaccineScheduleTracking.API_Test.Repository.Doctors;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using VaccineScheduleTracking.API_Test.Repository.Appointments;
 
 namespace VaccineScheduleTracking.API_Test.Services.Doctors
 {
@@ -23,7 +24,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
 
         public DoctorServices(IChildService childService, IDailyScheduleRepository dailyScheduleRepository, IDoctorRepository doctorRepository, IMapper mapper)
         {
-            //_appointmentsService = appointmentsService;
             _childService = childService;
 
             _dailyScheduleRepository = dailyScheduleRepository;
@@ -345,10 +345,15 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         }
 
 
-
-        public async Task<List<ChildTimeSlot>> ReassignDoctorAppointmentsAsync(int doctorId, List<Appointment> appointments)
+        /// <summary>
+        /// hàm này set các giá trị liên quan
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <param name="appointments"></param>
+        /// <returns></returns>
+        public async Task<List<Appointment>> ReassignDoctorAppointmentsAsync(int doctorId, List<Appointment> appointments)
         {
-            var affectedChildSlots = new List<ChildTimeSlot>();
+            var affectedAppointment = new List<Appointment>();
             foreach (var a in appointments)
             {
                 int slotNumber = a.TimeSlots.SlotNumber;
@@ -362,20 +367,27 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
                     {
                         childSlot.Available = false;
                         await _childService.UpdateChildTimeSlotAsync(childSlot);
-                        affectedChildSlots.Add(childSlot);
                     }
                 }
                 else
                 {
+                    a.DoctorID = doctorSlot.DoctorID;
                     doctorSlot.Available = false;
                     await UpdateDoctorTimeSlotAsync(doctorSlot);
                 }
+                affectedAppointment.Add(a);
             }
-            return affectedChildSlots;
+            return affectedAppointment;
         }
 
 
 
+        /// <summary>
+        /// hàm này tái tạo lại DoctorSchedule
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <param name="doctorSchedule"></param>
+        /// <returns></returns>
         public async Task<Doctor?> ManageDoctorScheduleServiceAsync(int doctorId, string doctorSchedule)
         {
             ValidateInput(doctorId, "doctorId không thể để trống");

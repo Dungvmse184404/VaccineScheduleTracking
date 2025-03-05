@@ -28,18 +28,35 @@ namespace Utility.Tests
             Assert.Equal(expected, result);
         }
 
+
+        [Theory]
+        [InlineData("07:00", 1)]
+        [InlineData("07:45", 2)]
+        [InlineData("08:30", 3)]
+        [InlineData("09:15", 4)]
+        [InlineData("10:00", 5)]
+        public void CalculateSlotNumber_ReturnCorrectSlotNumber(string time, int expectedSlotNumber)
+        {
+            var startTime = TimeOnly.Parse(time);
+            var slotNumber = TimeSlotHelper.CalculateSlotNumber(startTime);
+
+            Assert.Equal(expectedSlotNumber, slotNumber);
+        }
+
         [Theory]
         [InlineData(1, "07:00")]
-        [InlineData(5, "10:00")]
-        [InlineData(10, "14:45")] //13:45 mới đúng
-        public void CalculateStartTime_ValidSlot_ReturnsStartTime(int slotNumber, string expectedTime)
+        [InlineData(2, "07:45")]
+        [InlineData(3, "08:30")]
+        [InlineData(4, "09:15")]
+        public void CalculateStartTime_ShouldReturnCorrectStartTime(int slotNumber, string expectedTime)
         {
-            // Act
-            var result = TimeSlotHelper.CalculateStartTime(slotNumber);
+            var startTime = TimeSlotHelper.CalculateStartTime(slotNumber);
 
-            // Assert
-            Assert.Equal(TimeOnly.Parse(expectedTime), result);
+            Assert.Equal(TimeOnly.Parse(expectedTime), startTime);
         }
+
+
+
 
         [Fact]
         public void ConvertToWeekday_ValidDate_ReturnsWeekday()

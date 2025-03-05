@@ -104,9 +104,14 @@ INSERT [dbo].[Doctors] (AccountID, DoctorTimeSlots) VALUES
 (10, 'Monday:1,2,3,4,5,6,7,8,9,10|Tuesday:11,12,13,14,15,16,17,18,19,20|Wednesday:1,2,3,4,5,6,7,8,9,10|Thursday:11,12,13,14,15,16,17,18,19,20|Friday:1,2,3,4,5,6,7,8,9,10|Saturday:11,12,13,14,15,16,17,18,19,20'),
 
 (11, 'Monday:11,12,13,14,15,16,17,18,19,20|Tuesday:1,2,3,4,5,6,7,8,9,10|Wednesday:11,12,13,14,15,16,17,18,19,20|Thursday:1,2,3,4,5,6,7,8,9,10|Friday:11,12,13,14,15,16,17,18,19,20|Saturday:1,2,3,4,5,6,7,8,9,10');
+/*
+DBCC CHECKIDENT ('DailySchedule', RESEED, 0);
+DBCC CHECKIDENT ('TimeSlots', RESEED, 0);
 
-
-
+DBCC CHECKIDENT ('Appointments', RESEED, 0);
+DBCC CHECKIDENT ('DoctorTimeSlots', RESEED, 0);
+DBCC CHECKIDENT ('ChildTimeSlots', RESEED, 0);
+*/
 /****** Insert:  Table [dbo].[Staff] ******/
 INSERT [dbo].[Staffs] (AccountID) VALUES  (12), (13)
 
@@ -120,7 +125,7 @@ INSERT [dbo].[Children] ([FirstName], [LastName], [Weight], [Height], [Gender], 
 ('Lan', 'Le', 17.0, 1.1, 'FEMALE', '2022-04-30', 4),
 ('Duy', 'Nguyen', 20.0, 1.15, 'MALE', '2022-08-10', 1),
 ('Thao', 'Nguyen', 13.7, 0.95, 'FEMALE', '2022-02-20', 2),
-('Hao', 'Nguyen', 20.0, 1.15, 'MALE', '2022-08-10', 5);
+('Hao', 'Nguyen',	20.0, 1.15, 'MALE', '2022-08-10', 5);
 GO
 
 

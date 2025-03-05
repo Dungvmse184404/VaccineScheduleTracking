@@ -2,7 +2,9 @@
 using Org.BouncyCastle.Asn1.Ocsp;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
+using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using VaccineScheduleTracking.API_Test.Models.Entities;
+using VaccineScheduleTracking.API_Test.Helpers;
 
 namespace VaccineScheduleTracking.API_Test.Repository.Doctors
 {
@@ -17,7 +19,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
 
         public async Task<List<Doctor>> GetAllDoctorAsync()
         {
-            return await _dbContext.Doctors.Include(a => a.Account).ToListAsync();
+            return await _dbContext.Doctors
+                .Include(a => a.Account)
+                .ToListAsync();
         }
 
 
@@ -91,11 +95,14 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
 
         public async Task DeleteDoctorTimeSlotByDoctorIDAsync(int doctorId)
         {
+            var currentSlotNumber = CalculateSlotNumber(TimeOnly.FromDateTime(DateTime.Now));
+
             var timeSlots = await _dbContext.DoctorTimeSlots
-                                  .Where(ts => ts.DoctorID == doctorId
-                                            && ts.DailySchedule.AppointmentDate > DateOnly.FromDateTime(DateTime.Today)
-                                            /*&& ts.Available == true*/)
-                                  .ToListAsync();
+                .Where(ts => ts.DoctorID == doctorId &&
+                             (ts.DailySchedule.AppointmentDate > DateOnly.FromDateTime(DateTime.Today) ||
+                              (ts.DailySchedule.AppointmentDate == DateOnly.FromDateTime(DateTime.Today) &&
+                               ts.SlotNumber >= currentSlotNumber)))
+                .ToListAsync();
 
             if (timeSlots.Any())
             {

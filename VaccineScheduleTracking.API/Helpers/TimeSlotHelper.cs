@@ -43,8 +43,19 @@
             };
         }
 
+
         /// <summary>
-        /// hàm này dùng cho các timeslot không có startTime
+        /// hàm này đưa vào startTime tính ra timeSlot
+        /// </summary>
+        /// <param name="startTime"></param>
+        /// <returns></returns>
+        public static int CalculateSlotNumber(TimeOnly startTime)
+            => ((startTime.Hour - 7) * 60 + startTime.Minute) / 45 + 1;
+
+
+
+        /// <summary>
+        /// hàm này đưa vào slotNumber để tính ra startTime 
         /// </summary>
         /// <param name="slotNumber"></param>
         /// <returns></returns>
