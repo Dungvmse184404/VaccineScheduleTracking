@@ -7,5 +7,8 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
     {
         Task<List<VaccineCombo>> GetVaccineCombosAsync();
         Task<VaccineCombo> CreateVaccineComboAsync(CreateVaccineComboDto createVaccineCombo);
+        Task<VaccineCombo?> GetVaccineComboByIdAsync(int id);
+        Task<VaccineContainer> AddVaccineContainerAsync(CreateVaccineContainerDto createVaccineContainer);
+        Task<bool> DeleteVaccineContainerAsync(DeleteVaccineContainerDto deleteVaccineContainer);
     }
 }

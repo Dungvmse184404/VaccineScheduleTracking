@@ -35,5 +35,54 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             var vaccineCombo = await vaccineComboService.CreateVaccineComboAsync(createVaccineCombo);
             return Ok(mapper.Map<VaccineComboDto>(vaccineCombo));
         }
+
+        [HttpGet("get-vaccine-combo/{comboID}")]
+        public async Task<IActionResult> GetVaccineComboByID([FromRoute] int comboID)
+        {
+            var vaccineCombo = await vaccineComboService.GetVaccineComboByIdAsync(comboID);
+            if (vaccineCombo == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Không tìm thấy Vaccine combo hợp lệ"
+                });
+            }
+            return Ok(mapper.Map<VaccineComboDto>(vaccineCombo));
+        }
+
+        [HttpPost("add-vaccine-container")]
+        public async Task<IActionResult> AddVaccineContainer(CreateVaccineContainerDto createVaccineContainer)
+        {
+            try
+            {
+                var vaccineContainer = await vaccineComboService.AddVaccineContainerAsync(createVaccineContainer);
+                var vaccineCombo = await vaccineComboService.GetVaccineComboByIdAsync(createVaccineContainer.VaccineComboID);
+                return Ok(mapper.Map<VaccineComboDto>(vaccineCombo));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
+
+        [HttpPost("delete-vaccine-container")]
+        public async Task<IActionResult> DeleteVaccineContainer([FromBody] DeleteVaccineContainerDto deleteVaccineContainer)
+        {
+            try
+            {
+                await vaccineComboService.DeleteVaccineContainerAsync(deleteVaccineContainer);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
     }
 }
