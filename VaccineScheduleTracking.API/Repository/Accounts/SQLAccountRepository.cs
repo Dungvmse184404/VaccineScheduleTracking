@@ -31,7 +31,10 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
 
         public async Task<Account?> GetAccountByID(int id)
         {
-            return await dbContext.Accounts.FirstOrDefaultAsync(user => user.AccountID == id);
+            return await dbContext.Accounts.Include(x => x.Parent)
+                                           .Include(x => x.Doctor)
+                                           .Include(x => x.Staff)
+                                           .FirstOrDefaultAsync(user => user.AccountID == id);
         }
 
         public async Task<Account?> GetAccountByEmailAsync(string email)

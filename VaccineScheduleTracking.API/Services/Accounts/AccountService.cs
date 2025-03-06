@@ -111,7 +111,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             return await accountRepository.GetAllAccountsAsync(filterAccount);
         }
 
-
         public async Task<Account?> DisableAccountAsync(int id)
         {
             var account = await accountRepository.GetAccountByID(id);
@@ -121,6 +120,11 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             }
             //account = mapper.Map<Account>(account);
             return await accountRepository.DisableAccountAsync(account);
+        }
+
+        public async Task<Account?> GetAccountByIdAsync(int accountId)
+        {
+            return await accountRepository.GetAccountByID(accountId);
         }
 
 

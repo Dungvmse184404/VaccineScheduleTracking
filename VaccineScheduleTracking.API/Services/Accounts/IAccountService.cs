@@ -14,6 +14,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
         Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccountDto);
         Task<Account?> DisableAccountAsync(int id);
         Task<bool> VerifyAccountEmail(int accountId, string username, string email, string phoneNumber);
+        Task<Account?> GetAccountByIdAsync(int accountId);
         //Task<Account?> DeleteAccountAsync(int id);
     }
 }
