@@ -20,6 +20,18 @@ namespace VaccineScheduleTracking.API_Test.Repository.VaccinePackage
             return vaccineCombo;
         }
 
+        public async Task<VaccineCombo?> DeleteVaccineComboAsync(int id)
+        {
+            var vaccineCombo = await dbContext.VaccineCombos.FirstOrDefaultAsync(x => x.VaccineComboID == id);
+            if (vaccineCombo == null)
+            {
+                return null;
+            }
+            dbContext.VaccineCombos.Remove(vaccineCombo);
+            await dbContext.SaveChangesAsync();
+            return vaccineCombo;
+        }
+
         public async Task<VaccineCombo?> GetVaccineComboByIdAsync(int id)
         {
             return await dbContext.VaccineCombos.Include(x => x.VaccineContainers)

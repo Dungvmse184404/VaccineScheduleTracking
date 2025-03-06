@@ -53,6 +53,17 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
             return vaccineCombo;
         }
 
+        public async Task<bool> DeleteVaccineComboAsync(int id)
+        {
+            var vaccineCombo = await vaccineComboRepository.GetVaccineComboByIdAsync(id);
+            if (vaccineCombo == null)
+            {
+                throw new Exception("Không tìm thấy vaccine combo hợp lệ");
+            }
+            await vaccineComboRepository.DeleteVaccineComboAsync(id);
+            return true;
+        }
+
         public async Task<bool> DeleteVaccineContainerAsync(DeleteVaccineContainerDto deleteVaccineContainer)
         {
             var vaccineCombo = await GetVaccineComboByIdAsync(deleteVaccineContainer.VaccineComboID);
@@ -79,7 +90,5 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
         {
             return await vaccineComboRepository.GetVaccineCombosAsync();
         }
-
-
     }
 }

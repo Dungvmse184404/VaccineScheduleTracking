@@ -68,13 +68,38 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [HttpPost("delete-vaccine-container")]
+        [Authorize(Roles = "Doctor")]
+        [HttpDelete("delete-vaccine-container")]
         public async Task<IActionResult> DeleteVaccineContainer([FromBody] DeleteVaccineContainerDto deleteVaccineContainer)
         {
             try
             {
                 await vaccineComboService.DeleteVaccineContainerAsync(deleteVaccineContainer);
-                return Ok();
+                return Ok(new
+                {
+                    Message = "Đã xóa vaccine container thành công"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
+
+        [Authorize(Roles = "Doctor")]
+        [HttpDelete("delete-vaccine-combo/{vaccineComboID}")]
+        public async Task<IActionResult> DeleteVaccineCombo([FromRoute] int vaccineComboID)
+        {
+            try
+            {
+                await vaccineComboService.DeleteVaccineComboAsync(vaccineComboID);
+                return Ok(new
+                {
+                    Message = "Đã xóa vaccine combo thành công"
+                });
             }
             catch (Exception ex)
             {
