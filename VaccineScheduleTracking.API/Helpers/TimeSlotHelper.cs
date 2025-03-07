@@ -2,6 +2,10 @@
 {
     public static class TimeSlotHelper
     {
+        static int slotDuration = 45; //độ dài mỗi slot (Mins)
+        static int scheduleLength = 7; //độ dài lịch để tạo appointment (Days)
+        static int PeriodForVaccine = 7; //mỗi Period bao nhiêu ngày (Days)
+
         public static List<int> AllocateTimeSlotsAsync(string? timeSlot)
         {
             List<int> slotNumbers;
@@ -20,6 +24,7 @@
 
         public static bool ExcludedDay(DateOnly date)
             => date.DayOfWeek != DayOfWeek.Sunday;
+
 
         /// <summary>
         /// hàm này so sánh 3 kiểu dữ liệu DateOnly, TimeOnly, DateTime với thời gian hiện tại (BETA)
@@ -50,7 +55,7 @@
         /// <param name="startTime"></param>
         /// <returns></returns>
         public static int CalculateSlotNumber(TimeOnly startTime)
-            => ((startTime.Hour - 7) * 60 + startTime.Minute) / 45 + 1;
+            => ((startTime.Hour - 7) * 60 + startTime.Minute) / slotDuration + 1;
 
 
 
@@ -60,7 +65,7 @@
         /// <param name="slotNumber"></param>
         /// <returns></returns>
         public static TimeOnly CalculateStartTime(int slotNumber)
-            => new TimeOnly(7, 0).AddMinutes((slotNumber - 1) * 45);
+            => new TimeOnly(7, 0).AddMinutes((slotNumber - 1) * slotDuration);
 
 
         /// <summary>
@@ -76,7 +81,7 @@
         /// Set số ngày tạo timeSlot
         /// </summary>
         /// <returns></returns>
-        public static int SetCalanderDate() => 7;
+        public static int SetCalanderDate() => scheduleLength;
 
 
         /// <summary>
@@ -102,6 +107,10 @@
             }
 
         }
+
+
+        public static DateOnly GetPeriodDate(int weeks, DateOnly date)
+            => date.AddDays(weeks * PeriodForVaccine);
 
     }
 }

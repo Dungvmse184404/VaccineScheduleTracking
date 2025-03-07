@@ -14,6 +14,11 @@ namespace VaccineScheduleTracking.API.Mappings
     {
         public AutoMapperProfiles()
         {
+            //CreateMap<CreateVaccineRecordDto, Appointment>().ReverseMap()
+            //    .ForMember(dest => dest.VaccineTypeID, opt => opt.MapFrom(src => src.Vaccine.VaccineTypeID))
+            //    //.ForMember(dest => dest.VaccineID, opt => opt.MapFrom(src => src.VaccineID))
+            //    //.ForMember(dest => dest.AppointmentID, opt => opt.MapFrom(src => src.AppointmentID))
+            //    .ForMember(dest => dest.VaccineTypeID, opt => opt.MapFrom(src => src.TimeSlots.DailySchedule.AppointmentDate));
 
             CreateMap<Appointment, AppointmentDto>()
                 .ForMember(dest => dest.AppointmentID, opt => opt.MapFrom(src => src.AppointmentID))
@@ -42,6 +47,7 @@ namespace VaccineScheduleTracking.API.Mappings
                 .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.DoctorID))
                 .ForMember(dest => dest.DoctorTimeSlot, opt => opt.MapFrom(src => src.DoctorTimeSlots))
                 .ReverseMap();
+                
             CreateMap<ChildTimeSlot, ChildTimeSlotDto>();
 
             CreateMap<Account, AccountDto>().ReverseMap();

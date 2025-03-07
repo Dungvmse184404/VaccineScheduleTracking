@@ -4,7 +4,8 @@ using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 using System.Reflection.PortableExecutable;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
-
+using VaccineScheduleTracking.API_Test.Services.Children;
+using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 
 namespace VaccineScheduleTracking.API_Test.Services.Vaccines
 {
@@ -136,6 +137,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
 
             return await vaccineRepository.UpdateVaccineAsync(vaccine);
         }
+
 
 
         public async Task<Vaccine?> DeleteVaccineAsync(int id)

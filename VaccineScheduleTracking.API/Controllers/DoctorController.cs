@@ -17,6 +17,9 @@ using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 using System.Security.Claims;
 using VaccineScheduleTracking.API_Test.Repository.Doctors;
+using VaccineScheduleTracking.API_Test.Services.Record;
+using VaccineScheduleTracking.API_Test.Models.DTOs;
+using System.Net.NetworkInformation;
 
 namespace VaccineScheduleTracking.API_Test.Controllers
 {
@@ -31,7 +34,12 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         private readonly IAppointmentService _appointmentService;
         private readonly IMapper _mapper;
 
-        public DoctorController(IDoctorServices doctorService, IDoctorRepository doctorRepository, IAccountService accountService, IAppointmentService appointmentService, IMapper mapper)
+        public DoctorController(IDoctorServices doctorService,
+                                IDoctorRepository doctorRepository,
+                                IAccountService accountService,
+
+                                IAppointmentService appointmentService,
+                                IMapper mapper)
         {
             _doctorService = doctorService;
             _doctorRepository = doctorRepository;
@@ -77,13 +85,14 @@ namespace VaccineScheduleTracking.API_Test.Controllers
 
         [Authorize(Roles = "Doctor")]
         [HttpPut("set-appointment-status")]
-        public async Task<IActionResult> SetAppointmentStatus(int appointmentId, string status)
+        public async Task<IActionResult> SetAppointmentStatus(int appointmentId, string status, string? note)
         {
             try
             {
                 ValidateInput(appointmentId, "ID buổi hẹn không thể để trống");
-                ValidateInput(status, "chưa nhập trạng thái cho cuộc hẹn");
-                var appointment = await _appointmentService.SetAppointmentStatusAsync(appointmentId, status);
+                status = ValidateStatus(status);
+                var appointment = await _appointmentService.SetAppointmentStatusAsync(appointmentId, status, note);
+
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
             catch (Exception ex)
@@ -109,8 +118,8 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 //--------------------------------------------------------
 
                 //ValidateInput(await _doctorService.GetDoctorByIDAsync(doctorId), $"tài khoản {accountId} không có thẩm quyền của doctor");
-                
-                
+
+
                 var appointmentList = await _appointmentService.GetPendingDoctorAppointmentAsync(doctorId);
 
                 var appointments = await _doctorService.ReassignDoctorAppointmentsAsync(doctorId, appointmentList);

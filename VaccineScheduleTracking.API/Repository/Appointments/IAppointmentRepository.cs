@@ -16,6 +16,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         Task<List<Appointment>> SearchAppointmentByKeyword(string keyword);
         Task<Appointment?> UpdateAppointmentAsync(Appointment appointment);
         Task<List<Appointment>> GetAllAppointmentsAsync();
+        Task<List<Appointment>> GetAppointmentByDateAsync(int childId, DateOnly date);
     }
 
 }

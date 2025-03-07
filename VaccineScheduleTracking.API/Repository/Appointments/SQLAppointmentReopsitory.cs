@@ -27,6 +27,19 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
                 .ToListAsync();
         }
 
+        public async Task<List<Appointment>> GetAppointmentByDateAsync(int childId, DateOnly date)
+        {
+            return await _dbContext.Appointments
+                .Where(a => a.ChildID == childId && a.TimeSlots.DailySchedule.AppointmentDate == date)
+                .Include(a => a.Child)
+                .Include(a => a.Account)
+                    .ThenInclude(d => d.Doctor)
+                .Include(a => a.Vaccine)
+                .Include(a => a.TimeSlots)
+                    .ThenInclude(s => s.DailySchedule)
+                .ToListAsync();
+        }
+
         /// <summary>
         /// tổng hợp các hàm Get (Chắc cũng ko dùng nhiều)
         /// </summary>

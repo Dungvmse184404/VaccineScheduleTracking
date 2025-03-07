@@ -59,7 +59,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
 
             foreach (int slotNumber in slots)
             {
-                TimeOnly startTime = new TimeOnly(7, 0).AddMinutes((slotNumber - 1) * 45);
+                TimeOnly startTime = CalculateStartTime(slotNumber);
                 var slot = new TimeSlot
                 {
                     StartTime = startTime,
