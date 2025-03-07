@@ -15,6 +15,7 @@ public class ScheduledTaskService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ScheduledTaskService> _logger;
+    private readonly TimeSlotServices _timeSlotHelper;
 
     public ScheduledTaskService(IServiceProvider serviceProvider, ILogger<ScheduledTaskService> logger)
     {
