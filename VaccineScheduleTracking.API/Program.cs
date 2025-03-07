@@ -1,7 +1,4 @@
 using System.Text;
-using VaccineScheduleTracking.API_Test.BackgroundTasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +26,7 @@ using VaccineScheduleTracking.API_Test.Services.Vaccines;
 using VaccineScheduleTracking.API_Test.Helpers;
 using VaccineScheduleTracking.API_Test.Repository.Doctors;
 using VaccineScheduleTracking.API_Test.Services.Doctors;
+using VaccineScheduleTracking.API_Test.Repository.VaccineContainers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +90,7 @@ builder.Services.AddScoped<IVaccineRecordRepository, SQLVaccineRecordRepository>
 builder.Services.AddScoped<IVaccineRecordService, VaccineRecordService>();
 builder.Services.AddScoped<IVaccineComboRepository, SQLVaccineComboRepository>();
 builder.Services.AddScoped<IVaccineComboService, VaccineComboService>();
+builder.Services.AddScoped<IVaccineContainerRepository, SQLVaccineContainerRepository>();   
 
 builder.Services.AddAuthentication(options =>
 {

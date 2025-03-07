@@ -274,9 +274,7 @@ GO
 CREATE TABLE [dbo].[VaccineContainers](
 	[VaccineContainerID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[VaccineComboID] [int] NOT NULL,
-	[VaccineTypeID] [int] NOT NULL,
 	[VaccineID] [int] NOT NULL,
-	FOREIGN KEY ([VaccineTypeID]) REFERENCES [dbo].[VaccineTypes]([VaccineTypeID]),
 	FOREIGN KEY ([VaccineID]) REFERENCES [dbo].[Vaccines]([VaccineID]),
 	FOREIGN KEY ([VaccineComboID]) REFERENCES [dbo].[VaccineCombos]([VaccineComboID])
 )
@@ -301,12 +299,12 @@ INSERT INTO [dbo].[VaccineCombos] ([Name], [Description]) VALUES
 (N'Tiền học đường',N'Gồm các vaccine cho bé trong độ tuổi chuẩn bị đến trường.');
 GO
 
-INSERT INTO [dbo].[VaccineContainers] ([VaccineComboID], [VaccineTypeID], [VaccineID]) VALUES
-(1, 2, 3),
-(1, 3, 4),
-(1, 5, 5),
-(2, 1, 1),
-(2, 2, 3),
-(2, 4, 9),
-(2, 3, 7);
+INSERT INTO [dbo].[VaccineContainers] ([VaccineComboID], [VaccineID]) VALUES
+(1, 3),
+(1, 4),
+(1, 5),
+(2, 1),
+(2, 3),
+(2, 9),
+(2, 7);
 GO
