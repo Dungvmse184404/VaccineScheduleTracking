@@ -5,6 +5,7 @@ using VaccineScheduleTracking.API.Models.Entities;
 using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Helpers;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace VaccineScheduleTracking.API_Test.Repository.Doctors
 {
@@ -17,34 +18,52 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
             _dbContext = dbContext;
         }
 
-        public async Task<List<Doctor>> GetAllDoctorAsync()
+        // ----------------- hàm tạm để sửa lỗi ----------------- 
+
+        public async Task<Account> GetAccountByAccountIDAsync(int accountId)
+        {
+            return await _dbContext.Accounts
+                .Include(a => a.Doctor)
+                .FirstOrDefaultAsync(a => a.AccountID == accountId);
+        }
+        public async Task<Doctor?> GetDoctorByAccountIDAsync(int accountId) 
         {
             return await _dbContext.Doctors
                 .Include(a => a.Account)
+                .FirstOrDefaultAsync(a => a.AccountID == accountId);
+        }
+        //-----------------  -----------------  ------------------
+
+        public async Task<List<Account>> GetAllDoctorAsync()
+        {
+            return await _dbContext.Accounts
+                .Include(a => a.Doctor)
+                .Where(a => a.Doctor != null)
                 .ToListAsync();
         }
 
 
-        public async Task<Doctor?> GetDoctorByIDAsync(int doctorID)
+        public async Task<Account?> GetDoctorByIDAsync(int doctorID)
         {
-            return await _dbContext.Doctors
-                .Include(d => d.Account)
-                .FirstOrDefaultAsync(d => d.DoctorID == doctorID);
+            return await _dbContext.Accounts
+                .Include(d => d.Doctor)
+                .Where(d => d.Doctor.DoctorID  == doctorID)
+                .FirstOrDefaultAsync();
         }
 
 
-        public async Task<Doctor?> UpdateDoctorAsync(Doctor doctor)
+        public async Task<Account?> UpdateDoctorAsync(Doctor doctor)
         {
             var doc = await GetDoctorByIDAsync(doctor.DoctorID);
-            doc.DoctorTimeSlots = doctor.DoctorTimeSlots;
+            doc.Doctor.DoctorTimeSlots = doctor.DoctorTimeSlots;
             await _dbContext.SaveChangesAsync();
 
             return doc;
         }
 
-        //-----------------------doctorTimeSlot----------------------
+        //------------------------doctorTimeSlot-----------------------
 
-        public async Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorID, DateOnly date, int slot)
+        public async Task<DoctorTimeSlot?> GetSpecificDoctorTimeSlotAsync(int doctorID, DateOnly date, int slot)
         {
             return await _dbContext.DoctorTimeSlots
                 .FirstOrDefaultAsync(Ds => Ds.DoctorID == doctorID && Ds.DailySchedule.AppointmentDate == date && Ds.SlotNumber == slot);
@@ -76,7 +95,8 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
         public async Task<DoctorTimeSlot> GetDoctorTimeSlotByIDAsync(int doctorTimeSlotID)
         {
             return await _dbContext.DoctorTimeSlots
-                .FirstOrDefaultAsync(ts => ts.DoctorTimeSlotID == doctorTimeSlotID);
+                .Where(ts => ts.DoctorTimeSlotID == doctorTimeSlotID)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<DoctorTimeSlot> UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot)
@@ -110,6 +130,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
                 await _dbContext.SaveChangesAsync();
             }
         }
+
 
 
     }

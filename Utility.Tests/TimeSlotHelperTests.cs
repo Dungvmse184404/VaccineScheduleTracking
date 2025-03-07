@@ -1,6 +1,6 @@
 using System;
+using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using System.Collections.Generic;
-using VaccineScheduleTracking.API_Test.Helpers;
 using Xunit;
 
 
@@ -13,19 +13,18 @@ namespace Utility.Tests
         [InlineData(null, new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 })]
         public void AllocateTimeSlotsAsync_ValidInput_ReturnsList(string input, int[] expected)
         {
-            var result = TimeSlotHelper.AllocateTimeSlotsAsync(input);
+            var result = AllocateTimeSlotsAsync(input);
             Assert.Equal(expected, result);
         }
 
         [Theory]
+        [InlineData("2024-03-02", true)]
         [InlineData("2024-03-03", false)] // Chủ Nhật
         [InlineData("2024-03-04", true)]  // Thứ Hai
         public void ExcludedDay_CheckSundayExclusion(string date, bool expected)
         {
             var dateOnly = DateOnly.Parse(date);
-            var result = TimeSlotHelper.ExcludedDay(dateOnly);
-
-            Assert.Equal(expected, result);
+            Assert.Equal(expected, ExcludedDay(dateOnly));
         }
 
 
@@ -35,12 +34,10 @@ namespace Utility.Tests
         [InlineData("08:30", 3)]
         [InlineData("09:15", 4)]
         [InlineData("10:00", 5)]
-        public void CalculateSlotNumber_ReturnCorrectSlotNumber(string time, int expectedSlotNumber)
+        public void CalculateSlotNumber_ReturnCorrectSlotNumber(string time, int exp)
         {
             var startTime = TimeOnly.Parse(time);
-            var slotNumber = TimeSlotHelper.CalculateSlotNumber(startTime);
-
-            Assert.Equal(expectedSlotNumber, slotNumber);
+            Assert.Equal(exp, CalculateSlotNumber(startTime));
         }
 
         [Theory]
@@ -48,24 +45,25 @@ namespace Utility.Tests
         [InlineData(2, "07:45")]
         [InlineData(3, "08:30")]
         [InlineData(4, "09:15")]
-        public void CalculateStartTime_ShouldReturnCorrectStartTime(int slotNumber, string expectedTime)
+        public void CalculateStartTime_ReturnCorrectStartTime(int slotNumber, string exp)
         {
-            var startTime = TimeSlotHelper.CalculateStartTime(slotNumber);
-
-            Assert.Equal(TimeOnly.Parse(expectedTime), startTime);
+            Assert.Equal(TimeOnly.Parse(exp), CalculateStartTime(slotNumber));
         }
 
 
 
-
-        [Fact]
-        public void ConvertToWeekday_ValidDate_ReturnsWeekday()
+        [Theory]
+        [InlineData("2024-03-04", "Monday")]
+        [InlineData("2024-03-05", "Tuesday")]
+        [InlineData("2024-03-07", "Thursday")]
+        [InlineData("2024-03-10", "Sunday")]
+        public void ConvertToWeekday_ReturnsWeekday(string dateString, string exp)
         {
-            var date = new DateOnly(2024, 3, 4); // Thứ Hai
-            var result = TimeSlotHelper.ConvertToWeekday(date);
+            var date = DateOnly.Parse(dateString);
 
-            Assert.Equal("Monday", result);
+            Assert.Equal(exp, ConvertToWeekday(date));
         }
+
 
 
 

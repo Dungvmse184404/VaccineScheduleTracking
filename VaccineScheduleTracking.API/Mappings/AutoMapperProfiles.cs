@@ -17,23 +17,30 @@ namespace VaccineScheduleTracking.API.Mappings
 
             CreateMap<Appointment, AppointmentDto>()
                 .ForMember(dest => dest.AppointmentID, opt => opt.MapFrom(src => src.AppointmentID))
-                //.ForMember(dest => dest.Child, opt => opt.MapFrom(src => $"{src.Child.Firstname} {src.Child.Lastname}"))
-                //.ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => $"{src.Doctor.Account.Firstname} {src.Doctor.Account.Lastname}"))
-                // child và doctor tự map
-                .ForMember(dest => dest.VaccineID, opt => opt.MapFrom(src => src.VaccineID))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.TimeSlots.DailySchedule.AppointmentDate))
                 .ForMember(dest => dest.SlotNumber, opt => opt.MapFrom(src => src.TimeSlots.SlotNumber))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+                .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.Account));
+
+            CreateMap<Account, AppDoctorDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.Firstname} {src.Lastname}"))
+                .ForMember(dest => dest.DoctorID, opt => opt.MapFrom(src => src.Doctor.DoctorID));
+            CreateMap<Child, AppChildDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.Firstname} {src.Lastname}"));
+            CreateMap<Vaccine, AppVaccineDto>()
+                .ForMember(dest => dest.VaccineType, opt => opt.MapFrom(src => src.VaccineType));
+
+            //--------------
 
             CreateMap<UpdateAppointmentDto, Appointment>().ReverseMap()
                  .ForMember(dest => dest.SlotNumber, opt => opt.MapFrom(src => src.TimeSlots.SlotNumber));
 
-
             CreateMap<Appointment, CreateAppointmentDto>().ReverseMap();
+
+            CreateMap<Account, DoctorAccountDto>().ReverseMap();
+
             CreateMap<Doctor, DoctorDto>()
                 .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.DoctorID))
                 .ForMember(dest => dest.DoctorTimeSlot, opt => opt.MapFrom(src => src.DoctorTimeSlots))
-                //account tự map
                 .ReverseMap();
             CreateMap<ChildTimeSlot, ChildTimeSlotDto>();
 

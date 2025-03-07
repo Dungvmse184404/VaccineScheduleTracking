@@ -204,13 +204,13 @@ CREATE TABLE [dbo].[TimeSlots](
 CREATE TABLE [dbo].[Appointments](
     [AppointmentID] [int] IDENTITY(1,1) PRIMARY KEY,
     [ChildID] [int] NOT NULL,
-	[DoctorID] [int] NOT NULL,
+	[AccountID] [int] NOT NULL,
 	[VaccineID] [int] NOT NULL,
 	[TimeSlotID] int not null,
     [Status] [varchar](20) NOT NULL,
 	FOREIGN KEY ([TimeSlotID]) REFERENCES [dbo].[TimeSlots]([TimeSlotID]),
     FOREIGN KEY ([ChildID]) REFERENCES [dbo].[Children]([ChildID]),
-	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Accounts]([AccountID]),
+	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID]),
 	FOREIGN KEY ([VaccineID]) REFERENCES [dbo].[Vaccines]([VaccineID])
 )	
 GO

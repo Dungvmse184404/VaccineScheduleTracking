@@ -7,12 +7,16 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
     public interface IDoctorRepository
     {
         //Doctor
-        Task<List<Doctor>> GetAllDoctorAsync();
+        //===================================================
+        Task<Account> GetAccountByAccountIDAsync(int accountId);
+        Task<Doctor?> GetDoctorByAccountIDAsync(int accountId);
+        //====================================================
+        Task<List<Account>> GetAllDoctorAsync();
         //Task<Doctor?> GetSuitableDoctor(int slot, DateTime time);
-        Task<Doctor?> GetDoctorByIDAsync(int doctorID);
-        Task<Doctor?> UpdateDoctorAsync(Doctor doctor);
+        Task<Account?> GetDoctorByIDAsync(int doctorID);
+        Task<Account?> UpdateDoctorAsync(Doctor doctor);
 
-        //DoctorTimeSlot
+        //----------------------DoctorTimeSlot---------------------------
         Task<List<DoctorTimeSlot>> GetDoctorTimeSlotsForDayAsync(int doctorID, DateOnly date);
         Task<DoctorTimeSlot> GetDoctorTimeSlotByIDAsync(int doctorTimeSlotID);
         Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorID, DateOnly date, int slotNumber);

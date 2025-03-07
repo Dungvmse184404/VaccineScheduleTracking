@@ -5,6 +5,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
 {
     public interface IAccountRepository
     {
+        Task<Account?> GetAccountRole(int accountId);
         Task<Account?> GetAccountByKeywordAsync(string keyword);
         Task<Account?> GetAccountByID(int id);
         Task<Account?> GetAccountByUsernameAsync(string username);

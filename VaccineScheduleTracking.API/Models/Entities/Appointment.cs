@@ -9,8 +9,8 @@ namespace VaccineScheduleTracking.API.Models.Entities
         public int ChildID { get; set; }
         public Child Child { get; set; }
 
-        public int DoctorID { get; set; }
-        public Doctor Doctor { get; set; }
+        public int AccountID { get; set; }
+        public Account Account { get; set; }
         public int VaccineID { get; set; }
         public Vaccine Vaccine { get; set; }
 

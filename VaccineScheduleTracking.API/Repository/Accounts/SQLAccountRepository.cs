@@ -17,6 +17,15 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
             this.dbContext = dbContext;
         }
 
+        public async Task<Account?> GetAccountRole(int accountId)
+        {
+            return await dbContext.Accounts
+                               .Include(a => a.Parent)
+                               .Include(a => a.Doctor)
+                               .Include(a => a.Staff)
+                               .FirstOrDefaultAsync(a => a.AccountID == accountId);
+        }
+
 
         public async Task<Account?> GetAccountByKeywordAsync(string keyword)
         {
@@ -49,7 +58,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
             return await dbContext.Accounts.Include(x => x.Parent).
                                             Include(x => x.Doctor).
                                             Include(x => x.Staff).FirstOrDefaultAsync(user => user.Username == username);
-            }
+        }
 
         public async Task<Account> AddAccountAsync(Account account)
         {

@@ -40,7 +40,9 @@ namespace VaccineScheduleTracking.API_Test.BackgroundTasks
                     /// tạo lịch (TimeSlot)
                     await timeSlotServices.GenerateCalanderAsync(days);
                     /// tạo lịch làm vc cho bác sĩ
-                    var doctorList = await doctorServices.GetAllDoctorAsync();
+                    var docAccountList = await doctorServices.GetAllDoctorAsync();
+                    var doctorList = docAccountList.Select(docAccount => docAccount.Doctor).ToList();
+
                     await doctorServices.GenerateDoctorCalanderAsync(doctorList, days);
                     /// set false cho những timeSlot trước ngày hôm nay
                     await timeSlotServices.SetOverdueTimeSlotAsync();

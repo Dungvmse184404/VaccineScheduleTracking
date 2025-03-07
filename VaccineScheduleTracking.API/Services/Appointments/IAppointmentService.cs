@@ -7,7 +7,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
     {
         Task<Appointment?> GetAppointmentByIDAsync(int appointmentID);
         Task<Appointment?> CreateAppointmentAsync(CreateAppointmentDto appointment);
-        Task<List<Appointment>> GetAppointmentListByIDAsync(int id, string role);
+        Task<List<Appointment>> GetDoctorAppointmentsAsync(int doctorId);
+        Task<List<Appointment>> GetChildAppointmentsAsync(int childId);
         Task<List<Appointment>> GetPendingDoctorAppointmentAsync(int doctorId);
         Task<Appointment?> UpdateAppointmentAsync(int appointmentId, UpdateAppointmentDto appointment);
 

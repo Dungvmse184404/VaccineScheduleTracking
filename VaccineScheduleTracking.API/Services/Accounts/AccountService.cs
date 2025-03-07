@@ -106,6 +106,17 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             return account;
         }
 
+        public async Task<Account?> GetAccountRole(int accountId)
+        {
+            var account = await accountRepository.GetAccountRole(accountId);
+            if (account == null)
+            {
+                throw new Exception("không tìm thầy tài khoản");
+            }
+
+            return account;
+        }
+
         public async Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccount)
         {
             return await accountRepository.GetAllAccountsAsync(filterAccount);
@@ -124,7 +135,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
         }
 
 
-
+        public async Task<Account?> GetAccountByID(int id)
+        {
+            return await accountRepository.GetAccountByID(id);
+        }
 
         //public async Task<Account?> DeleteAccountAsync(int id)
         //{

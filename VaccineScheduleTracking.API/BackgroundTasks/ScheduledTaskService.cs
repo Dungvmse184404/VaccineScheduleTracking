@@ -9,6 +9,7 @@ using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Services.Doctors;
+using VaccineScheduleTracking.API.Models.Entities;
 
 public class ScheduledTaskService : BackgroundService
 {
@@ -34,12 +35,13 @@ public class ScheduledTaskService : BackgroundService
                     var childServices = scope.ServiceProvider.GetRequiredService<IChildService>();
                     var appointmentServices = scope.ServiceProvider.GetRequiredService<IAppointmentService>();
 
-                    int days = 7;
-
                     /// Tạo lịch (TimeSlot)
                     await timeSlotServices.GenerateCalanderAsync(SetCalanderDate());
                     /// Tạo lịch làm việc cho bác sĩ
-                    var doctorList = await doctorServices.GetAllDoctorAsync();
+                    var docAccountList = await doctorServices.GetAllDoctorAsync();
+                    var doctorList = docAccountList.Select(docAccount => docAccount.Doctor).ToList();
+
+
                     await doctorServices.GenerateDoctorCalanderAsync(doctorList, SetCalanderDate());
 
                     /// Set false cho những TimeSlot trước ngày hôm nay

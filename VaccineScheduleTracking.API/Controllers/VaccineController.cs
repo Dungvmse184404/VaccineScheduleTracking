@@ -137,7 +137,7 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var vaccineType = await vaccineService.DeleteVaccineTypeAsync(id);
-                return Ok($"Đã xóa loại Vaccine {vaccineType.Name} ");
+                return Ok($"Đã xóa loại Vaccine {vaccineType.Name}");
             }
             catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
         }
@@ -176,8 +176,8 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize(Roles = "Doctor, Staff")]
-        [HttpDelete("delete-vaccinee/{id}")]
-        public async Task<IActionResult> DeleteVaccine(int id)
+        [HttpDelete("delete-vaccine/{id}")]
+        public async Task<IActionResult> DeleteVaccine([FromRoute] int id)
         {
             try
             {

@@ -39,7 +39,7 @@
                     0 => 0,
                     var result => result
                 },
-                _ => throw new ArgumentException("(BE)err: Định dạng ngày truyền vào không hỗ trợ")
+                _ => throw new ArgumentException("Định dạng ngày truyền vào không hỗ trợ")
             };
         }
 

@@ -18,13 +18,13 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         public async Task<List<Appointment>> GetAllAppointmentsAsync()
         {
             return await _dbContext.Appointments
-           .Include(a => a.Child)
-           .Include(a => a.Doctor)
-               .ThenInclude(d => d.Account)
-           .Include(a => a.Vaccine)
-           .Include(a => a.TimeSlots)
-               .ThenInclude(s => s.DailySchedule)
-           .ToListAsync();
+                .Include(a => a.Child)
+                .Include(a => a.Account)
+                    .ThenInclude(d => d.Doctor)
+                .Include(a => a.Vaccine)
+                .Include(a => a.TimeSlots)
+                    .ThenInclude(s => s.DailySchedule)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -36,8 +36,8 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         {
             if (int.TryParse(keyword, out int id))
             {
-                return await GetAppointmentListByDoctorIDAsync(id)
-                    ?? await GetAppointmentListByChildIDAsync(id);
+                return await GetAppointmentsByDoctorIDAsync(id)
+                    ?? await GetAppointmentsByChildIDAsync(id);
             }
             return await GetAppointmentListByStatus(keyword);
 
@@ -54,8 +54,8 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             return await _dbContext.Appointments
                 .Where(appointment => appointment.AppointmentID == id)
                 .Include(a => a.Child)
-                .Include(a => a.Doctor)
-                    .ThenInclude(d => d.Account)
+                .Include(a => a.Account)
+                    .ThenInclude(d => d.Doctor)
                 .Include(a => a.Vaccine)
                 .Include(a => a.TimeSlots)
                     .ThenInclude(s => s.DailySchedule)
@@ -72,7 +72,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         public async Task<List<Appointment>> GetPendingDoctorAppointmentAsync(int doctorId)
         {
             return await _dbContext.Appointments
-                .Where(a => a.DoctorID == doctorId && a.Status == "PENDING")
+                .Where(a => a.Account.Doctor.DoctorID == doctorId && a.Status == "PENDING")
                 .Include(a => a.TimeSlots)
                     .ThenInclude(s => s.DailySchedule)
                 .ToListAsync();
@@ -84,16 +84,16 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         /// </summary>
         /// <param name="id"> ID của Child </param>
         /// <returns> danh sách Appointment của child </returns>
-        public async Task<List<Appointment>> GetAppointmentListByChildIDAsync(int id)
+        public async Task<List<Appointment>> GetAppointmentsByChildIDAsync(int id)
         {
             return await _dbContext.Appointments
                .Where(Appmt => Appmt.ChildID == id)
                .Include(a => a.Child)
-               .Include(a => a.Doctor)
-                   .ThenInclude(d => d.Account)
+               .Include(a => a.Account)
+                   .ThenInclude(d => d.Doctor)
                .Include(a => a.Vaccine)
                .Include(a => a.TimeSlots)
-                    .ThenInclude(s => s.DailySchedule)
+                   .ThenInclude(s => s.DailySchedule)
                .ToListAsync();
         }
 
@@ -103,13 +103,13 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         /// </summary>
         /// <param name="id"> ID của Doctor </param>
         /// <returns> danh sách Appointment của Doctor </returns>
-        public async Task<List<Appointment>> GetAppointmentListByDoctorIDAsync(int id)
+        public async Task<List<Appointment>> GetAppointmentsByDoctorIDAsync(int id)
         {
             return await _dbContext.Appointments
-                .Where(a => a.DoctorID == id)
+                .Where(a => a.Account.Doctor.DoctorID == id)
                 .Include(a => a.Child)
-                .Include(a => a.Doctor)
-                    .ThenInclude(d => d.Account)
+                .Include(a => a.Account)
+                   .ThenInclude(d => d.Doctor)
                 .Include(a => a.Vaccine)
                 .Include(a => a.TimeSlots)
                     .ThenInclude(s => s.DailySchedule)
@@ -146,7 +146,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
                 return null;
             }
             appointment.ChildID = appointmentDto.ChildID;
-            appointment.DoctorID = appointmentDto.DoctorID;
+            appointment.AccountID = appointmentDto.AccountID;
             appointment.VaccineID = appointmentDto.VaccineID;
             appointment.TimeSlotID = appointmentDto.TimeSlotID;
             appointment.Status = appointmentDto.Status;
@@ -172,6 +172,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             return appointment;
         }
 
-        
+
     }
 }

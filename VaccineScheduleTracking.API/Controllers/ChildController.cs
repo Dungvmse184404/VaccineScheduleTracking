@@ -3,8 +3,12 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Helpers;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
+using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Services.Children;
+using static VaccineScheduleTracking.API_Test.Helpers.ExceptionHelper;
+
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -12,11 +16,13 @@ namespace VaccineScheduleTracking.API.Controllers
     [ApiController]
     public class ChildController : ControllerBase
     {
+        private readonly IAccountService accountServices;
         private readonly IChildService childService;
         private readonly IMapper mapper;
 
-        public ChildController(IChildService childService, IMapper mapper)
+        public ChildController(IAccountService accountServices, IChildService childService, IMapper mapper)
         {
+            this.accountServices = accountServices;
             this.childService = childService;
             this.mapper = mapper;
         }
@@ -44,6 +50,27 @@ namespace VaccineScheduleTracking.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách trẻ của Parent đang đăng nhập
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Parent")]
+        [HttpGet("get-childs-for-parent")]
+        public async Task<IActionResult> GetChildListForParent()
+        {
+            try
+            {
+                var account = await accountServices.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+                var childList = await childService.GetParentChildren(account.Parent.ParentID);
+
+                return Ok(mapper.Map<List<ChildDto>>(childList));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
             }
         }
 
