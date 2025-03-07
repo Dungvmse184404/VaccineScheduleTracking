@@ -176,7 +176,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize(Roles = "Doctor, Staff")]
-        [HttpDelete("delete-vaccine")]
+        [HttpDelete("delete-vaccine/{id}")]
         public async Task<IActionResult> DeleteVaccine(int id)
         {
             try
