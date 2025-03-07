@@ -409,7 +409,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         public async Task<List<Appointment>> GetDoctorAppointmentsAsync(int doctorId)
         {
             var docAccount = await _doctorServices.GetDoctorByIDAsync(doctorId);
-            var doctorAppointments = await _appointmentRepository.GetAppointmentsByChildIDAsync(doctorId);
+            var doctorAppointments = await _appointmentRepository.GetAppointmentsByDoctorIDAsync(doctorId);
             if (doctorAppointments.IsNullOrEmpty())
             {
                 throw new Exception($"không tìm thấy buổi hẹn nào cho bé {docAccount.Lastname} {docAccount.Firstname}");
