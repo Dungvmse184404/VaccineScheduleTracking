@@ -5,18 +5,21 @@ using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using VaccineScheduleTracking.API_Test.Helpers;
 
 
 namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
 {
     public class TimeSlotServices : ITimeSlotServices
     {
+        private readonly TimeSlotHelper _timeSlotHelper;
         private readonly ITimeSlotRepository _timeSlotRepository;
         private readonly IDailyScheduleRepository _dailyScheduleRepository;
         private readonly IMapper _mapper;
 
-        public TimeSlotServices(ITimeSlotRepository timeSlotRepository, IDailyScheduleRepository dailyScheduleRepository, IMapper mapper)
+        public TimeSlotServices(TimeSlotHelper timeSlotHelper, ITimeSlotRepository timeSlotRepository, IDailyScheduleRepository dailyScheduleRepository, IMapper mapper)
         {
+            _timeSlotHelper = timeSlotHelper;
             _dailyScheduleRepository = dailyScheduleRepository;
             _timeSlotRepository = timeSlotRepository;
             _mapper = mapper;
@@ -43,7 +46,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
 
         public async Task GenerateDailyScheduleAsync(DateOnly date)
         {
-            if (!await ExistingScheduleAsync(date) || !ExcludedDay(date))
+            if (!await ExistingScheduleAsync(date) || !_timeSlotHelper.ExcludedDay(date))
             {
                 return;
             }
@@ -53,13 +56,13 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
             };
             await _dailyScheduleRepository.AddDailyScheduleAsync(daily);
 
-            List<int> slots = AllocateTimeSlotsAsync(null);
+            List<int> slots = _timeSlotHelper.AllocateTimeSlots(null);
 
             List<Task> tasks = new List<Task>();
 
             foreach (int slotNumber in slots)
             {
-                TimeOnly startTime = CalculateStartTime(slotNumber);
+                TimeOnly startTime = _timeSlotHelper.CalculateStartTime(slotNumber);
                 var slot = new TimeSlot
                 {
                     StartTime = startTime,
@@ -111,7 +114,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
         {
             ValidateInput(SlotNumber, "Chưa chọn slot");
             ValidateInput(date, "Chưa nhập ngày");
-            if (!ExcludedDay(date))
+            if (!_timeSlotHelper.ExcludedDay(date))
             {
                 throw new Exception("Chủ nhật hong có làm việc");
             }
@@ -127,7 +130,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
             foreach (var date in dailySchedules)
             {
                 var timeSlots = await _timeSlotRepository.GetTimeSlotsByDateAsync(date.AppointmentDate);
-                int dateStatus = CompareNowTime(date.AppointmentDate);
+                int dateStatus = _timeSlotHelper.CompareNowTime(date.AppointmentDate);
                 if (dateStatus == -1) // Ngày đã qua
                 {
                     foreach (var slot in timeSlots)
@@ -143,7 +146,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
                 {
                     foreach (var slot in timeSlots)
                     {
-                        if (CompareNowTime(slot.StartTime) == -1 && slot.Available) // Giờ đã qua
+                        if (_timeSlotHelper.CompareNowTime(slot.StartTime) == -1 && slot.Available) // Giờ đã qua
                         {
                             slot.Available = false;
                             await _timeSlotRepository.UpdateTimeSlotAsync(slot);

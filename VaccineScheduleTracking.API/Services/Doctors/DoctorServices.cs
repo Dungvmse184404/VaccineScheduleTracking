@@ -1,30 +1,26 @@
 ﻿using AutoMapper;
-using System.Numerics;
-using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.Doctors;
-using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Children;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using VaccineScheduleTracking.API_Test.Repository.Appointments;
-using Microsoft.EntityFrameworkCore;
+using VaccineScheduleTracking.API_Test.Helpers;
 
 namespace VaccineScheduleTracking.API_Test.Services.Doctors
 {
     public class DoctorServices : IDoctorServices
     {
-        //private readonly IAppointmentService _appointmentsService;
+        private readonly TimeSlotHelper _timeSlotHelper;
         private readonly IChildService _childService;
 
         private readonly IDailyScheduleRepository _dailyScheduleRepository;
         private readonly IDoctorRepository _doctorRepository;
         private readonly IMapper _mapper;
 
-        public DoctorServices(IChildService childService, IDailyScheduleRepository dailyScheduleRepository, IDoctorRepository doctorRepository, IMapper mapper)
+        public DoctorServices(TimeSlotHelper timeSlotHelper, IChildService childService, IDailyScheduleRepository dailyScheduleRepository, IDoctorRepository doctorRepository, IMapper mapper)
         {
+            _timeSlotHelper = timeSlotHelper;
             _childService = childService;
 
             _dailyScheduleRepository = dailyScheduleRepository;
@@ -49,7 +45,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
             ValidateInput(doctorID, "ID của account không thể để trống");
             ValidateInput(date, "Ngày không thể để trống");
             ValidateInput(slotNumber, "Slot không thể để trống");
-            LimitDate(date, "lịch hẹn chỉ được tạo đến trước ngày ");
+            _timeSlotHelper.LimitDate(date, "lịch hẹn chỉ được tạo đến trước ngày ");
             return await _doctorRepository.GetSpecificDoctorTimeSlotAsync(doctorID, date, slotNumber);
         }
 
@@ -64,7 +60,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         {
             ValidateInput(slotNumber, "Slot không thể để trống");
             ValidateInput(date, "Ngày không thể để trống");
-            LimitDate(date, "lịch hẹn chỉ được tạo đến trước ngày ");
+            _timeSlotHelper.LimitDate(date, "lịch hẹn chỉ được tạo đến trước ngày ");
 
             var docAccountList = await _doctorRepository.GetAllDoctorAsync();
             List<Account> docAccounts = new List<Account>();
@@ -257,7 +253,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
             {
                 foreach (var day in dailyScheduleList)
                 {
-                    string weekday = ConvertToWeekday(day.AppointmentDate);
+                    string weekday = _timeSlotHelper.ConvertToWeekday(day.AppointmentDate);
                     if (doctor.DoctorTimeSlots.Contains(weekday))
                     {
                         await GenerateDoctorScheduleAsync(doctor, day, weekday);
@@ -339,7 +335,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
                         var timeSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(doctor.Doctor.DoctorID, date.AppointmentDate);
                         foreach (var slot in timeSlots)
                         {
-                            var startTime = CalculateStartTime(slot.SlotNumber);
+                            var startTime = _timeSlotHelper.CalculateStartTime(slot.SlotNumber);
                             var slotDateTime = date.AppointmentDate.ToDateTime(startTime);
                             if (slotDateTime < now && slot.Available)
                             {
@@ -409,7 +405,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
 
             List<Doctor> doctorList = new List<Doctor>() { doctor };
 
-            await GenerateDoctorCalanderAsync(doctorList, SetCalanderDate());
+            await GenerateDoctorCalanderAsync(doctorList, _timeSlotHelper.SetCalendarDate());
 
             return doctor;
         }

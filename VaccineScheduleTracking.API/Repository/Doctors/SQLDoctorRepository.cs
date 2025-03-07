@@ -11,10 +11,12 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
 {
     public class SQLDoctorRepository : IDoctorRepository
     {
+        private readonly TimeSlotHelper _timeSlotHelper;
         private readonly VaccineScheduleDbContext _dbContext;
 
-        public SQLDoctorRepository(VaccineScheduleDbContext dbContext)
+        public SQLDoctorRepository(TimeSlotHelper timeSlotHelper, VaccineScheduleDbContext dbContext)
         {
+            _timeSlotHelper = timeSlotHelper;
             _dbContext = dbContext;
         }
 
@@ -115,7 +117,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
 
         public async Task DeleteDoctorTimeSlotByDoctorIDAsync(int doctorId)
         {
-            var currentSlotNumber = CalculateSlotNumber(TimeOnly.FromDateTime(DateTime.Now));
+            var currentSlotNumber = _timeSlotHelper.CalculateSlotNumber(TimeOnly.FromDateTime(DateTime.Now));
 
             var timeSlots = await _dbContext.DoctorTimeSlots
                 .Where(ts => ts.DoctorID == doctorId &&

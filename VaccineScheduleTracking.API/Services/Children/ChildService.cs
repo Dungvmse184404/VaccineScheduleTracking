@@ -6,17 +6,20 @@ using VaccineScheduleTracking.API_Test.Repository.Children;
 using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository;
+using VaccineScheduleTracking.API_Test.Helpers;
 
 namespace VaccineScheduleTracking.API_Test.Services.Children
 {
     public class ChildService : IChildService
     {
+        private readonly TimeSlotHelper timeSlotHelper;
         private readonly IChildRepository childRepository;
         private readonly IDailyScheduleService dailyScheduleService;
         private readonly IDailyScheduleRepository dailyScheduleRepository;
 
-        public ChildService(IChildRepository childRepository, IDailyScheduleService dailyScheduleService, IDailyScheduleRepository dailyScheduleRepository)
+        public ChildService(TimeSlotHelper timeSlotHelper, IChildRepository childRepository, IDailyScheduleService dailyScheduleService, IDailyScheduleRepository dailyScheduleRepository)
         {
+            this.timeSlotHelper = timeSlotHelper;
             this.childRepository = childRepository;
             this.dailyScheduleService = dailyScheduleService;
             this.dailyScheduleRepository = dailyScheduleRepository;
@@ -178,7 +181,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
                         var timeSlots = await childRepository.GetChildTimeSlotsForDayAsync(child.ChildID, date.AppointmentDate);
                         foreach (var slot in timeSlots)
                         {
-                            var startTime = CalculateStartTime(slot.SlotNumber);
+                            var startTime = timeSlotHelper.CalculateStartTime(slot.SlotNumber);
                             var slotDateTime = date.AppointmentDate.ToDateTime(startTime);
                             if (slotDateTime < now && slot.Available)
                             {

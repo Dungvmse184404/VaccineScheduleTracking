@@ -28,6 +28,7 @@ using VaccineScheduleTracking.API_Test.Repository.Doctors;
 using VaccineScheduleTracking.API_Test.Services.Doctors;
 using VaccineScheduleTracking.API_Test.Repository.VaccineContainers;
 using VaccineScheduleTracking.API_Test.Configurations;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -129,6 +130,9 @@ ExceptionHelper.Configure(builder.Configuration);
 
 //cấu hình file DefaultConfig
 builder.Services.Configure<DefaultConfig>(builder.Configuration.GetSection("DefaultConfig"));
+builder.Services.AddSingleton<DefaultConfig>(sp => sp.GetRequiredService<IOptions<DefaultConfig>>().Value);
+
+builder.Services.AddSingleton<TimeSlotHelper>();
 
 //đăng kí chạy background
 builder.Services.AddHostedService<ScheduledTaskService>();

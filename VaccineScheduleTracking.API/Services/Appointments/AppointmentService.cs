@@ -22,11 +22,13 @@ using VaccineScheduleTracking.API_Test.Models.DTOs;
 using System.Net.WebSockets;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Reflection.PortableExecutable;
+using VaccineScheduleTracking.API_Test.Helpers;
 
 namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
     public class AppointmentService : IAppointmentService
     {
+        private readonly TimeSlotHelper _timeSlotHelper;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IVaccineRepository _vaccineRepository;
         private readonly IDailyScheduleRepository _dailyScheduleRepository;
@@ -40,6 +42,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         private readonly IMapper _mapper;
 
         public AppointmentService(
+            TimeSlotHelper timeSlotHelper,
             IAppointmentRepository appointmentRepository,
             IVaccineRepository vaccineRepository,
             IDailyScheduleRepository dailyScheduleRepository,
@@ -52,6 +55,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             IMapper mapper)
         {
+            _timeSlotHelper = timeSlotHelper;
             _appointmentRepository = appointmentRepository;
             _dailyScheduleRepository = dailyScheduleRepository;
             _vaccineRepository = vaccineRepository;
@@ -80,10 +84,20 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             return await _appointmentRepository.GetAppointmentByDateAsync(childId, date);
         }
 
+        /// <summary>
+        /// giới hạn số lượng appointment cho 1 ngày
+        /// </summary>
+        /// <param name="childId"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task LimitAmount(int childId, DateOnly date)
         {
             var appointments = await GetAppointmentByDateAsync(childId, date);
-            if (appointments.Count >= 5)
+            var validAppointments = appointments
+                .Where(a => a.Status == "FINISHED" || a.Status == "PENDING")
+                .ToList();
+            if (validAppointments.Count >= 5)
             {
                 throw new Exception("không thể đăng kí quá 4 lịch tiêm cho 1 ngày");
             }
@@ -103,11 +117,14 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         /// <returns></returns>
         public async Task<DateOnly?> GetLatestVaccineDate(int childId, int vaccineId)
         {
-            var childAppointments = await GetChildAppointmentsAsync(childId);
+            var appointments = await GetChildAppointmentsAsync(childId);
+            var validAppointments = appointments
+               .Where(a => a.Status == "FINISHED" || a.Status == "PENDING")
+               .ToList();
             var vacHistory = await _vaccineRecordService.GetRecordsAsync(childId);
 
-            DateOnly? latestDate = null;
-            foreach (var appointment in childAppointments)
+            DateOnly? latestDate = DateOnly.MinValue;
+            foreach (var appointment in validAppointments)
             {
                 if (appointment.VaccineID == vaccineId)
                 {
@@ -130,6 +147,14 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             return latestDate;
         }
 
+
+        /// <summary>
+        /// giới hạn thời gian cùng loại vaccine
+        /// </summary>
+        /// <param name="vaccineId"></param>
+        /// <param name="childId"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public async Task<(bool canSchedule, DateOnly? limitDate)> LimitVaccinePeriod(int vaccineId, int childId, DateOnly date)
         {
             var vaccine = await _vaccineServices.GetVaccineByIDAsync(vaccineId);
@@ -137,7 +162,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             if (latestDate == null) return (true, null);
 
-            DateOnly limitDate = GetPeriodDate(vaccine.Period, latestDate.Value);
+            DateOnly limitDate = _timeSlotHelper.GetPeriodDate(vaccine.Period, latestDate.Value);
 
             return (date > limitDate, limitDate);
         }
@@ -279,14 +304,14 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             }
 
             // Catch boundary cho ngày đặt lịch 
-            LimitDate(date, "Hiện tại chỉ có thể đặt lịch trước ngày");
-            
+            _timeSlotHelper.LimitDate(date, "Hiện tại chỉ có thể đặt lịch trước ngày");
+
             //giới hạn mũi tiêm
-            LimitAmount(childID, date);
+            await LimitAmount(childID, date);
             var (Available, limitDate) = await LimitVaccinePeriod(vaccineID, childID, date);
             if (!Available)
             {
-                throw new Exception($"Vaccine này đã được dùng gần đây và sẽ khả dụng sau ngày {limitDate}");
+                throw new Exception($"Vaccine này đã được dùng gần đây, sẽ khả dụng sau ngày {limitDate}");
             }
 
 
@@ -335,7 +360,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             };
 
             // Cập nhật TimeSlot cho trẻ - tách hàm 
-            if (childTimeSlot.Available != null && childTimeSlot.Available == true)
+            if (childTimeSlot != null && childTimeSlot.Available == true)
             {
                 childTimeSlot.Available = false;
                 await _childServices.UpdateChildTimeSlotAsync(childTimeSlot);
@@ -374,7 +399,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             DateOnly oldDate = appointment.TimeSlots.DailySchedule.AppointmentDate;
 
             ValidateInput(appointment, "Lịch hẹn không tồn tại!");
-            LimitDate(modAppointment.Date, "TimeSlot chỉ được tạo đến trước ngày");
+            _timeSlotHelper.LimitDate(modAppointment.Date, "TimeSlot chỉ được tạo đến trước ngày");
 
             if (appointment.TimeSlots.Available == false)
             {
@@ -405,7 +430,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 : oldDate;
 
             ///kiểm tra ngày hẹn
-            if (CompareNowTime(oldDate) == -1)
+            if (_timeSlotHelper.CompareNowTime(oldDate) == -1)
             {
                 throw new Exception("không thể đặt ngày đã qua hạn!");
             }
@@ -557,7 +582,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             foreach (var date in dailySchedules)
             {
-                int dateStatus = CompareNowTime(date.AppointmentDate);
+                int dateStatus = _timeSlotHelper.CompareNowTime(date.AppointmentDate);
                 var filteredAppointments = allAppointments.Where(a => a.TimeSlots.DailySchedule.AppointmentDate == date.AppointmentDate).ToList();
 
                 if (dateStatus == -1) // Ngày đã qua
@@ -575,7 +600,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 {
                     foreach (var appointment in filteredAppointments)
                     {
-                        if (CompareNowTime(appointment.TimeSlots.StartTime) == -1 && appointment.Status == "PENDING") // Giờ đã qua
+                        if (_timeSlotHelper.CompareNowTime(appointment.TimeSlots.StartTime) == -1 && appointment.Status == "PENDING") // Giờ đã qua
                         {
                             appointment.Status = "OVERDUE";
                             await _appointmentRepository.UpdateAppointmentAsync(appointment);
