@@ -10,6 +10,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
         Task<Child> AddChild(Child child);
         Task<Child> UpdateChild(int id, Child child);
         Task<Child> DeleteChild(int id);
+        Task<Child> UpdateChildForParent(int parentId, int childId, Child updateChild);
 
         //-----------------ChildTimeSlot-----------------
 

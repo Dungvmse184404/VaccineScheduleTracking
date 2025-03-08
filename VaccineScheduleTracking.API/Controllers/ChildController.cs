@@ -94,11 +94,14 @@ namespace VaccineScheduleTracking.API.Controllers
 
         [Authorize]
         [HttpPut("update-child/{id}")]
-        public async Task<IActionResult> ModifileChildProfile(int id, [FromBody] UpdateChildDto updateChild)
+        public async Task<IActionResult> ModifileChildProfile([FromRoute] int id, [FromQuery] UpdateChildDto updateChild)
         {
             try
             {
-                var modifiledChild = await childService.UpdateChild(id, mapper.Map<Child>(updateChild));
+                var parAccount = await accountServices.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+                
+
+                var modifiledChild = await childService.UpdateChildForParent(parAccount.Parent.ParentID, id, mapper.Map<Child>(updateChild));
 
                 return Ok(mapper.Map<ChildDto>(modifiledChild));
             }
