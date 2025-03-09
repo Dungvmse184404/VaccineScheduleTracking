@@ -71,7 +71,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
             return account;
         }
 
-        public async Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount)
+        public async Task<Account?> UpdateAccountAsync(Account updateAccount)
         {
             var account = await GetAccountByID(updateAccount.AccountID);
             if (account == null)

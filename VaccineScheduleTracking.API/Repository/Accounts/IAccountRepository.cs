@@ -12,7 +12,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
         Task<Account?> GetAccountByEmailAsync(string email);
         Task<Account?> GetAccountByPhonenumberAsync(string phonenumber);
         Task<Account> AddAccountAsync(Account account);
-        Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount);
+        Task<Account?> UpdateAccountAsync(Account updateAccount);
         Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccountDto);
         Task<Account?> DisableAccountAsync(Account account);
         //Task<Account?> DeleteAccountsAsync(Account account);

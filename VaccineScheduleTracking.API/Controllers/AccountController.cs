@@ -55,7 +55,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [HttpPost("register-parent")]
-        public async Task<IActionResult> Register([FromBody] RegisterAccountDto registerAccount)
+        public async Task<IActionResult> Register([FromForm] RegisterAccountDto registerAccount)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
 
             account.Status = "ACTIVE";
-            await accountRepository.UpdateAccountAsync(mapper.Map<UpdateAccountDto>(account));
+            await accountRepository.UpdateAccountAsync(account);
 
             return Ok(
                 new
@@ -141,7 +141,7 @@ namespace VaccineScheduleTracking.API.Controllers
 
         [Authorize]
         [HttpPut("update-account")]
-        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto updateAccount)
+        public async Task<IActionResult> UpdateAccount([FromForm] UpdateAccountDto updateAccount)
         {
             try
             {

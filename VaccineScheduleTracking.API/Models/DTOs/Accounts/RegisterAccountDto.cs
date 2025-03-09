@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http.Metadata;
 
 namespace VaccineScheduleTracking.API_Test.Models.DTOs.Accounts
 {
@@ -22,6 +23,6 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Accounts
         [Required]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Số điện thoại phải có đúng 10 chữ số.")]
         public string PhoneNumber { get; set; } = string.Empty;
-        public string? Avatar { get; set; } = string.Empty;
+        public IFormFile? Avatar {  get; set; }
     }
 }

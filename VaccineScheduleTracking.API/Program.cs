@@ -92,7 +92,7 @@ builder.Services.AddScoped<IVaccineRecordRepository, SQLVaccineRecordRepository>
 builder.Services.AddScoped<IVaccineRecordService, VaccineRecordService>();
 builder.Services.AddScoped<IVaccineComboRepository, SQLVaccineComboRepository>();
 builder.Services.AddScoped<IVaccineComboService, VaccineComboService>();
-builder.Services.AddScoped<IVaccineContainerRepository, SQLVaccineContainerRepository>();   
+builder.Services.AddScoped<IVaccineContainerRepository, SQLVaccineContainerRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -156,11 +156,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
-    RequestPath = "/Images"
-});
+app.UseStaticFiles();
 
 app.MapControllers();
 

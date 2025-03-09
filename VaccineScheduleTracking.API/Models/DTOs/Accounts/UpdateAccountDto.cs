@@ -14,6 +14,6 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Accounts
         public string? Email { get; set; }
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Số điện thoại phải có đúng 10 chữ số.")]
         public string? PhoneNumber { get; set; }
-        public string? Avatar { get; set; }
+        public IFormFile? Avatar { get; set; }
     }
 }

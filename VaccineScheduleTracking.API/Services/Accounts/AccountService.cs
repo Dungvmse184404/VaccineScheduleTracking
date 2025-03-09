@@ -14,14 +14,16 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
         private readonly IPasswordHasher<Account> passwordHasher;
         private readonly IEmailService emailService;
         private readonly JwtHelper jwtHelper;
+        private readonly IWebHostEnvironment env;
 
-        public AccountService(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher, IEmailService emailService, JwtHelper jwtHelper)
+        public AccountService(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher, IEmailService emailService, JwtHelper jwtHelper, IWebHostEnvironment env)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;
             this.passwordHasher = passwordHasher;
             this.emailService = emailService;
             this.jwtHelper = jwtHelper;
+            this.env = env;
         }
         public async Task<Account?> LoginAsync(string username, string password)
         {
@@ -51,12 +53,31 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             {
                 throw new Exception($"Số điện thoại {registerAccount.PhoneNumber} đã tồn tại");
             }
+            var fileName = "";
+            if (registerAccount.Avatar != null)
+            {
+                if (string.IsNullOrEmpty(env.WebRootPath))
+                {
+                    env.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                }
+                var uploadsFolder = Path.Combine(env.WebRootPath, "Images");
+                Directory.CreateDirectory(uploadsFolder);
+
+                fileName = $"{Guid.NewGuid()}{Path.GetExtension(registerAccount.Avatar.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await registerAccount.Avatar.CopyToAsync(stream);
+                }
+            }
 
             var account = mapper.Map<Account>(registerAccount);
             account.Status = "EMAILNOTACTIVE";
             var hashPawword = passwordHasher.HashPassword(account, account.Password);
             account.Password = hashPawword;
             account.Parent = new Parent() { Account = account };
+            account.Avatar = $"/Images/{fileName}";
 
             var newAccount = await accountRepository.AddAccountAsync(account);
 
@@ -98,7 +119,27 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             {
                 throw new Exception($"Số điện thoại {updateAccount.PhoneNumber} đã tồn tại");
             }
-            var account = await accountRepository.UpdateAccountAsync(updateAccount);
+            var fileName = "";
+            if (updateAccount.Avatar != null)
+            {
+                if (string.IsNullOrEmpty(env.WebRootPath))
+                {
+                    env.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                }
+                var uploadsFolder = Path.Combine(env.WebRootPath, "Images");
+                Directory.CreateDirectory(uploadsFolder);
+
+                fileName = $"{Guid.NewGuid()}{Path.GetExtension(updateAccount.Avatar.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await updateAccount.Avatar.CopyToAsync(stream);
+                }
+            }
+            var tmpAccount = mapper.Map<Account>(updateAccount);
+            tmpAccount.Avatar = $"/Images/{fileName}";
+            var account = await accountRepository.UpdateAccountAsync(tmpAccount);
             if (account == null)
             {
                 throw new Exception($"Tài khoản không tồn tại!");
