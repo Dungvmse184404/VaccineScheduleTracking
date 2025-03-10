@@ -249,29 +249,29 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             }
 
             var childTimeSlot = await _childServices.GetChildTimeSlotBySlotNumberAsync(childID, slotNumber, date);
-            if (childTimeSlot == null)
-            {
-                Console.WriteLine($"Dữ liệu bất thường:\nChildTimeSlot Ngày: {date} slot {slotNumber} không tồn tại");
-            }
-            else if (childTimeSlot.Available == false)
-            {
-                Console.WriteLine($"Dữ liệu bất thường:\nChildTimeSlot Ngày: {date} slot {slotNumber} đã được set thành false trước đó");
-            }
+            //if (childTimeSlot == null)
+            //{
+            //    Console.WriteLine($"Dữ liệu bất thường:\nChildTimeSlot Ngày: {date} slot {slotNumber} không tồn tại");
+            //}
+            //else if (childTimeSlot.Available == false)
+            //{
+            //    Console.WriteLine($"Dữ liệu bất thường:\nChildTimeSlot Ngày: {date} slot {slotNumber} đã được set thành false trước đó");
+            //}
 
             var doctorTimeSlot = await _doctorServices.FindDoctorTimeSlotAsync(doctorID, date, slotNumber);
-            if (doctorTimeSlot.Available == null)
-            {
-                Console.WriteLine($"Dữ liệu bất thường:\nDoctorTimeSLot Ngày: {date} slot {slotNumber} của bác sĩ {doctorName} không tồn tại (có lẽ là từ tạo doctortimeslot // tạo thiếu ngày)");
-            }
-            else if (doctorTimeSlot.Available == false)
-            {
-                Console.WriteLine($"Dữ liệu bất thường:\nDoctorTimeSLot Ngày: {date} slot {slotNumber} của bác sĩ {doctorName} đã bị hủy trước đó");
-            }
+            //if (doctorTimeSlot != null)
+            //{
+            //    Console.WriteLine($"Dữ liệu bất thường:\nDoctorTimeSLot Ngày: {date} slot {slotNumber} của bác sĩ {doctorName} không tồn tại (có lẽ là từ tạo doctortimeslot // tạo thiếu ngày)");
+            //}
+            //else if (doctorTimeSlot == null && doctorTimeSlot.Available == false)
+            //{
+            //    Console.WriteLine($"Dữ liệu bất thường:\nDoctorTimeSLot Ngày: {date} slot {slotNumber} của bác sĩ {doctorName} đã bị hủy trước đó");
+            //}
 
             if (appointment.Status == "PENDING")
-            {
-                Console.WriteLine($"Dữ liệu bất thường:\ncuộc hẹn ngày {date} slot {slotNumber} đang chưa được đăng kí");
-            }
+            //{
+            //    Console.WriteLine($"Dữ liệu bất thường:\ncuộc hẹn ngày {date} slot {slotNumber} đang chưa được đăng kí");
+            //}
             doctorTimeSlot.Available = true;
             childTimeSlot.Available = false;
             appointment.Vaccine.Stock += 1;
@@ -280,7 +280,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             var cancelReason = new CancelReason()
             {
-                AppointmentId = appointment.AppointmentID,
+                AppointmentID = appointment.AppointmentID,
                 Reason = reason
             };
 

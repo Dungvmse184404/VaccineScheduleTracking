@@ -2,8 +2,8 @@
 {
     public class CancelReason
     {
-        public int CancelReasonId { get; set; }
-        public int AppointmentId { get; set; }
+        public int CancelReasonID { get; set; }
+        public int AppointmentID { get; set; }
         public string Reason { get; set; }
     }
 }
