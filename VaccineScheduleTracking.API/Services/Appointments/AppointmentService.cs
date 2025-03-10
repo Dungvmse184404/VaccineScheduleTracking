@@ -15,6 +15,7 @@ using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Helpers;
 using System.Runtime.CompilerServices;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
@@ -90,7 +91,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 .Where(a => a.Status == "FINISHED" || a.Status == "PENDING")
                 .ToList();
             return (validAppointments.Count >= 5);
-            
+
         }
 
 
@@ -227,7 +228,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         /// <param name="appointmentId"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Appointment?> CancelAppointmentAsync(int appointmentId)
+        public async Task<Appointment?> CancelAppointmentAsync(int appointmentId, string reason)
         {
             ValidateInput(appointmentId, "Id buổi hẹn không thể để trống");
             var appointment = await _appointmentRepository.GetAppointmentByIDAsync(appointmentId);
@@ -275,6 +276,15 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             childTimeSlot.Available = false;
             appointment.Vaccine.Stock += 1;
             appointment.Status = "CANCELED";
+
+
+            var cancelReason = new CancelReason()
+            {
+                AppointmentId = appointment.AppointmentID,
+                Reason = reason
+            };
+
+            await _appointmentRepository.createCancelReasonAsync(cancelReason);
 
             return await _appointmentRepository.UpdateAppointmentAsync(appointment);
         }
@@ -534,10 +544,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         {
             var child = await _childServices.GetChildByIDAsync(childId);
             var appointmentList = await _appointmentRepository.GetAppointmentsByChildIDAsync(childId);
-            if (appointmentList.IsNullOrEmpty())
-            {
-                throw new Exception($"không tìm thấy buổi hẹn nào cho bé {child.Lastname} {child.Firstname}");
-            }
+            //if (appointmentList.IsNullOrEmpty())
+            //{
+            //    throw new Exception($"không tìm thấy buổi hẹn nào cho bé {child.Lastname} {child.Firstname}");
+            //}
 
             return appointmentList;
         }
@@ -576,7 +586,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 int dateStatus = _timeSlotHelper.CompareNowTime(date.AppointmentDate);
                 var filteredAppointments = allAppointments.Where(a => a.TimeSlots.DailySchedule.AppointmentDate == date.AppointmentDate).ToList();
 
-                if (dateStatus == -1) 
+                if (dateStatus == -1)
                 {
                     foreach (var appointment in filteredAppointments)
                     {
@@ -587,7 +597,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                         }
                     }
                 }
-                else if (dateStatus == 0) 
+                else if (dateStatus == 0)
                 {
                     foreach (var appointment in filteredAppointments)
                     {
