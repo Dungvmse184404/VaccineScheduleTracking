@@ -136,11 +136,11 @@ namespace VaccineScheduleTracking.API.Controllers
 
 
         [HttpDelete("cancel-appointment/{id}")]
-        public async Task<IActionResult> CancelAppointment([FromRoute] int id)
+        public async Task<IActionResult> CancelAppointment([FromRoute] int id, string reason)
         {
             try
             {
-                var appointment = await _appointmentServices.CancelAppointmentAsync(id);
+                var appointment = await _appointmentServices.CancelAppointmentAsync(id, reason);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
             catch (Exception ex)

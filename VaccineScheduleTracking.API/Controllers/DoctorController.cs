@@ -65,7 +65,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "Doctor")]
         [HttpGet("get-doctor-account")]
         public async Task<IActionResult> GetDoctorByAccountID()
         {
@@ -103,7 +103,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "Doctor")]
         [HttpPut("change-doctor-schedule")]
         public async Task<IActionResult> ChangeDoctorTimeSlot(string doctorSchedule)
         {
@@ -114,6 +114,10 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 //------------------ hàm tạm để sửa lỗi ------------------
                 var accountId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 var doc = await _doctorRepository.GetDoctorByAccountIDAsync(accountId);
+                if (doc == null)
+                {
+                    throw new Exception($"không tìm thấy tài bác sĩ có acocuntId {accountId}");
+                }
                 int doctorId = doc.DoctorID;
                 //--------------------------------------------------------
 
@@ -138,7 +142,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "Doctor")]
         [HttpDelete("delete-doctor-schedule")]
         public async Task<IActionResult> DeleteDoctor()
         {

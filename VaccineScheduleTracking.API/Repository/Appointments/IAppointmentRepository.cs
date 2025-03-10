@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Repository.Appointments
 {
@@ -17,6 +18,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         Task<Appointment?> UpdateAppointmentAsync(Appointment appointment);
         Task<List<Appointment>> GetAllAppointmentsAsync();
         Task<List<Appointment>> GetAppointmentByDateAsync(int childId, DateOnly date);
+        Task createCancelReasonAsync(CancelReason reason);
     }
 
 }

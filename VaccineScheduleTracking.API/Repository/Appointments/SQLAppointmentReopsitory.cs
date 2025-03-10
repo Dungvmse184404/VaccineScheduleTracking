@@ -2,6 +2,7 @@
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Repository.Appointments
 {
@@ -185,6 +186,10 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             return appointment;
         }
 
-
+        public async Task createCancelReasonAsync(CancelReason reason)
+        {
+            _dbContext.CancelReasons.Add(reason);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

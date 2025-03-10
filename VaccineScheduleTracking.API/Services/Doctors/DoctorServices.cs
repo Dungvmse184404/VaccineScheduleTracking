@@ -279,9 +279,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
 
             var doctorSlotsByDay = doctor.DoctorTimeSlots
                 .Split('|')
-                .FirstOrDefault(d => d.StartsWith(weekday + ":"))? // Lấy ngày trong tuần (là cái Mon, Tus,...)
+                .FirstOrDefault(d => d.StartsWith(weekday + ":"))?
                 .Split(':')
-                .ElementAtOrDefault(1); // Lấy danh sách slot (kiểu 1,2,3,4,5...)
+                .ElementAtOrDefault(1);
 
             if (!string.IsNullOrEmpty(doctorSlotsByDay))
             {

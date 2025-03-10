@@ -16,14 +16,12 @@ namespace VaccineScheduleTracking.API.Controllers
     [ApiController]
     public class ChildController : ControllerBase
     {
-        private readonly IAccountService accountServices;
         private readonly IChildService childService;
         private readonly IMapper mapper;
         private readonly IAccountService accountService;
 
-        public ChildController(IAccountService accountServices, IChildService childService, IMapper mapper, IAccountService accountService)
+        public ChildController(IAccountService accountService, IChildService childService, IMapper mapper)
         {
-            this.accountServices = accountServices;
             this.childService = childService;
             this.mapper = mapper;
             this.accountService = accountService;
@@ -81,7 +79,7 @@ namespace VaccineScheduleTracking.API.Controllers
         {
             try
             {
-                var account = await accountServices.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+                var account = await accountService.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
                 var childList = await childService.GetParentChildren(account.Parent.ParentID);
 
                 return Ok(mapper.Map<List<ChildDto>>(childList));
@@ -94,11 +92,14 @@ namespace VaccineScheduleTracking.API.Controllers
 
         [Authorize]
         [HttpPut("update-child/{id}")]
-        public async Task<IActionResult> ModifileChildProfile(int id, [FromBody] UpdateChildDto updateChild)
+        public async Task<IActionResult> ModifileChildProfile([FromRoute] int id, [FromQuery] UpdateChildDto updateChild)
         {
             try
             {
-                var modifiledChild = await childService.UpdateChild(id, mapper.Map<Child>(updateChild));
+                var parAccount = await accountService.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+                
+
+                var modifiledChild = await childService.UpdateChildForParent(parAccount.Parent.ParentID, id, mapper.Map<Child>(updateChild));
 
                 return Ok(mapper.Map<ChildDto>(modifiledChild));
             }

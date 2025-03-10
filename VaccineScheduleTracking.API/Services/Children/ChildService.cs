@@ -7,6 +7,7 @@ using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository;
 using VaccineScheduleTracking.API_Test.Helpers;
+using AutoMapper;
 
 namespace VaccineScheduleTracking.API_Test.Services.Children
 {
@@ -45,14 +46,35 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
         public async Task<Child> AddChild(Child child)
         {
             ValidateInput(child, "Chưa nhập thông tin trẻ");
+            if (child.DateOfBirth >= timeSlotHelper.CalculateDate(-42))
+            {
+                throw new Exception("không thể đăng kí tài khoản cho trẻ dưới 6 tuần tuổi");
+            }
             return await childRepository.AddChild(child);
         }
 
         public async Task<Child> UpdateChild(int id, Child child)
         {
+
             ValidateInput(id, "Chưa nhập ID trẻ");
             ValidateInput(child, "Chưa nhập thông tin trẻ");
+
             return await childRepository.UpdateChild(id, child);
+        }
+
+        public async Task<Child> UpdateChildForParent(int parentId, int childId, Child updateChild)
+        {
+            var children = await childRepository.GetChildrenByParentID(parentId);
+            Child upChild = null;
+            foreach (var child in children)
+            {
+                if (child.ChildID == childId)
+                {
+                    upChild = await UpdateChild(childId, updateChild);
+                }
+            }
+            ValidateInput(upChild, "bạn không có quyền chính sửa childId này");
+            return upChild;
         }
 
         public async Task<Child> DeleteChild(int id)
