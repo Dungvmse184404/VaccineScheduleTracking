@@ -21,7 +21,7 @@ namespace VaccineScheduleTracking.API.Controllers
         private readonly IMapper mapper;
         private readonly IAccountService accountService;
 
-        public ChildController(IAccountService accountServices, IChildService childService, IMapper mapper)
+        public ChildController(IAccountService accountServices, IChildService childService, IMapper mapper, IAccountService accountService)
         {
             this.accountServices = accountServices;
             this.childService = childService;
