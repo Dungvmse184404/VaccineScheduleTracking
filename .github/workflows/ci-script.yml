@@ -40,9 +40,9 @@ name: .NET Core Desktop
 
 on:
   push:
-    branches: [ "DungVu" ] #lấy code từ nhánh DungVu nếu có ai push lên
+    branches: [ "main" ] #lấy code từ nhánh DungVu nếu có ai push lên
   pull_request:
-    branches: [ "DungVu" ] #Lấy code từ nhánh main nếu có ai gửi pull request
+    branches: [ "main" ] #Lấy code từ nhánh main nếu có ai gửi pull request
 
 jobs: # Những công việc dev làm thường ngày: lấy code, build, chạy test, đóng gói, gửi build...
 
