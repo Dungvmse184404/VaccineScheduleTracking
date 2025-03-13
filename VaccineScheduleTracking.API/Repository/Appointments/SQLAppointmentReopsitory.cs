@@ -186,9 +186,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             return appointment;
         }
 
-        public async Task createCancelReasonAsync(CancelReason reason)
+        public async Task createCancelReasonAsync(CancelAppointment reason)
         {
-            _dbContext.CancelReasons.Add(reason);
+            _dbContext.CancelAppointments.Add(reason);
             await _dbContext.SaveChangesAsync();
         }
     }

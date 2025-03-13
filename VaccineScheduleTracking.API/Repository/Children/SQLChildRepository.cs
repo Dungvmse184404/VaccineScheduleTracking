@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.Entities;
@@ -16,7 +17,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
 
         public async Task<List<Child>> GetChildrenByParentID(int parentID)
         {
-            return await dbContext.Children.AsQueryable().Where(x => x.ParentID == parentID).ToListAsync();
+            return await dbContext.Children.AsQueryable().Where(x => x.ParentID == parentID && x.Available == true).ToListAsync();
         }
         public async Task<List<Child>> GetAllChildrenAsync()
         {
@@ -53,14 +54,14 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
             return child;
         }
 
-        public async Task<Child> DeleteChildAsync(Child child)
+        public async Task<Child> DisableChildAsync(Child child)
         {
             if (child == null)
             {
                 return null;
             }
+            child.Available = false;
 
-            dbContext.Children.Remove(child);
             await dbContext.SaveChangesAsync();
             return child;
         }
@@ -82,6 +83,13 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
         public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int childId, int slotNumber, DateOnly date)
         {
             return await dbContext.ChildTimeSlots.FirstOrDefaultAsync(x => x.ChildID == childId && x.SlotNumber == slotNumber && x.DailySchedule.AppointmentDate == date);
+        }
+
+        public async Task<List<ChildTimeSlot>> GetAllTimeSlotByChildIDAsync(int childId)
+        {
+            return await dbContext.ChildTimeSlots
+                .Where(ts => ts.ChildID == childId)
+                .ToListAsync();
         }
 
         public async Task<ChildTimeSlot> AddChildTimeSlotAsync(ChildTimeSlot childTimeSlot)

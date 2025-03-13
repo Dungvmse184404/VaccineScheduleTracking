@@ -3,24 +3,6 @@
     public static class ValidationHelper
     {
 
-        public static string ColorText(string text, string color)
-        {
-            color.ToLower();
-            var colorCodes = new Dictionary<string, string>
-            {
-                { "red", "\u001b[31m" },
-                { "green", "\u001b[32m" },
-                { "yellow", "\u001b[33m" },
-                { "blue", "\u001b[34m" },
-                { "magenta", "\u001b[35m" },
-                { "cyan", "\u001b[36m" },
-                { "white", "\u001b[37m" },
-                { "reset", "\u001b[0m" }
-            };
-
-            return colorCodes.ContainsKey(color) ? $"{colorCodes[color]}{text}{colorCodes["reset"]}" : text;
-        }
-
         public static bool NullValidator<T>(T value)
         {
             if (value == null) return false;
@@ -53,12 +35,12 @@
         /// <exception cref="Exception"></exception>
         public static string ValidateStatus(string status)
         {
-            string[] validStatuses = { "FINISHED", "CANCELED", "OVERDUE", "PENDING" };
+            string[] validStatuses = { "CONFIRMED", "FINISHED", "CANCELED", "OVERDUE", "PENDING" };
             var s = ValidateInput(status, "status nhập vào không thể để trống").ToUpper();
 
             if (!validStatuses.Contains(s))
             {
-                throw new Exception("Sai format trạng thái (PENDING || OVERDUE || CANCELED || FINISHED)");
+                throw new Exception("Sai format trạng thái (PENDING || CONFIRMED || OVERDUE || CANCELED || FINISHED)");
             }
 
             return s;
@@ -68,6 +50,12 @@
 
         public static string ValidateDoctorSchedule(string doctorSchedule)
         {
+            if (string.IsNullOrWhiteSpace(doctorSchedule))
+            {
+                Console.WriteLine("doctorSchedule is null!! ");
+                return doctorSchedule;
+            }
+
             string[] validWeekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
             var scheduleParts = doctorSchedule.Split('|');
 
@@ -97,7 +85,6 @@
                     }
                 }
             }
-
             return doctorSchedule;
         }
 

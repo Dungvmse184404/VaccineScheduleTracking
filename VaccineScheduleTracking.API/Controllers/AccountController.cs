@@ -11,6 +11,8 @@ using System.Security.Principal;
 using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Repository.Accounts;
+using VaccineScheduleTracking.API_Test.Configurations;
+using VaccineScheduleTracking.API_Test.Services.Staffs;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -18,15 +20,22 @@ namespace VaccineScheduleTracking.API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly JwtHelper jwtHelper;
+        private readonly IStaffService staffService;
         private readonly IAccountRepository accountRepository;
         private readonly IMapper mapper;
         private readonly IAccountService accountService;
-        private readonly JwtHelper jwtHelper;
         private readonly IEmailService emailService;
 
-        public AccountController(IAccountRepository accountRepository, IMapper mapper, IAccountService accountService, JwtHelper jwtHelper, IEmailService emailService)
+        public AccountController(JwtHelper jwtHelper,
+                                IStaffService staffService,
+                                IAccountRepository accountRepository,
+                                IMapper mapper,
+                                IAccountService accountService,
+                                IEmailService emailService)
         {
             this.accountRepository = accountRepository;
+            this.staffService = staffService;
             this.mapper = mapper;
             this.accountService = accountService;
             this.jwtHelper = jwtHelper;
@@ -71,6 +80,29 @@ namespace VaccineScheduleTracking.API.Controllers
                 });
             }
         }
+
+
+        [HttpPost("register-blank-account")]
+        public async Task<IActionResult> RegisterBlankAccount([FromForm] RegisterAccountDto registerAccount)//đang sửa
+        {
+            try
+            {
+                var account = await accountService.RegisterBlankAccountAsync(registerAccount);
+                if (account != null)
+                    await staffService.RecoveryAdminAccount(account, account.Password);
+
+                return Ok(mapper.Map<AccountDto>(account));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = ex.StackTrace,
+                    Message = ex.Message
+                });
+            }
+        }
+
 
         [HttpGet("send-email-token")]
         public async Task<IActionResult> SendEmailToken(string username)

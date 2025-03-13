@@ -6,11 +6,14 @@ using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.Doctors;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Helpers;
+using VaccineScheduleTracking.API_Test.Services.Accounts;
+using Microsoft.Identity.Client;
 
 namespace VaccineScheduleTracking.API_Test.Services.Doctors
 {
     public class DoctorServices : IDoctorServices
     {
+        private readonly IAccountService _accountService;
         private readonly TimeSlotHelper _timeSlotHelper;
         private readonly IChildService _childService;
 
@@ -18,10 +21,17 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         private readonly IDoctorRepository _doctorRepository;
         private readonly IMapper _mapper;
 
-        public DoctorServices(TimeSlotHelper timeSlotHelper, IChildService childService, IDailyScheduleRepository dailyScheduleRepository, IDoctorRepository doctorRepository, IMapper mapper)
+        public DoctorServices(TimeSlotHelper timeSlotHelper,
+            IChildService childService,
+            IAccountService accountService,
+
+            IDailyScheduleRepository dailyScheduleRepository,
+            IDoctorRepository doctorRepository,
+            IMapper mapper)
         {
             _timeSlotHelper = timeSlotHelper;
             _childService = childService;
+            _accountService = accountService;
 
             _dailyScheduleRepository = dailyScheduleRepository;
             _doctorRepository = doctorRepository;
@@ -66,7 +76,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
             List<Account> docAccounts = new List<Account>();
             foreach (var docAcc in docAccountList)
             {
-                var doctorSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(docAcc.Doctor.DoctorID , date);
+                var doctorSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(docAcc.Doctor.DoctorID, date);
                 if (doctorSlots.Any(ts => ts.SlotNumber == slotNumber && ts.Available))
                 {
                     docAccounts.Add(docAcc);
@@ -76,6 +86,17 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         }
 
 
+        public async Task<Account> AddDoctorByAccountIdAsync(Account account, string doctorSchedule)
+        {
+            var doctor = new Doctor
+            {
+                AccountID = account.AccountID,
+                DoctorTimeSlots = doctorSchedule
+            };
+            account.Doctor = doctor;
+
+            return await _doctorRepository.AddDoctorByAccountIdAsync(account, doctor);
+        }
 
         /// <summary>
         /// cập nhật lại doctor.doctorSchedule
@@ -232,7 +253,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
             {
                 throw new Exception($"không tìm thấy bác sĩ có ID {doctorId}");
             }
-
+            await UpdateDoctorAsync(doc.Doctor.DoctorID, null);
             await _doctorRepository.DeleteDoctorTimeSlotByDoctorIDAsync(doctorId);
         }
 
@@ -248,19 +269,29 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         /// <returns></returns>
         public async Task GenerateDoctorCalanderAsync(List<Doctor> doctorList, int numberOfDays)
         {
-            var dailyScheduleList = await _dailyScheduleRepository.GetAllDailyScheduleAsync();
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var dailyScheduleList = (await _dailyScheduleRepository.GetAllDailyScheduleAsync())
+                ?.Where(d => d.AppointmentDate >= today)
+                .ToList();
+
+            if (dailyScheduleList == null || dailyScheduleList.Count == 0 || doctorList.Count == 0)
+            {
+                return;
+            }
+
             foreach (var doctor in doctorList)
             {
                 foreach (var day in dailyScheduleList)
                 {
                     string weekday = _timeSlotHelper.ConvertToWeekday(day.AppointmentDate);
-                    if (doctor.DoctorTimeSlots.Contains(weekday))
+                    if (doctor.DoctorTimeSlots != null && doctor.DoctorTimeSlots.Contains(weekday))
                     {
                         await GenerateDoctorScheduleAsync(doctor, day, weekday);
                     }
                 }
             }
         }
+
 
 
         /// <summary>
@@ -398,10 +429,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
             ValidateInput(doctorId, "doctorId không thể để trống");
             ValidateDoctorSchedule(doctorSchedule);
 
+            await DeleteDoctorTimeSlotAsync(doctorId);
             var docAccount = await UpdateDoctorAsync(doctorId, doctorSchedule);
             var doctor = docAccount.Doctor;
-
-            await DeleteDoctorTimeSlotAsync(doctorId);
 
             List<Doctor> doctorList = new List<Doctor>() { doctor };
 
@@ -409,5 +439,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
 
             return doctor;
         }
+
+
     }
 }

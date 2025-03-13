@@ -103,7 +103,7 @@ namespace VaccineScheduleTracking.API.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize(Roles = "Doctor")]
-        [HttpGet("get-doctor-appointment-list")]
+        [HttpGet("get-doctor-appointment-list")] 
         public async Task<IActionResult> GetDoctorAppointments()
         {
             try
@@ -119,7 +119,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Parent")]
         [HttpPut("update-appointment/{appointmentId}")]
         public async Task<IActionResult> UpdateAppointment([FromRoute] int appointmentId, UpdateAppointmentDto updateAppointment)
         {
@@ -134,7 +134,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Parent")]
         [HttpDelete("cancel-appointment/{id}")]
         public async Task<IActionResult> CancelAppointment([FromRoute] int id, string reason)
         {

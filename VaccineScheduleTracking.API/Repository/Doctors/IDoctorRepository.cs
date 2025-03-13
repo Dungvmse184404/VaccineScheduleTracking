@@ -13,13 +13,15 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
         //====================================================
         Task<List<Account>> GetAllDoctorAsync();
         //Task<Doctor?> GetSuitableDoctor(int slot, DateTime time);
-        Task<Account?> GetDoctorByIDAsync(int doctorID);
+        Task<Account> AddDoctorByAccountIdAsync(Account account, Doctor doctorInfo);
+        Task<Account?> GetDoctorByIDAsync(int doctorId);
         Task<Account?> UpdateDoctorAsync(Doctor doctor);
 
+
         //----------------------DoctorTimeSlot---------------------------
-        Task<List<DoctorTimeSlot>> GetDoctorTimeSlotsForDayAsync(int doctorID, DateOnly date);
-        Task<DoctorTimeSlot> GetDoctorTimeSlotByIDAsync(int doctorTimeSlotID);
-        Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorID, DateOnly date, int slotNumber);
+        Task<List<DoctorTimeSlot>> GetDoctorTimeSlotsForDayAsync(int doctorId, DateOnly date);
+        Task<DoctorTimeSlot> GetDoctorTimeSlotByIDAsync(int doctorTimeSlotId);
+        Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorId, DateOnly date, int slotNumber);
         Task AddTimeSlotForDoctorAsync(DoctorTimeSlot doctorSlot);
         Task<DoctorTimeSlot> UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot);
         Task DeleteDoctorTimeSlotByDoctorIDAsync(int doctorId);

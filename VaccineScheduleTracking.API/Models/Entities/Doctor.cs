@@ -10,6 +10,6 @@ namespace VaccineScheduleTracking.API.Models.Entities
 
         [JsonIgnore]
         public Account Account { get; set; }
-        public string DoctorTimeSlots { get; set; }
+        public string? DoctorTimeSlots { get; set; }
     }
 }

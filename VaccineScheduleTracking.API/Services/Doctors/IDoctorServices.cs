@@ -11,6 +11,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         Task<List<Account>> GetDoctorByTimeSlotAsync(int slotNumber, DateOnly date);
         Task<Account?> UpdateDoctorAsync(int doctorId, string doctorSchedule);
         Task<List<Appointment>> ReassignDoctorAppointmentsAsync(int doctorId, List<Appointment> appointments);
+        Task<Account> AddDoctorByAccountIdAsync(Account account, string doctorSchedule);
 
         //----------------------------Doctor Schedule---------------------------
         Task<Doctor?> ManageDoctorScheduleServiceAsync(int doctorId, string doctorSchedule);

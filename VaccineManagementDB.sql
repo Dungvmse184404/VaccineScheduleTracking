@@ -35,7 +35,7 @@ GO
 CREATE TABLE [dbo].[Doctors](
 	[DoctorID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[AccountID] [int] NOT NULL,
-	[DoctorTimeSlots]  VARCHAR(max) NOT NULL,
+	[DoctorTimeSlots]  VARCHAR(max) NULL,
 	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
 )
 GO
@@ -57,6 +57,7 @@ CREATE TABLE [dbo].[Children] (
 	[Height] [decimal](8,2) NOT NULL,
 	[Gender] [varchar](10) NOT NULL,
 	[DateOfBirth] [date] NOT NULL,
+	[Available] [bit] NOT NULL,
 	[ParentID] [int] NOT NULL,
     FOREIGN KEY ([ParentID]) REFERENCES [dbo].[Parents]([ParentID])
 )
@@ -116,16 +117,16 @@ DBCC CHECKIDENT ('ChildTimeSlots', RESEED, 0);
 INSERT [dbo].[Staffs] (AccountID) VALUES  (12), (13)
 
 /****** Insert:  Table [dbo].[Child] ******/
-INSERT [dbo].[Children] ([FirstName], [LastName], [Weight], [Height], [Gender], [DateOfBirth], [ParentID]) VALUES
-('Thuy', 'Nguyen', 11.3, 0.8, 'FEMALE', '2022-01-01', 1),
-('Thu', 'Nguyen', 22.3, 1.23, 'FEMALE', '2022-12-25', 1),
-('Minh', 'Nguyen', 20.3, 1.1, 'MALE', '2022-1-1', 2),
-('Hoa', 'Tran', 15.2, 0.95, 'FEMALE', '2022-03-15', 3),
-('Kien', 'Pham', 18.5, 1.05, 'MALE', '2021-07-19', 3),
-('Lan', 'Le', 17.0, 1.1, 'FEMALE', '2022-04-30', 4),
-('Duy', 'Nguyen', 20.0, 1.15, 'MALE', '2022-08-10', 1),
-('Thao', 'Nguyen', 13.7, 0.95, 'FEMALE', '2022-02-20', 2),
-('Hao', 'Nguyen',	20.0, 1.15, 'MALE', '2022-08-10', 5);
+INSERT [dbo].[Children] ([FirstName], [LastName], [Weight], [Height], [Gender], [DateOfBirth], [ParentID], [Available]) VALUES
+('Thuy', 'Nguyen', 11.3, 0.8, 'FEMALE', '2022-01-01', 1, 1),
+('Thu', 'Nguyen', 22.3, 1.23, 'FEMALE', '2022-12-25', 1, 1),
+('Minh', 'Nguyen', 20.3, 1.1, 'MALE', '2022-1-1', 2, 1),
+('Hoa', 'Tran', 15.2, 0.95, 'FEMALE', '2022-03-15', 3, 1),
+('Kien', 'Pham', 18.5, 1.05, 'MALE', '2021-07-19', 3, 1),
+('Lan', 'Le', 17.0, 1.1, 'FEMALE', '2022-04-30', 4, 1),
+('Duy', 'Nguyen', 20.0, 1.15, 'MALE', '2022-08-10', 1, 1),
+('Thao', 'Nguyen', 13.7, 0.95, 'FEMALE', '2022-02-20', 2, 1),
+('Hao', 'Nguyen',	20.0, 1.15, 'MALE', '2022-08-10', 5, 1);
 GO
 
 
@@ -215,16 +216,16 @@ CREATE TABLE [dbo].[Appointments](
 )	
 GO
 
-
-CREATE TABLE [dbo].[DoctorTimeSlots](
-	DoctorTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
-	DoctorID int NOT NULL,
-	SlotNumber int NOT NULL,
-	Available bit NOT NULL,
-	DailyScheduleID int NOT NULL,
-	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
-	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID])
+CREATE TABLE [dbo].[CancelAppointment](
+	[CancelAppointmentID] [int] IDENTITY(1,1) PRIMARY KEY,
+	[AppointmentID] [int] NOT NULL,
+	[CancelDate] [DateTime] NOT NULL,
+	[Reason] NText NOT NULL,
+	FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments]([AppointmentID]),
 )
+GO
+
+ 
 
 CREATE TABLE [dbo].[ChildTimeSlots] (
     ChildTimeSlotID int IDENTITY(1,1) PRIMARY KEY,

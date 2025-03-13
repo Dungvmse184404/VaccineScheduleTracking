@@ -178,10 +178,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Appointment?> SetAppointmentStatusAsync(int appointmentId, string status, string? note)
+        public async Task<Appointment?> SetAppointmentStatusAsync(int appointmentId, string? note)
         {
             //ValidateInput(appointmentId, "Id buổi hẹn không thể để trống");
-            string s = ValidateStatus(status);
             var appointment = await _appointmentRepository.GetAppointmentByIDAsync(appointmentId);
             if (appointment == null)
                 throw new Exception("không tìm thấy buổi hẹn");
@@ -190,12 +189,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             else if (appointment.Status == "CANCELED")
                 throw new Exception(" buổi hẹn đã bị hủy");
 
-            appointment.Status = s;
+            appointment.Status = "FINISHED";
+            await AddAppointmentToRecord(appointment, note);
 
-            if (s.Equals("FINISHED"))
-            {
-                await AddAppointmentToRecord(appointment, note);
-            }
             return await _appointmentRepository.UpdateAppointmentAsync(appointment);
         }
 
@@ -247,40 +243,29 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             {
                 throw new Exception($"buổi hẹn ngày {date} slot {slotNumber} đã quá hạn");
             }
+            if (appointment.Status == "CONFIRMED")
+                throw new Exception("không thể hủy lịch hẹn đã được thanh toán");
+
+            if (date == DateOnly.FromDateTime(DateTime.Now))
+            {
+                throw new Exception("Lịch hẹn chỉ có thể hủy trước ngày tiêm 1 ngày");
+            }
 
             var childTimeSlot = await _childServices.GetChildTimeSlotBySlotNumberAsync(childID, slotNumber, date);
-            //if (childTimeSlot == null)
-            //{
-            //    Console.WriteLine($"Dữ liệu bất thường:\nChildTimeSlot Ngày: {date} slot {slotNumber} không tồn tại");
-            //}
-            //else if (childTimeSlot.Available == false)
-            //{
-            //    Console.WriteLine($"Dữ liệu bất thường:\nChildTimeSlot Ngày: {date} slot {slotNumber} đã được set thành false trước đó");
-            //}
-
             var doctorTimeSlot = await _doctorServices.FindDoctorTimeSlotAsync(doctorID, date, slotNumber);
-            //if (doctorTimeSlot != null)
-            //{
-            //    Console.WriteLine($"Dữ liệu bất thường:\nDoctorTimeSLot Ngày: {date} slot {slotNumber} của bác sĩ {doctorName} không tồn tại (có lẽ là từ tạo doctortimeslot // tạo thiếu ngày)");
-            //}
-            //else if (doctorTimeSlot == null && doctorTimeSlot.Available == false)
-            //{
-            //    Console.WriteLine($"Dữ liệu bất thường:\nDoctorTimeSLot Ngày: {date} slot {slotNumber} của bác sĩ {doctorName} đã bị hủy trước đó");
-            //}
 
             if (appointment.Status == "PENDING")
-            //{
-            //    Console.WriteLine($"Dữ liệu bất thường:\ncuộc hẹn ngày {date} slot {slotNumber} đang chưa được đăng kí");
-            //}
-            doctorTimeSlot.Available = true;
-            childTimeSlot.Available = false;
-            appointment.Vaccine.Stock += 1;
-            appointment.Status = "CANCELED";
+            {
+                doctorTimeSlot.Available = true;
+                childTimeSlot.Available = false;
+                appointment.Vaccine.Stock += 1;
+                appointment.Status = "CANCELED";
+            }
 
-
-            var cancelReason = new CancelReason()
+            var cancelReason = new CancelAppointment()
             {
                 AppointmentID = appointment.AppointmentID,
+                CancelDate = DateTime.Now,
                 Reason = reason
             };
 
@@ -613,7 +598,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         }
 
 
+        //public async Task AsyncTimeSlot(DateOnly date, int SlotNumber,  )
+        //{
 
+        //}
 
 
     }
