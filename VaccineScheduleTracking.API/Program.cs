@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Helpers;
@@ -29,8 +28,14 @@ using VaccineScheduleTracking.API_Test.Services.Doctors;
 using VaccineScheduleTracking.API_Test.Repository.VaccineContainers;
 using VaccineScheduleTracking.API_Test.Configurations;
 using Microsoft.Extensions.Options;
+
+using VaccineScheduleTracking.API_Test.Payments.VnPay.Service;
+using VaccineScheduleTracking.API_Test.Payments.VnPay.Repository;
+using VaccineScheduleTracking.API_Test.Payment.VnPay.Service;
+
 using VaccineScheduleTracking.API_Test.Services.Staffs;
 using VaccineScheduleTracking.API_Test.Repository.Staffs;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,6 +102,10 @@ builder.Services.AddScoped<IVaccineRecordService, VaccineRecordService>();
 builder.Services.AddScoped<IVaccineComboRepository, SQLVaccineComboRepository>();
 builder.Services.AddScoped<IVaccineComboService, VaccineComboService>();
 builder.Services.AddScoped<IVaccineContainerRepository, SQLVaccineContainerRepository>();
+
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 builder.Services.AddAuthentication(options =>
 {

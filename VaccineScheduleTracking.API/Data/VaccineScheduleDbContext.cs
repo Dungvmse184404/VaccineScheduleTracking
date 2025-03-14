@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.Entities;
+using VaccineScheduleTracking.API_Test.Payments.VnPay.Models;
 
 namespace VaccineScheduleTracking.API.Data
 {
@@ -25,8 +26,9 @@ namespace VaccineScheduleTracking.API.Data
         public DbSet<Vaccine> Vaccines { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Image> Images { get; set; }
-        public DbSet<VaccineRecord> VaccineRecords { get; set; }  
+        public DbSet<VaccineRecord> VaccineRecords { get; set; }
         public DbSet<VaccineCombo> VaccineCombos { get; set; }
         public DbSet<VaccineContainer> VaccineContainers { get; set; }
+        public DbSet<Payment> Payments { get; set; }
     }
 }
