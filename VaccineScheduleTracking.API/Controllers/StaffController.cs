@@ -21,7 +21,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         private readonly IMapper _mapper;
 
         public StaffController(IAccountService accountService,
-                               IStaffService staffService, 
+                               IStaffService staffService,
                                IMapper mapper)
         {
             _accountService = accountService;
@@ -31,10 +31,11 @@ namespace VaccineScheduleTracking.API_Test.Controllers
 
         [Authorize(Roles = "Staff")]
         [HttpPost("Promote-to-doctor/{accountId}")]
-        public async Task<IActionResult> PromoteToDoctor([FromRoute]int accountId, [FromQuery] string? schedule)
+        public async Task<IActionResult> PromoteToDoctor([FromRoute] int accountId, [FromQuery] string? schedule)
         {
             try
             {
+                ValidateInput(accountId, "chưa nhập ID cho account gán role doctor");
                 ValidateDoctorSchedule(schedule);
                 var account = await _staffService.PromoteToDoctorAsync(accountId, schedule);
 
@@ -56,12 +57,32 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 ValidateInput(accountId, "chưa nhập ID cho account gán role staff");
                 var account = await _staffService.PromoteToStaffAsync(accountId);
 
-                return Ok(_mapper.Map<Account>(account));
+                return Ok(_mapper.Map<StaffAccountDto>(account));
             }
             catch (Exception ex)
             {
                 return HandleException(ex);
             }
         }
+
+
+        [Authorize(Roles = "Staff")]
+        [HttpPost("Promote-to-manager/{accountId}")]
+        public async Task<IActionResult> PromoteToManager([FromRoute] int accountId)
+        {
+            try
+            {
+                ValidateInput(accountId, "chưa nhập ID cho account gán role manager");
+                var account = await _staffService.PromoteToManagerAsync(accountId);
+
+                return Ok(_mapper.Map<ManagerAccountDto>(account));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
+        }
+
+
     }
 }

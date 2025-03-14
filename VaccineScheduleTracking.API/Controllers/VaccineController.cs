@@ -102,7 +102,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [Authorize(Roles = "Doctor, Staff")]
+        [Authorize(Roles = "Manager, Staff")]
         [HttpPost("add-vaccinetype")]
         public async Task<IActionResult> CreateVaccineType([FromBody] AddVaccineTypeDto addVaccineTypeDto)
         {
@@ -117,7 +117,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [Authorize(Roles = "Doctor, Staff")]
+        [Authorize(Roles = "Manager, Staff")]
         [HttpPut("Update-vaccinetype/{id}")]
         public async Task<IActionResult> UpdateVaccineType([FromRoute] int id, UpdateVaccineTypeDto updateVaccineType)
         {
@@ -130,7 +130,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [Authorize(Roles = "Doctor, Staff")]
+        [Authorize(Roles = "Manager, Staff")]
         [HttpDelete("delete-vaccinetype/{id}")]
         public async Task<IActionResult> DeleteVaccineType([FromRoute] int id)
         {
@@ -142,8 +142,8 @@ namespace VaccineScheduleTracking.API.Controllers
             catch (Exception ex) { return BadRequest(new { Message = ex.Message }); }
         }
 
-        //Vaccine 
-        [Authorize(Roles = "Doctor, Staff")]
+        //------------------------------ Vaccine -------------------------------
+        [Authorize(Roles = "Manager, Staff")]
         [HttpPost("add-vaccine")]
         public async Task<IActionResult> CreateVaccine([FromBody] AddVaccineDto addVaccineDto)
         {
@@ -159,7 +159,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [Authorize(Roles = "Doctor, Staff")]
+        [Authorize(Roles = "Manager, Staff")]
         [HttpPut("update-vaccine/{id}")]
         public async Task<IActionResult> UpdateVaccine([FromRoute] int id, [FromBody] UpdateVaccineDto updateVaccineDto)
         {
@@ -175,7 +175,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Doctor, Staff")]
+        [Authorize(Roles = "Manager, Staff")]
         [HttpDelete("delete-vaccine/{id}")]
         public async Task<IActionResult> DeleteVaccine([FromRoute] int id)
         {

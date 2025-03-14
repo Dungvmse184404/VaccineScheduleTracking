@@ -23,6 +23,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
                                .Include(a => a.Parent)
                                .Include(a => a.Doctor)
                                .Include(a => a.Staff)
+                               .Include(a => a.Manager)
                                .FirstOrDefaultAsync(a => a.AccountID == accountId);
         }
 
@@ -43,6 +44,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
             return await dbContext.Accounts.Include(x => x.Parent)
                                            .Include(x => x.Doctor)
                                            .Include(x => x.Staff)
+                                           .Include(a => a.Manager)
                                            .FirstOrDefaultAsync(user => user.AccountID == id);
         }
 
@@ -60,7 +62,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
         {
             return await dbContext.Accounts.Include(x => x.Parent).
                                             Include(x => x.Doctor).
-                                            Include(x => x.Staff).FirstOrDefaultAsync(user => user.Username == username);
+                                            Include(x => x.Staff).
+                                            Include(a => a.Manager).
+                                            FirstOrDefaultAsync(user => user.Username == username);
         }
 
         public async Task<Account> AddAccountAsync(Account account)
@@ -94,7 +98,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
         {
             var query = dbContext.Accounts.Include(x => x.Parent).
                                            Include(x => x.Doctor).
-                                           Include(x => x.Staff).AsQueryable();
+                                           Include(x => x.Staff).
+                                           Include(a => a.Manager).
+                                           AsQueryable();
             if (filterAccountDto.AccountID.HasValue)
             {
                 query = query.Where(x => x.AccountID == filterAccountDto.AccountID);

@@ -42,7 +42,8 @@ namespace VaccineScheduleTracking.API.Mappings
             CreateMap<Appointment, CreateAppointmentDto>().ReverseMap();
 
             CreateMap<Account, DoctorAccountDto>().ReverseMap();
-
+            CreateMap<Account, ManagerAccountDto>().ReverseMap();
+            CreateMap<Account, StaffAccountDto>().ReverseMap();
             CreateMap<Doctor, DoctorDto>()
                 .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.DoctorID))
                 .ForMember(dest => dest.DoctorTimeSlot, opt => opt.MapFrom(src => src.DoctorTimeSlots))

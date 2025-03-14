@@ -48,6 +48,14 @@ CREATE TABLE [dbo].[Staffs](
 )
 GO
 
+/****** Object:  Table [dbo].[Manager] ******/
+CREATE TABLE [dbo].[Manager](
+	[ManagerID] [int] IDENTITY(1,1) PRIMARY KEY,
+	[AccountID] [int] NOT NULL,
+	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
+)
+GO
+
 /****** Object:  Table [dbo].[Child] ******/
 CREATE TABLE [dbo].[Children] (
     [ChildID] [int] IDENTITY(1,1) PRIMARY KEY,

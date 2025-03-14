@@ -178,7 +178,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Appointment?> SetAppointmentStatusAsync(int appointmentId, string? note)
+        public async Task<Appointment?> SetAppointmentStatusAsync(int appointmentId, string status, string? note)
         {
             //ValidateInput(appointmentId, "Id buổi hẹn không thể để trống");
             var appointment = await _appointmentRepository.GetAppointmentByIDAsync(appointmentId);
@@ -189,7 +189,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             else if (appointment.Status == "CANCELED")
                 throw new Exception(" buổi hẹn đã bị hủy");
 
-            appointment.Status = "FINISHED";
+            appointment.Status = status;
             await AddAppointmentToRecord(appointment, note);
 
             return await _appointmentRepository.UpdateAppointmentAsync(appointment);
@@ -318,6 +318,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             {
                 throw new Exception($"Không tìm thấy trẻ có ID {childID}");
             }
+            //if (child.DateOfBirth >= _timeSlotHelper.CalculateDate(-42))
+            //{
+            //    throw new Exception("không thể đăng kí tiêm cho trẻ dưới 6 tuần tuổi");
+            //}
 
             /// Kiểm tra trẻ đã đặt slot này chưa 
             var childTimeSlot = await _childServices.GetChildTimeSlotBySlotNumberAsync(childID, slotNumber, date);

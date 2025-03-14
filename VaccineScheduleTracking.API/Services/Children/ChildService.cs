@@ -49,10 +49,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
         public async Task<Child> AddChild(Child child)
         {
             ValidateInput(child, "Chưa nhập thông tin trẻ");
-            if (child.DateOfBirth >= timeSlotHelper.CalculateDate(-42))
-            {
-                throw new Exception("không thể đăng kí tài khoản cho trẻ dưới 6 tuần tuổi");
-            }
+            //if (child.DateOfBirth >= timeSlotHelper.CalculateDate(-42))
+            //{
+            //    throw new Exception("không thể đăng kí tài khoản cho trẻ dưới 6 tuần tuổi");
+            //}
             return await childRepository.AddChild(child);
         }
 

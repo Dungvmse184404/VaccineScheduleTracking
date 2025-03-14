@@ -90,7 +90,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             try
             {
                 ValidateInput(appointmentId, "ID buổi hẹn không thể để trống");
-                var appointment = await _appointmentService.SetAppointmentStatusAsync(appointmentId, note);
+                var appointment = await _appointmentService.SetAppointmentStatusAsync(appointmentId, "FINISHED", note);
 
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }

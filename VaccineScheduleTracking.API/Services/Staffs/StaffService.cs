@@ -11,6 +11,7 @@ using System.Net.WebSockets;
 using VaccineScheduleTracking.API_Test.Repository.Staffs;
 using VaccineScheduleTracking.API_Test.Configurations;
 using Microsoft.AspNetCore.Identity;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 namespace VaccineScheduleTracking.API_Test.Services.Staffs
 {
     public class StaffService : IStaffService
@@ -52,8 +53,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Staffs
 
         public async Task<Account> PromoteToDoctorAsync(int accountId, string schedule)
         {
-            ValidateInput(accountId, "chưa nhập accountId");
-            ValidateInput(schedule, "chưa nhập lịch làm việc");
             var account = await _accountService.GetAccountByIdAsync(accountId);
             ValidateInput(account, "không tìm thấy Account");
             checkRole(account);
@@ -61,9 +60,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Staffs
             account = await _doctorService.AddDoctorByAccountIdAsync(account, schedule);
 
             var doctorList = new List<Doctor>() { account.Doctor };
+
             await _doctorService.DeleteDoctorTimeSlotAsync(account.Doctor.DoctorID);
             await _doctorService.GenerateDoctorCalanderAsync(doctorList, _timeSlotHelper.SetCalendarDate());
-
             return account;
         }
 
@@ -72,10 +71,18 @@ namespace VaccineScheduleTracking.API_Test.Services.Staffs
         {
             var account = await _accountService.GetAccountByIdAsync(accountId);
             ValidateInput(account, "không tìm thấy Account");
+            checkRole(account);
 
             return await AddStaffToAccountAsync(account);
         }
+        public async Task<Account> PromoteToManagerAsync(int accountId)
+        {
+            var account = await _accountService.GetAccountByIdAsync(accountId);
+            ValidateInput(account, "không tìm thấy Account");
+            checkRole(account);
 
+            return await AddManagerToAccountAsync(account);
+        }
 
         public async Task<Account> AddStaffToAccountAsync(Account account)
         {
@@ -85,6 +92,17 @@ namespace VaccineScheduleTracking.API_Test.Services.Staffs
             };
 
             return await _staffRepository.AddStaffToAccountAsync(account, staff);
+        }
+
+
+
+        public async Task<Account> AddManagerToAccountAsync(Account account)
+        {
+            var manager = new Manager()
+            {
+                AccountID = account.AccountID,
+            };
+            return await _staffRepository.AddManagerToAccountAsync(account, manager);
         }
 
         /// <summary>
@@ -103,5 +121,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Staffs
                 }
             }
         }
+
+
     }
 }
