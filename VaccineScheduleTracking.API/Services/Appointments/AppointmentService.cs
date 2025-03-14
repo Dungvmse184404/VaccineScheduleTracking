@@ -117,9 +117,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             foreach (var app in appointments)
             {
-                if ((app.Status == "FINISHED" || app.Status == "PENDING"))
+                if ((app.Status == "FINISHED" || app.Status == "PENDING" || app.Status == "CONFIRMED"))
                 {
-                    if (!latestDates.TryGetValue(app.VaccineID, out var latest) || app.TimeSlots.DailySchedule.AppointmentDate > latest)
+                    if (!latestDates.TryGetValue(app.VaccineID, out var latest) ||  app.TimeSlots.DailySchedule.AppointmentDate > latest)
                     {
                         latestDates[app.VaccineID] = app.TimeSlots.DailySchedule.AppointmentDate;
                     }
@@ -188,6 +188,14 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 throw new Exception(" buổi hẹn đã quá hạn");
             else if (appointment.Status == "CANCELED")
                 throw new Exception(" buổi hẹn đã bị hủy");
+            var Time = $"{appointment.TimeSlots.DailySchedule.AppointmentDate} - {appointment.TimeSlots.StartTime}";
+            string childName = $"{appointment.Child.Lastname} {appointment.Child.Firstname}";
+
+            if (appointment.Status == "CONFIRMED" && status == "CONFIRMED")
+                throw new Exception($"buổi hẹn {Time} cho bé {childName} đã được thanh toán trước đó");
+
+            if (appointment.Status == "PENDING" && status == "FINISHED")
+                throw new Exception($"buổi hẹn {Time} cho bé {childName} chưa được thanh toán!!");
 
             appointment.Status = status;
             await AddAppointmentToRecord(appointment, note);

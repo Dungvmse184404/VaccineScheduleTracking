@@ -40,7 +40,7 @@
 
             if (!validStatuses.Contains(s))
             {
-                throw new Exception("Sai format trạng thái (PENDING || CONFIRMED || OVERDUE || CANCELED || FINISHED)");
+                throw new Exception("Sai format trạng thái (CONFIRMED || PENDING || CONFIRMED || OVERDUE || CANCELED || FINISHED)");
             }
 
             return s;
