@@ -28,9 +28,14 @@ using VaccineScheduleTracking.API_Test.Services.Doctors;
 using VaccineScheduleTracking.API_Test.Repository.VaccineContainers;
 using VaccineScheduleTracking.API_Test.Configurations;
 using Microsoft.Extensions.Options;
+
 using VaccineScheduleTracking.API_Test.Payments.VnPay.Service;
 using VaccineScheduleTracking.API_Test.Payments.VnPay.Repository;
 using VaccineScheduleTracking.API_Test.Payment.VnPay.Service;
+
+using VaccineScheduleTracking.API_Test.Services.Staffs;
+using VaccineScheduleTracking.API_Test.Repository.Staffs;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +77,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<VaccineScheduleDbContext>(option =>
 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IStaffRepository, SQLStaffRepository>();
+builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IDailyScheduleRepository, SQLDailyScheduleRepository>();
 builder.Services.AddScoped<IDailyScheduleService, DailyScheduleService>();
 builder.Services.AddScoped<ITimeSlotServices, TimeSlotServices>();
@@ -134,9 +141,12 @@ builder.Services.AddCors(options =>
 //set đường dẫn cho file log.txt (giống SQL DB)
 ExceptionHelper.Configure(builder.Configuration);
 
-//cấu hình file DefaultConfig
+//cấu hinhd để lấy thông tin default từ appsettings
 builder.Services.Configure<DefaultConfig>(builder.Configuration.GetSection("DefaultConfig"));
 builder.Services.AddSingleton<DefaultConfig>(sp => sp.GetRequiredService<IOptions<DefaultConfig>>().Value);
+
+builder.Services.Configure<AdminAccountConfig>(builder.Configuration.GetSection("AdminAccount"));
+builder.Services.AddSingleton<AdminAccountConfig>(sp => sp.GetRequiredService<IOptions<AdminAccountConfig>>().Value);
 
 builder.Services.AddSingleton<TimeSlotHelper>();
 

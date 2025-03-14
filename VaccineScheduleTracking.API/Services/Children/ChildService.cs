@@ -7,6 +7,9 @@ using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Repository;
 using VaccineScheduleTracking.API_Test.Helpers;
+using AutoMapper;
+using Org.BouncyCastle.Asn1.Ocsp;
+using VaccineScheduleTracking.API_Test.Repository.Doctors;
 
 namespace VaccineScheduleTracking.API_Test.Services.Children
 {
@@ -39,39 +42,112 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
         public async Task<List<Child>> GetParentChildren(int parentID)
         {
             ValidateInput(parentID, "Chưa nhập parentID");
-            return await childRepository.GetChildrenByParentID(parentID);
+            return await childRepository.GetChildrenByParentID(parentID); 
+            
         }
 
         public async Task<Child> AddChild(Child child)
         {
             ValidateInput(child, "Chưa nhập thông tin trẻ");
+            if (child.DateOfBirth >= timeSlotHelper.CalculateDate(-42))
+            {
+                throw new Exception("không thể đăng kí tài khoản cho trẻ dưới 6 tuần tuổi");
+            }
             return await childRepository.AddChild(child);
         }
 
         public async Task<Child> UpdateChild(int id, Child child)
         {
+
             ValidateInput(id, "Chưa nhập ID trẻ");
             ValidateInput(child, "Chưa nhập thông tin trẻ");
+
             return await childRepository.UpdateChild(id, child);
         }
 
-        public async Task<Child> DeleteChild(int id)
+        public async Task<Child> UpdateChildForParent(int parentId, int childId, Child updateChild)
         {
-            var child = await childRepository.GetChildByID(id);
-            if (child == null)
+            var children = await childRepository.GetChildrenByParentID(parentId);
+            Child upChild = null;
+            foreach (var child in children)
             {
-                throw new Exception($"Không tìm thấy ID: {id}");
+                if (child.ChildID == childId)
+                {
+                    upChild = await UpdateChild(childId, updateChild);
+                }
             }
-            return await childRepository.DeleteChildAsync(child);
+            ValidateInput(upChild, "bạn không có quyền chính sửa childId này");
+            return upChild;
+        }
+
+        public async Task<Child> DeleteChild(int id, int parentID)
+        {
+            var children = await childRepository.GetChildrenByParentID(parentID);
+            Child delChild = null;
+            foreach (var child in children)
+            {
+                if (child.ChildID == id)
+                {
+                    await DisableChildTimeSlot(id);
+                    delChild = await DisableChildByIDAsync(child.ChildID);//set db on delete set null hoặc tạo thêm thuộc tính status cho child
+                }
+            }
+            ValidateInput(delChild, "bạn không có quyền xóa childId này");
+            return delChild;
+        }
+
+        public async Task<Child> DisableChildByIDAsync(int childId)
+        {
+            var child = await GetChildByIDAsync(childId);
+            return await childRepository.DisableChildAsync(child);
         }
 
         //-------------------ChildTimeSlot func-------------------
 
-        public async Task<ChildTimeSlot?> GetChildTimeSlotByIDAsync(int id)
+        public async Task<ChildTimeSlot?> ModifyChildTimeSlotStatusByIDAsync(int childTimeSlotID, bool status)
         {
-            ValidateInput(id, "ID không thể để trống");
-            return await childRepository.GetChildTimeSlotByIDAsync(id);
+            var childTimeSlot = await GetChildTimeSlotByIDAsync(childTimeSlotID);
+            ValidateInput(childTimeSlot, $"Không tìm thấy childTimeSlotID {childTimeSlotID}");
+
+            childTimeSlot.Available = status;
+            var updatedSlot = await UpdateChildTimeSlotAsync(childTimeSlot);
+            ValidateInput(updatedSlot, $"Không thể cập nhật childTimeSlotID {childTimeSlotID}");
+
+            return updatedSlot;
         }
+
+        public async Task DisableChildTimeSlot(int childID)
+        {
+            var allTimeSlot = await GetAllTimeSlotByChildIDAsync(childID);
+
+
+            foreach (var timeSlot in allTimeSlot)
+            {
+                if (timeSlot.Available)
+                {
+                    await ModifyChildTimeSlotStatusByIDAsync(timeSlot.ChildTimeSlotID, false);
+                }
+            }
+        }
+
+        public async Task SwapChildTimeSlotAsync(int disableId, int enableId)
+        {
+            await ModifyChildTimeSlotStatusByIDAsync(disableId, false);
+            await ModifyChildTimeSlotStatusByIDAsync(enableId, true);
+        }
+
+        public async Task<List<ChildTimeSlot>> GetAllTimeSlotByChildIDAsync(int childId)
+        {
+            ValidateInput(childId, "Id của trẻ không thể để trống");
+            return await childRepository.GetAllTimeSlotByChildIDAsync(childId);
+        }
+
+        public async Task<ChildTimeSlot?> GetChildTimeSlotByIDAsync(int timeSlotId)
+        {
+            ValidateInput(timeSlotId, "ID không thể để trống");
+            return await childRepository.GetChildTimeSlotByIDAsync(timeSlotId);
+        }
+
         public async Task<ChildTimeSlot?> GetChildTimeSlotBySlotNumberAsync(int childId, int slotNumber, DateOnly date)
         {
             ValidateInput(slotNumber, "Chưa chọn slot");

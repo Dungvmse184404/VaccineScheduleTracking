@@ -9,6 +9,7 @@
         public decimal Height { get; set; }
         public string Gender { get; set; }
         public DateOnly DateOfBirth { get; set; }
+        public bool Available { get; set; }
         public int ParentID { get; set; }
         public Parent Parent { get; set; }
 

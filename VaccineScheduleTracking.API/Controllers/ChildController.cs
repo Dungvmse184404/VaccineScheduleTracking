@@ -2,11 +2,15 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Helpers;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
+using VaccineScheduleTracking.API_Test.Repository.Appointments;
+using VaccineScheduleTracking.API_Test.Repository.Doctors;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Services.Children;
+using VaccineScheduleTracking.API_Test.Services.Doctors;
 using static VaccineScheduleTracking.API_Test.Helpers.ExceptionHelper;
 
 
@@ -16,17 +20,19 @@ namespace VaccineScheduleTracking.API.Controllers
     [ApiController]
     public class ChildController : ControllerBase
     {
-        private readonly IAccountService accountServices;
         private readonly IChildService childService;
         private readonly IMapper mapper;
         private readonly IAccountService accountService;
+        private readonly IDoctorRepository doctorRepository;
+        private readonly IAppointmentRepository appointmentRepository;
 
-        public ChildController(IAccountService accountServices, IChildService childService, IMapper mapper, IAccountService accountService)
+        public ChildController(IAccountService accountService, IChildService childService, IMapper mapper, IDoctorRepository doctorRepository, IAppointmentRepository appointmentRepository)
         {
-            this.accountServices = accountServices;
             this.childService = childService;
             this.mapper = mapper;
             this.accountService = accountService;
+            this.doctorRepository = doctorRepository;
+            this.appointmentRepository = appointmentRepository;
         }
 
         [Authorize]
@@ -45,7 +51,7 @@ namespace VaccineScheduleTracking.API.Controllers
             return Ok(mapper.Map<List<ChildDto>>(await childService.GetParentChildren(parentAccount.Parent.ParentID)));
         }
 
-        [Authorize(Roles ="Parent")]
+        [Authorize(Roles = "Parent")]
         [HttpPost("add-child")]
         public async Task<IActionResult> CreateChildProfile([FromBody] AddChildDto addChild)
         {
@@ -54,7 +60,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 var child = mapper.Map<Child>(addChild);
                 int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int currentUserID);
                 var parentAccount = await accountService.GetAccountByIdAsync(currentUserID);
-                if (parentAccount == null || parentAccount.Parent == null) 
+                if (parentAccount == null || parentAccount.Parent == null)
                 {
                     return BadRequest(new
                     {
@@ -81,7 +87,7 @@ namespace VaccineScheduleTracking.API.Controllers
         {
             try
             {
-                var account = await accountServices.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+                var account = await accountService.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
                 var childList = await childService.GetParentChildren(account.Parent.ParentID);
 
                 return Ok(mapper.Map<List<ChildDto>>(childList));
@@ -92,13 +98,16 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Parent")]
         [HttpPut("update-child/{id}")]
-        public async Task<IActionResult> ModifileChildProfile(int id, [FromBody] UpdateChildDto updateChild)
+        public async Task<IActionResult> ModifileChildProfile([FromRoute] int id, [FromQuery] UpdateChildDto updateChild)
         {
             try
             {
-                var modifiledChild = await childService.UpdateChild(id, mapper.Map<Child>(updateChild));
+                var parAccount = await accountService.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+
+
+                var modifiledChild = await childService.UpdateChildForParent(parAccount.Parent.ParentID, id, mapper.Map<Child>(updateChild));
 
                 return Ok(mapper.Map<ChildDto>(modifiledChild));
             }
@@ -108,13 +117,22 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Parent")]
         [HttpDelete("delete-child/{id}")]
-        public async Task<IActionResult> DeleteChildProfile(int id)
+        public async Task<IActionResult> DeleteChildProfile([FromRoute] int id)
         {
             try
             {
-                var deleteChild = await childService.DeleteChild(id);
+                var parAccount = await accountService.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+
+                var deleteChild = await childService.DeleteChild(id, parAccount.Parent.ParentID);
+                var appointments = await appointmentRepository.GetAppointmentsByChildIDAsync(id);
+
+                if (appointments.IsNullOrEmpty())
+                    foreach (var app in appointments)
+                    {
+                        await doctorRepository.DeleteDoctorTimeSlotByDoctorIDAsync(app.Account.Doctor.DoctorID);
+                    }
                 return Ok($"Child name {deleteChild.Firstname} has been deleted!");
             }
             catch (Exception ex)

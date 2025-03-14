@@ -94,6 +94,64 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             return newAccount;
         }
 
+
+        public async Task<Account?> RegisterBlankAccountAsync(RegisterAccountDto registerAccount)
+        {
+            {
+                if (await accountRepository.GetAccountByUsernameAsync(registerAccount.Username) != null)
+                {
+                    throw new Exception($"Tên người dùng: {registerAccount.Username} đã tồn tại");
+                }
+                if (await accountRepository.GetAccountByEmailAsync(registerAccount.Email) != null)
+                {
+                    throw new Exception($"Địa chỉ email {registerAccount.Email} đã tồn tại ");
+                }
+                if (await accountRepository.GetAccountByPhonenumberAsync(registerAccount.PhoneNumber) != null)
+                {
+                    throw new Exception($"Số điện thoại {registerAccount.PhoneNumber} đã tồn tại");
+                }
+                var fileName = "";
+                if (registerAccount.Avatar != null)
+                {
+                    if (string.IsNullOrEmpty(env.WebRootPath))
+                    {
+                        env.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    }
+                    var uploadsFolder = Path.Combine(env.WebRootPath, "Images");
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    fileName = $"{Guid.NewGuid()}{Path.GetExtension(registerAccount.Avatar.FileName)}";
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await registerAccount.Avatar.CopyToAsync(stream);
+                    }
+                }
+
+                var account = mapper.Map<Account>(registerAccount);
+                account.Status = "EMAILNOTACTIVE";
+                var hashPawword = passwordHasher.HashPassword(account, account.Password);
+                account.Password = hashPawword;
+                account.Avatar = $"/Images/{fileName}";
+
+                var newAccount = await accountRepository.AddAccountAsync(account);
+
+                var token = jwtHelper.GenerateEmailToken(newAccount.AccountID.ToString(), newAccount.Username, newAccount.Email, newAccount.PhoneNumber);
+                string verificationLink = $"https://localhost:7270/api/Account/verify-email?token={Uri.EscapeDataString(token)}";
+
+                string emailBody =
+                      $@"<p>Xin chào {account.Firstname},</p>
+                    <p>Vui lòng nhấp vào đường link dưới đây để xác minh email:</p>
+                    <p><a href='{verificationLink}'>Xác minh Email</a></p>
+                    <p>Liên kết sẽ hết hạn trong 24 giờ.</p>";
+                await emailService.SendEmailAsync(account.Email, "Xác minh email", emailBody);
+
+                return newAccount;
+            }
+        }
+
+
         public async Task<bool> VerifyAccountEmail(int accountId, string username, string email, string phoneNumber)
         {
             var account = await accountRepository.GetAccountByID(accountId);

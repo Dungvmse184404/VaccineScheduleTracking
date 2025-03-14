@@ -12,6 +12,7 @@ namespace VaccineScheduleTracking.API.Data
 
         }
 
+        public DbSet<CancelAppointment> CancelAppointments { get; set; }
         public DbSet<ChildTimeSlot> ChildTimeSlots { get; set; }
         public DbSet<DoctorTimeSlot> DoctorTimeSlots { get; set; }
         public DbSet<TimeSlot> TimeSlots { get; set; }

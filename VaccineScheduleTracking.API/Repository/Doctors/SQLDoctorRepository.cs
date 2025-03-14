@@ -133,7 +133,13 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
             }
         }
 
-
+        public async Task<Account> AddDoctorByAccountIdAsync(Account account, Doctor doctorInfo)
+        {
+            account.Doctor = doctorInfo;
+            _dbContext.Accounts.Update(account);
+            await _dbContext.SaveChangesAsync();
+            return account;
+        }
 
     }
 }
