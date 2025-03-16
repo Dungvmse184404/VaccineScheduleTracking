@@ -102,6 +102,7 @@ builder.Services.AddScoped<IVaccineRecordService, VaccineRecordService>();
 builder.Services.AddScoped<IVaccineComboRepository, SQLVaccineComboRepository>();
 builder.Services.AddScoped<IVaccineComboService, VaccineComboService>();
 builder.Services.AddScoped<IVaccineContainerRepository, SQLVaccineContainerRepository>();
+builder.Services.AddScoped<IVnPayTransactionRepository, VnPayTransactionRepository>();
 
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
@@ -141,7 +142,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("EmailConfirmed", policy =>
-        policy.RequireClaim("Status", "ACTIVE")); // Chỉ cho phép nếu claim này có giá trị "True"
+        policy.RequireClaim("Status", "ACTIVE")); 
 });
 
 //set đường dẫn cho file log.txt (giống SQL DB)

@@ -1,4 +1,5 @@
-﻿using VaccineScheduleTracking.API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API_Test.Payments.VnPay.Models;
 
 namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Repository
@@ -17,6 +18,11 @@ namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Repository
             await dbContext.Payments.AddAsync(model);
             await dbContext.SaveChangesAsync();
             return model;
+        }
+
+        public async Task<List<Models.Payment>> GetPaymentsByAccountId(int id)
+        {
+            return await dbContext.Payments.Include(x => x.VnPayTransaction).AsQueryable().Where(x => x.AccountId == id).ToListAsync();
         }
     }
 }

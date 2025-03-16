@@ -322,11 +322,16 @@ CREATE TABLE [dbo].[Payments](
 	[PaymentId] [int] IDENTITY(1,1) PRIMARY KEY,
 	[AccountId] [int] NOT NULL,
 	[AppointmentId] [int] NOT NULL,
-	[TransactionId] [varchar](500) NOT NULL,
-	[Token] [varchar](500) NOT NULL,
 	[Amount] [decimal](10,0) NOT NULL,
 	[CreateDate] [datetime] NOT NULL,
 	FOREIGN KEY ([AccountId]) REFERENCES [dbo].[Accounts]([AccountID]),
 	FOREIGN KEY ([AppointmentId]) REFERENCES [dbo].[Appointments]([AppointmentId])
 )
 GO
+
+CREATE TABLE [dbo].[VnPayTransactions] (
+	[TransactionId] [varchar](500) PRIMARY KEY,
+	[Token] [varchar](500) NOT NULL,
+	[PaymentId] [int] NOT NULL, 
+	FOREIGN KEY ([PaymentId]) REFERENCES [dbo].[Payments]([PaymentId])
+)
