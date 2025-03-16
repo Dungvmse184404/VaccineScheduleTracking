@@ -39,7 +39,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 }
                 if (appointment.Status?.ToUpper() == "CONFIRMED")
                 {
-                    return BadRequest($"Buổi hẹn lúc {appointment.TimeSlots.StartTime} cho bé {appointment.Child.Lastname} {appointment.Child.Firstname} đã được thanh toán.");
+                    return BadRequest($"Buổi hẹn lúc {appointment.TimeSlots.StartTime} cho bé {appointment.Child.Lastname} {appointment.Child.Firstname} đã được thanh toán trước đó.");
                 }
 
                 var url = vnPayService.CreatePaymentUrl(model, HttpContext);
@@ -63,6 +63,16 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         [HttpPost("create-cash-payment")]
         public async Task<IActionResult> CreatePaymentByCash([FromBody] PaymentInformationModel model)
         {
+            var appointment = await appointmentsService.GetAppointmentByIDAsync(model.AppointmentID);
+            if (appointment == null)
+            {
+                return BadRequest("Không tìm thấy buổi hẹn.");
+            }
+            if (appointment.Status?.ToUpper() == "CONFIRMED")
+            {
+                return BadRequest($"Buổi hẹn lúc {appointment.TimeSlots.StartTime} cho bé {appointment.Child.Lastname} {appointment.Child.Firstname} đã được thanh toán trước đó.");
+            }
+
             var payment = new Payments.VnPay.Models.Payment()
             {
                 AccountId = model.AccountID,
@@ -72,6 +82,10 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             };
 
             var addedPayment = await paymentService.AddPaymentAsync(payment);
+            if (addedPayment != null)
+            {
+                appointmentsService.SetAppointmentStatusAsync(appointment.AppointmentID, "CONFIRMED", null);
+            }
 
             return Ok(addedPayment);
         }
