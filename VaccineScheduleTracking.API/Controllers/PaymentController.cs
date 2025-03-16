@@ -24,18 +24,33 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         [HttpPost("create-payment")]
         public async Task<IActionResult> CreatePaymentUrlVnpay(PaymentInformationModel model)
         {
-            var appointment = await appointmentsService.GetAppointmentByIDAsync(model.AppointmentID);
-            if (appointment.Status.ToUpper().Equals("CONFIRMED"))
+            try
             {
-                throw new Exception($"buổi hẹn lúc {appointment.TimeSlots.StartTime} cho bé {appointment.Child.Lastname} {appointment.Child.Firstname} đã được thanh toán");
+                var appointment = await appointmentsService.GetAppointmentByIDAsync(model.AppointmentID);
+                if (appointment == null)
+                {
+                    return BadRequest("Không tìm thấy buổi hẹn.");
+                }
+                if (appointment.Status?.ToUpper() == "CONFIRMED")
+                {
+                    return BadRequest($"Buổi hẹn lúc {appointment.TimeSlots.StartTime} cho bé {appointment.Child.Lastname} {appointment.Child.Firstname} đã được thanh toán.");
+                }
+
+                var url = vnPayService.CreatePaymentUrl(model, HttpContext);
+
+                return Ok(new
+                {
+                    PaymentUrl = url
+                });
             }
-
-            var url = vnPayService.CreatePaymentUrl(model, HttpContext);
-
-            return Ok(new
+            catch (Exception ex)
             {
-                PaymentUrl = url
-            });
+                return BadRequest(new
+                {
+                    Error = ex.StackTrace,
+                    Message = ex.Message
+                });
+            }
         }
 
         [HttpGet("payment-info")]
