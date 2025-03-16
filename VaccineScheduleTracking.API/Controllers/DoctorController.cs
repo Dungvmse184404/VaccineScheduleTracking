@@ -49,7 +49,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpGet("get-all-doctor")]
         public async Task<IActionResult> GetAllDoctor()
         {
@@ -65,7 +65,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpGet("get-doctor-account")]
         public async Task<IActionResult> GetDoctorByAccountID()
         {
@@ -83,7 +83,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
 
         }
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPut("set-appointment-status/{appointmentId}")]
         public async Task<IActionResult> SetAppointmentStatus([FromRoute]int appointmentId, [FromQuery] string? note)
         {
@@ -102,7 +102,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPut("change-doctor-schedule")]
         public async Task<IActionResult> ChangeDoctorTimeSlot([FromQuery] string doctorSchedule)
         {
@@ -140,7 +140,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpDelete("delete-doctor-schedule")]
         public async Task<IActionResult> DeleteDoctor()
         {
