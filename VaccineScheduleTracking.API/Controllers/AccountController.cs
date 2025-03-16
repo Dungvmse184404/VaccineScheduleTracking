@@ -48,7 +48,7 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var account = await accountService.LoginAsync(loginAccountDto.Username, loginAccountDto.Password);
-                var role = account.Parent != null ? "Parent" : account.Doctor != null ? "Doctor" : "Staff";
+                var role = account.Parent != null ? "Parent" : account.Doctor != null ? "Doctor" : account.Manager != null ? "Manager" : "Staff";
                 var token = jwtHelper.GenerateToken(account.AccountID.ToString(), account.Username, role, account.Status);
                 return Ok(new
                 {
@@ -59,7 +59,11 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { Message = ex.Message });
+                return Unauthorized(new
+                {
+                    Error = ex.StackTrace,
+                    Message = ex.Message
+                });
             }
         }
 

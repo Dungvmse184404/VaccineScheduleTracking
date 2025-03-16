@@ -206,6 +206,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
                 }
             }
             var tmpAccount = mapper.Map<Account>(updateAccount);
+            var hashPawword = passwordHasher.HashPassword(tmpAccount, tmpAccount.Password);
+            tmpAccount.Password = hashPawword;
             tmpAccount.Avatar = $"/Images/{fileName}";
             var account = await accountRepository.UpdateAccountAsync(tmpAccount);
             if (account == null)

@@ -157,7 +157,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
 
         public async Task<List<Vaccine?>> GetVaccineListByAgeAsync(int age, int typeID)
         {
-            ValidateInput(age, "Tuổi của trẻ đang trống!!! (có thể là lỗi BE)");
+            ValidateInput(age, "Tuổi của trẻ đang trống!!!");
             ValidateInput(typeID, "Chưa điền ID loại vaccine cần tìm");
 
             var vaccineList = await vaccineRepository.GetVaccineByTypeIDAsync(typeID);
