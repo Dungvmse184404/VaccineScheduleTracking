@@ -49,7 +49,7 @@ namespace VaccineScheduleTracking.API.Controllers
             {
                 var account = await accountService.LoginAsync(loginAccountDto.Username, loginAccountDto.Password);
                 var role = account.Parent != null ? "Parent" : account.Doctor != null ? "Doctor" : "Staff";
-                var token = jwtHelper.GenerateToken(account.AccountID.ToString(), account.Username, role);
+                var token = jwtHelper.GenerateToken(account.AccountID.ToString(), account.Username, role, account.Status);
                 return Ok(new
                 {
                     Token = token,
@@ -171,7 +171,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 });
         }
 
-        [Authorize]
+        [Authorize(Policy = "EmailConfirmed")]
         [HttpPut("update-account")]
         public async Task<IActionResult> UpdateAccount([FromForm] UpdateAccountDto updateAccount)
         {
@@ -203,7 +203,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpDelete("disable-account/{id}")]
         public async Task<IActionResult> DisableAccount([FromRoute] int id)
         {

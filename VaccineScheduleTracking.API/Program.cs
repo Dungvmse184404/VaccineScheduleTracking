@@ -138,6 +138,12 @@ builder.Services.AddCors(options =>
                         .AllowAnyHeader());
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("EmailConfirmed", policy =>
+        policy.RequireClaim("Status", "ACTIVE")); // Chỉ cho phép nếu claim này có giá trị "True"
+});
+
 //set đường dẫn cho file log.txt (giống SQL DB)
 ExceptionHelper.Configure(builder.Configuration);
 

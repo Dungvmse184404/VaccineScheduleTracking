@@ -28,7 +28,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<List<VaccineComboDto>>(vaccineCombos));
         }
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPost("create-vaccine-combo")]
         public async Task<IActionResult> CreateVaccineCombo([FromBody] CreateVaccineComboDto createVaccineCombo)
         {
@@ -68,7 +68,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpDelete("delete-vaccine-container")]
         public async Task<IActionResult> DeleteVaccineContainer([FromBody] DeleteVaccineContainerDto deleteVaccineContainer)
         {
@@ -89,7 +89,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpDelete("delete-vaccine-combo/{vaccineComboID}")]
         public async Task<IActionResult> DeleteVaccineCombo([FromRoute] int vaccineComboID)
         {

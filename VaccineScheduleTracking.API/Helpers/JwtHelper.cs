@@ -14,7 +14,7 @@ namespace VaccineScheduleTracking.API.Helpers
             this.configuration = configuration;
         }
 
-        public string GenerateToken(string accountID, string username, string role)
+        public string GenerateToken(string accountID, string username, string role, string status)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -24,6 +24,7 @@ namespace VaccineScheduleTracking.API.Helpers
                 new Claim(ClaimTypes.NameIdentifier, accountID),
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim("role", role),
+                new Claim("Status", "ACTIVE"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
