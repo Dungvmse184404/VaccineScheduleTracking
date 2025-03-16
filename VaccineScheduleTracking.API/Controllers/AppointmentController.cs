@@ -39,7 +39,7 @@ namespace VaccineScheduleTracking.API.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPost("create-appointment")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDto createAppointment)
         {
@@ -55,7 +55,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
-        [Authorize(Roles = "Doctor, Parent")]
+        [Authorize(Roles = "Doctor, Parent", Policy = "EmailConfirmed")]
         [HttpGet("get-appointment-by-appointmentId/{appointmentId}")]
         public async Task<IActionResult> GetAppointmentByAppointmentID([FromRoute] int appointmentId)
         {
@@ -79,7 +79,7 @@ namespace VaccineScheduleTracking.API.Controllers
         /// </summary>
         /// <param name="childId"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpGet("get-parent-appointment-list/{childId}")]
         public async Task<IActionResult> GetParentAppointments([FromRoute] int childId)
         {
@@ -102,7 +102,7 @@ namespace VaccineScheduleTracking.API.Controllers
         /// lấy danh sách appointment trẻ cho Parent đang đăng nhập
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpGet("get-doctor-appointment-list")] 
         public async Task<IActionResult> GetDoctorAppointments()
         {
@@ -119,7 +119,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPut("update-appointment/{appointmentId}")]
         public async Task<IActionResult> UpdateAppointment([FromRoute] int appointmentId, UpdateAppointmentDto updateAppointment)
         {
@@ -134,7 +134,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpDelete("cancel-appointment/{id}")]
         public async Task<IActionResult> CancelAppointment([FromRoute] int id, string reason)
         {

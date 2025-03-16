@@ -29,7 +29,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpPost("Promote-to-doctor/{accountId}")]
         public async Task<IActionResult> PromoteToDoctor([FromRoute] int accountId, [FromQuery] string? schedule)
         {
@@ -48,7 +48,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpPost("Promote-to-staff/{accountId}")]
         public async Task<IActionResult> PromoteToStaff([FromRoute] int accountId)
         {

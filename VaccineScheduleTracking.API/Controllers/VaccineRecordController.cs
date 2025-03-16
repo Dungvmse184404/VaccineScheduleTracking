@@ -24,7 +24,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             this.childService = childService;
         }
 
-        [Authorize]
+        [Authorize(Policy = "EmailConfirmed")]
         [HttpGet("get-child-vaccine-record/{childID}")]
         public async Task<IActionResult> GetChildVaccineRecord([FromRoute] int childID)
         {
@@ -40,7 +40,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<List<VaccineRecordDto>>(records));
         }
 
-        [Authorize]
+        [Authorize(Policy = "EmailConfirmed")]
         [HttpGet("get-record/{recordID}")]
         public async Task<IActionResult> GetVaccineRecordByID([FromRoute] int recordID)
         {
@@ -55,7 +55,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<VaccineRecordDto>(record));
         }
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPost("update-record")]
         public async Task<IActionResult> UpdateVaccineRecord([FromBody] UpdateVaccineRecordDto updateVaccine)
         {
@@ -70,7 +70,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<VaccineRecordDto>(updatedRecord));
         }
 
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPost("update-child-vaccine-history")]
         public async Task<IActionResult> UpdateVaccineHistory([FromBody] UpdateVaccineHistoryDto updateVaccineHistory)
         {
@@ -95,7 +95,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             });
         }
 
-        [Authorize]
+        [Authorize(Policy = "EmailConfirmed")]
         [HttpDelete("delete-record/{recordID}")]
         public async Task<IActionResult> DeleteVaccineRecord([FromRoute] int recordID)
         {
@@ -122,7 +122,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
 
         }
 
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPost("create-vaccine-history")]
         public async Task<IActionResult> CreateVaccineHistory([FromBody] ChildVaccineHistoryDto childVaccineHistory)
         {
@@ -136,7 +136,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return BadRequest($"Thông tin của đứa trẻ không hợp lệ!");
         }
 
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPost("create-vaccine-record")]
         public async Task<IActionResult> CreateVaccineRecord([FromBody] CreateVaccineRecordDto createVaccineRecord)
         {

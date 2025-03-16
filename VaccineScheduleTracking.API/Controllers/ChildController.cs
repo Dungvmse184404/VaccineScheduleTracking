@@ -35,7 +35,7 @@ namespace VaccineScheduleTracking.API.Controllers
             this.appointmentRepository = appointmentRepository;
         }
 
-        [Authorize]
+        [Authorize(Policy = "EmailConfirmed")]
         [HttpGet]
         public async Task<IActionResult> GetChildren()
         {
@@ -51,7 +51,7 @@ namespace VaccineScheduleTracking.API.Controllers
             return Ok(mapper.Map<List<ChildDto>>(await childService.GetParentChildren(parentAccount.Parent.ParentID)));
         }
 
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPost("add-child")]
         public async Task<IActionResult> CreateChildProfile([FromBody] AddChildDto addChild)
         {
@@ -81,7 +81,7 @@ namespace VaccineScheduleTracking.API.Controllers
         /// Lấy danh sách trẻ của Parent đang đăng nhập
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpGet("get-childs-for-parent")]
         public async Task<IActionResult> GetChildListForParent()
         {
@@ -98,7 +98,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPut("update-child/{id}")]
         public async Task<IActionResult> ModifileChildProfile([FromRoute] int id, [FromQuery] UpdateChildDto updateChild)
         {
@@ -117,7 +117,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Parent")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpDelete("delete-child/{id}")]
         public async Task<IActionResult> DeleteChildProfile([FromRoute] int id)
         {

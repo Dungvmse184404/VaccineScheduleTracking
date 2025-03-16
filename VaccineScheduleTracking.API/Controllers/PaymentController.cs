@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
+using System.Security.Claims;
+using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Payments.VnPay.Models;
 using VaccineScheduleTracking.API_Test.Payments.VnPay.Service;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
@@ -21,6 +26,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             this.paymentService = paymentService;
         }
 
+        [Authorize(Policy = "EmailConfirmed")]
         [HttpPost("create-payment")]
         public async Task<IActionResult> CreatePaymentUrlVnpay(PaymentInformationModel model)
         {
@@ -53,6 +59,31 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
+        [Authorize(Roles = "Manager, Staff", Policy = "EmailConfirmed")]
+        [HttpPost("create-cash-payment")]
+        public async Task<IActionResult> CreatePaymentByCash([FromBody] PaymentInformationModel model)
+        {
+            var payment = new Payments.VnPay.Models.Payment()
+            {
+                AccountId = model.AccountID,
+                AppointmentId = model.AppointmentID,
+                Amount = (decimal) model.Amount,
+                CreateDate = DateTime.Now,
+            };
+
+            var addedPayment = await paymentService.AddPaymentAsync(payment);
+
+            return Ok(addedPayment);
+        }
+
+        [Authorize(Policy = "EmailConfirmed")]
+        [HttpGet("get-own-payments")]
+        public async Task<IActionResult> GetOwnPayments()
+        {
+            int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int currentUserID);
+            return Ok(await paymentService.GetPaymentsByAccountId(currentUserID));
+        }
+
         [HttpGet("payment-info")]
         public async Task<IActionResult> PaymentCallbackVnpay()
         {
@@ -66,13 +97,19 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             {
                 AccountId = accountId,
                 AppointmentId = appointmentId,
-                TransactionId = response.TransactionId,
-                Token = response.Token,
-                Amount = response.Amount,
+                Amount = response.Amount / 100,
                 CreateDate = createDate
             };
 
             var addedPayment = await paymentService.AddPaymentAsync(payment);
+
+            var transaction = new VnPayTransaction()
+            {
+                TransactionId = response.TransactionId,
+                Token = response.Token,
+                PaymentId = addedPayment.PaymentId
+            };
+            await paymentService.AddPaymentVnPayTransactionAsyn(transaction);
 
             await appointmentsService.SetAppointmentStatusAsync(appointmentId, "CONFIRMED", null);
             return Ok(addedPayment);
