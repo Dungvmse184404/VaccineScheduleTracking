@@ -48,7 +48,7 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var account = await accountService.LoginAsync(loginAccountDto.Username, loginAccountDto.Password);
-                var role = account.Parent != null ? "Parent" : account.Doctor != null ? "Doctor" : "Staff";
+                var role = account.Parent != null ? "Parent" : account.Doctor != null ? "Doctor" : account.Manager != null ? "Manager" : "Staff";
                 var token = jwtHelper.GenerateToken(account.AccountID.ToString(), account.Username, role, account.Status);
                 return Ok(new
                 {
@@ -59,7 +59,11 @@ namespace VaccineScheduleTracking.API.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { Message = ex.Message });
+                return Unauthorized(new
+                {
+                    Error = ex.StackTrace,
+                    Message = ex.Message
+                });
             }
         }
 
@@ -118,10 +122,20 @@ namespace VaccineScheduleTracking.API.Controllers
             var token = jwtHelper.GenerateEmailToken(account.AccountID.ToString(), account.Username, account.Email, account.PhoneNumber);
             string verificationLink = $"https://localhost:7270/api/Account/verify-email?token={Uri.EscapeDataString(token)}";
             string emailBody =
-            $@"<p>Xin chào {account.Firstname},</p>
-                    <p>Vui lòng nhấp vào đường link dưới đây để xác minh email:</p>
-                    <p><a href='{verificationLink}'>Xác minh Email</a></p>
-                    <p>Liên kết sẽ hết hạn trong 24 giờ.</p>";
+            $@"<div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+                <h2 style='color: #007bff;'>Xin chào {account.Firstname},</h2>
+                <p>Chúng tôi rất vui khi bạn đăng ký tài khoản tại hệ thống của chúng tôi.</p>
+                <p>Vui lòng nhấp vào nút bên dưới để xác minh email của bạn:</p>
+                <div style='text-align: center; margin: 20px 0;'>
+                    <a href='{verificationLink}' style='background-color: #007bff; color: #fff; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 5px; display: inline-block;'>
+                        Xác minh Email
+                    </a>
+                </div>
+                <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
+                <p><strong>Lưu ý:</strong> Liên kết sẽ hết hạn trong <strong>24 giờ</strong>.</p>
+                <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+                <p style='text-align: center; font-size: 14px; color: #777;'>Trân trọng,<br>Đội ngũ hỗ trợ</p>
+            </div>";
             await emailService.SendEmailAsync(account.Email, "Xác minh email", emailBody);
 
             return Ok(new
@@ -182,7 +196,7 @@ namespace VaccineScheduleTracking.API.Controllers
                 {
                     return BadRequest("You can't modifile account of another person.");
                 }
-                
+
                 var account = await accountService.UpdateAccountAsync(updateAccount);
 
                 return Ok(mapper.Map<AccountDto>(account));

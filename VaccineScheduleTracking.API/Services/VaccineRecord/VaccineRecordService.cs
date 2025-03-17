@@ -1,16 +1,19 @@
 ﻿using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Repository.Record;
+using VaccineScheduleTracking.API_Test.Repository.Vaccines;
 
 namespace VaccineScheduleTracking.API_Test.Services.Record
 {
     public class VaccineRecordService : IVaccineRecordService
     {
         private readonly IVaccineRecordRepository vaccineRecordRepository;
+        private readonly IVaccineRepository vaccineRepository;
 
-        public VaccineRecordService(IVaccineRecordRepository vaccineRecordRepository)
+        public VaccineRecordService(IVaccineRecordRepository vaccineRecordRepository, IVaccineRepository vaccineRepository)
         {
             this.vaccineRecordRepository = vaccineRecordRepository;
+            this.vaccineRepository = vaccineRepository;
         }
 
         public async Task<VaccineRecord> AddVaccineHistoryAsync(ChildVaccineHistoryDto childVaccineHistory)
@@ -19,6 +22,11 @@ namespace VaccineScheduleTracking.API_Test.Services.Record
             record.ChildID = childVaccineHistory.ChildID;
             record.VaccineTypeID = childVaccineHistory.VaccineTypeID;
             record.VaccineID = childVaccineHistory.VaccineID;
+            record.VaccineType = await vaccineRepository.GetVaccineTypeByIDAsync(childVaccineHistory.VaccineTypeID);
+            if (childVaccineHistory.VaccineID != null)
+            {
+                record.Vaccine = await vaccineRepository.GetVaccineByIDAsync(childVaccineHistory.VaccineID.Value);
+            }
             record.Note = childVaccineHistory.Note;
             record.Date = childVaccineHistory.Date;
 
@@ -32,7 +40,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Record
             var record = new VaccineRecord();
             record.ChildID = createVaccineRecord.ChildID;
             record.VaccineTypeID = createVaccineRecord.VaccineTypeID;
+            record.VaccineType = await vaccineRepository.GetVaccineTypeByIDAsync(createVaccineRecord.VaccineTypeID);
             record.VaccineID = createVaccineRecord.VaccineID;
+            record.Vaccine = await vaccineRepository.GetVaccineByIDAsync(createVaccineRecord.VaccineID);
             record.AppointmentID = createVaccineRecord.AppointmentID;
             record.Date = createVaccineRecord .Date;
             record.Note = createVaccineRecord .Note;

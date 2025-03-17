@@ -30,6 +30,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
         }
         public async Task<Child> AddChild(Child child)
         {
+            child.Available = true;
             await dbContext.Children.AddAsync(child);
             await dbContext.SaveChangesAsync();
 

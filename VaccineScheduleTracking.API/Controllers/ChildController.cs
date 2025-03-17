@@ -133,7 +133,7 @@ namespace VaccineScheduleTracking.API.Controllers
                     {
                         await doctorRepository.DeleteDoctorTimeSlotByDoctorIDAsync(app.Account.Doctor.DoctorID);
                     }
-                return Ok($"Child name {deleteChild.Firstname} has been deleted!");
+                return Ok(new { Message = $"Child name {deleteChild.Firstname} has been deleted!" });
             }
             catch (Exception ex)
             {
