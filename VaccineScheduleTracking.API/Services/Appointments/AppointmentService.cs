@@ -587,7 +587,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 {
                     foreach (var appointment in filteredAppointments)
                     {
-                        if (appointment.Status == "PENDING")
+                        if (appointment.Status == "PENDING" )
                         {
                             appointment.Status = "OVERDUE";
                             await _appointmentRepository.UpdateAppointmentAsync(appointment);

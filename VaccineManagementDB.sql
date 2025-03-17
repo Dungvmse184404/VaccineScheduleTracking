@@ -40,6 +40,16 @@ CREATE TABLE [dbo].[Doctors](
 )
 GO
 
+CREATE TABLE [dbo].[DoctorTimeSlots](
+	[DoctorTimeSlotID] [int] IDENTITY(1,1) PRIMARY KEY,
+	[DoctorID] [int] NOT NULL,
+	[SlotNumber] [int] NOT NULL,
+    [Available] [bit] NOT NULL,
+    [DailyScheduleID] [int] NOT NULL, 
+	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID]),
+	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID])
+)
+
 /****** Object:  Table [dbo].[Staff] ******/
 CREATE TABLE [dbo].[Staffs](
 	[StaffID] [int] IDENTITY(1,1) PRIMARY KEY,

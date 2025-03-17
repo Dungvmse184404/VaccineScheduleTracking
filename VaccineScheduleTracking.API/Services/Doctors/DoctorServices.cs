@@ -334,6 +334,12 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         }
 
 
+        private async Task DeleteOverdueSchedule()
+        {
+
+        }
+
+
         /// <summary>
         /// lhàm này sẽ kiểm tra xem các slot đã quá hạn chưa
         /// </summary>

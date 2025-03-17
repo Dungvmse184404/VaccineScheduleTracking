@@ -85,12 +85,12 @@ namespace VaccineScheduleTracking.API_Test.Controllers
 
         [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPut("set-appointment-status/{appointmentId}")]
-        public async Task<IActionResult> SetAppointmentStatus([FromRoute]int appointmentId, [FromQuery] string? note)
+        public async Task<IActionResult> SetAppointmentStatus([FromRoute]int appointmentId, [FromBody] noteDto? note)
         {
             try
             {
                 ValidateInput(appointmentId, "ID buổi hẹn không thể để trống");
-                var appointment = await _appointmentService.SetAppointmentStatusAsync(appointmentId, "FINISHED", note);
+                var appointment = await _appointmentService.SetAppointmentStatusAsync(appointmentId, "FINISHED", note.note);
 
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
@@ -104,12 +104,12 @@ namespace VaccineScheduleTracking.API_Test.Controllers
 
         [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPut("change-doctor-schedule")]
-        public async Task<IActionResult> ChangeDoctorTimeSlot([FromQuery] string doctorSchedule)
+        public async Task<IActionResult> ChangeDoctorTimeSlot([FromBody] DoctorScheduleDto ds)
         {
             try
             {
-                ValidateInput(doctorSchedule, "Chưa nhập lịch làm việc cho bác sĩ");
-                ValidateDoctorSchedule(doctorSchedule);
+                ValidateInput(ds.doctorSchedule, "Chưa nhập lịch làm việc cho bác sĩ");
+                ValidateDoctorSchedule(ds.doctorSchedule);
                 //------------------ hàm tạm để sửa lỗi ------------------
                 var accountId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 var doc = await _doctorRepository.GetDoctorByAccountIDAsync(accountId);
@@ -129,7 +129,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 {
                     _appointmentService.UpdateAppointmentAsync(a.AppointmentID, _mapper.Map<UpdateAppointmentDto>(a));
                 }
-                var doctor = await _doctorService.ManageDoctorScheduleServiceAsync(doctorId, doctorSchedule);
+                var doctor = await _doctorService.ManageDoctorScheduleServiceAsync(doctorId, ds.doctorSchedule);
 
                 return Ok(_mapper.Map<List<AppointmentDto>>(appointments));
             }
