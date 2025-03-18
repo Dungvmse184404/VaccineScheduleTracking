@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Doctors;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Repository.Accounts;
+using VaccineScheduleTracking.API_Test.Services;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Services.Staffs;
 using static VaccineScheduleTracking.API_Test.Helpers.ExceptionHelper;
@@ -16,29 +20,70 @@ namespace VaccineScheduleTracking.API_Test.Controllers
     [ApiController]
     public class StaffController : ControllerBase
     {
+        private readonly IEmailService _emailService;
         private readonly IAccountService _accountService;
         private readonly IStaffService _staffService;
         private readonly IMapper _mapper;
 
-        public StaffController(IAccountService accountService,
-                               IStaffService staffService,
-                               IMapper mapper)
+        public StaffController(IEmailService emailService, IAccountService accountService, IStaffService staffService, IMapper mapper)
         {
+            _emailService = emailService;
             _accountService = accountService;
             _staffService = staffService;
             _mapper = mapper;
         }
 
+        private AutoMailDto CreateRoleAssignmentMailDto(string accountName, string role)
+        {
+            return new AutoMailDto
+            {
+                Subject = $"Thông báo gán quyền truy cập: {role}",
+                Body = $@"
+        <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+            <h2 style='color: #007bff;'>Kính gửi {accountName},</h2>
+            <p>Chúng tôi xin thông báo rằng tài khoản của bạn đã được cấp quyền mới trên hệ thống.</p>
+            <p><strong>Vai trò mới:</strong> {role}</p>
+            <p>Vui lòng đăng nhập vào hệ thống để kiểm tra quyền hạn và sử dụng các tính năng tương ứng.</p>
+            <p>Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ.</p>
+            <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+            <p style='text-align: center; font-size: 14px; color: #777;'>Trân trọng,<br>Đội ngũ quản trị hệ thống</p>
+        </div>"
+            };
+        }
+
         [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
-        [HttpPost("Promote-to-doctor/{accountId}")]
-        public async Task<IActionResult> PromoteToDoctor([FromRoute] int accountId, [FromQuery] string? schedule)
+        [HttpGet("Get-All-Request")]
+        public async Task<IActionResult> GetAllRequest()
         {
             try
             {
-                ValidateInput(accountId, "chưa nhập ID cho account gán role doctor");
-                ValidateDoctorSchedule(schedule);
-                var account = await _staffService.PromoteToDoctorAsync(accountId, schedule);
+                var accNotes =  await _accountService.GetAllAccountNotationsAsync();
 
+                return Ok(accNotes);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
+        }
+
+
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
+        [HttpPost("Promote-to-doctor")]
+        public async Task<IActionResult> PromoteToDoctor([FromBody] PromoteDoctorDto doctorDto)
+        {
+            try
+            {
+                ValidateInput(doctorDto.AccountID, "chưa nhập ID cho account gán role doctor");
+                ValidateDoctorSchedule(doctorDto.DoctorSchedule);
+                var account = await _staffService.PromoteToDoctorAsync(doctorDto.AccountID, doctorDto.DoctorSchedule);
+                if (account == null)
+                {
+                    var mail = CreateRoleAssignmentMailDto($"{account.Lastname} {account.Firstname}", "Bác sĩ");
+                    await _emailService.SendEmailAsync(account.Email, mail.Subject, mail.Body);
+                    await _accountService.SetAccountNotationsAsync(account.AccountID, true);
+                }
+                
                 return Ok(_mapper.Map<DoctorAccountDto>(account));
             }
             catch (Exception ex)
@@ -56,6 +101,12 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             {
                 ValidateInput(accountId, "chưa nhập ID cho account gán role staff");
                 var account = await _staffService.PromoteToStaffAsync(accountId);
+                if (account != null)
+                {
+                    var mail = CreateRoleAssignmentMailDto($"{account.Lastname} {account.Firstname}", "Quản trị viên");
+                    await _emailService.SendEmailAsync(account.Email, mail.Subject, mail.Body);
+                    await _accountService.SetAccountNotationsAsync(account.AccountID, true);
+                }
 
                 return Ok(_mapper.Map<StaffAccountDto>(account));
             }
@@ -74,7 +125,11 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             {
                 ValidateInput(accountId, "chưa nhập ID cho account gán role manager");
                 var account = await _staffService.PromoteToManagerAsync(accountId);
-
+                if (account != null)
+                {
+                    var mail = CreateRoleAssignmentMailDto($"{account.Lastname} {account.Firstname}", "Quản lý viên");
+                    await _emailService.SendEmailAsync(account.Email, mail.Subject, mail.Body);
+                }
                 return Ok(_mapper.Map<ManagerAccountDto>(account));
             }
             catch (Exception ex)

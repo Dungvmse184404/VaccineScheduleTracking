@@ -40,19 +40,20 @@ public class ScheduledTaskService : BackgroundService
                     var appointmentServices = scope.ServiceProvider.GetRequiredService<IAppointmentService>();
 
                     /// Tạo lịch (TimeSlot)
-                    await timeSlotServices.GenerateCalanderAsync(_timeHelper.SetCalendarDate());
+                    await timeSlotServices.GenerateCalanderAsync(_config.ScheduleLength);
                     /// Tạo lịch làm việc cho bác sĩ
                     var docAccountList = await doctorServices.GetAllDoctorAsync();
                     var doctorList = docAccountList.Select(docAccount => docAccount.Doctor).ToList();
 
 
-                    await doctorServices.GenerateDoctorCalanderAsync(doctorList, _timeHelper.SetCalendarDate());
+                    await doctorServices.GenerateDoctorCalanderAsync(doctorList, _config.ScheduleLength);
 
                     /// Set false cho những TimeSlot trước ngày hôm nay
+                    await appointmentServices.SetOverdueAppointmentAsync(_config.OverdueSchedule);
                     await timeSlotServices.SetOverdueTimeSlotAsync(_config.OverdueSchedule);
                     await doctorServices.SetOverdueDoctorScheduleAsync(_config.OverdueSchedule);
                     await childServices.SetOverdueChildScheduleAsync(_config.OverdueSchedule);
-                    await appointmentServices.SetOverdueAppointmentAsync(_config.OverdueSchedule);
+                    
                 }
                 _logger.LogInformation($"ScheduledTaskService chạy lúc: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 Console.WriteLine($"ScheduledTaskService chạy lúc: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");

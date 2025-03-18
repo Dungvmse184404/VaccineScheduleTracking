@@ -4,6 +4,7 @@ using System.Numerics;
 using VaccineScheduleTracking.API.Data;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaccineScheduleTracking.API_Test.Repository.Accounts
@@ -140,6 +141,45 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
 
             return account;
         }
+
+        public async Task<Account?> GetParentByChildIDAsync(int childId)
+        {
+            return await dbContext.Children
+                .Where(c => c.ChildID == childId)
+                .Select(c => c.Parent.Account)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task CreateAccountNotationAsync(AccountNotation acc)
+        {
+            await dbContext.AccountNotations.AddAsync(acc);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<AccountNotation>> GetAllAccountNotationsAsync()
+        {
+            return await dbContext.AccountNotations.ToListAsync();
+        }
+
+        public async Task<AccountNotation> GetAllAccountNotationByIDAsync(int accountID)
+        {
+            return await dbContext.AccountNotations.FirstOrDefaultAsync(x => x.AccountID == accountID);
+        }
+
+        public async Task UpdateAccountNoteAsync(AccountNotation accNote)
+        {
+            var oldAccNote = await GetAllAccountNotationByIDAsync(accNote.AccountID);
+            if (oldAccNote == null)
+            {
+                throw new Exception("Account notation không tồn tại.");
+            }
+            oldAccNote.Notation = accNote.Notation;
+            oldAccNote.Processed = accNote.Processed;
+            oldAccNote.CreateDate = accNote.CreateDate;
+
+            await dbContext.SaveChangesAsync();
+        }
+
 
         //public async Task<Account?> DeleteAccountsAsync(Account account)
         //{

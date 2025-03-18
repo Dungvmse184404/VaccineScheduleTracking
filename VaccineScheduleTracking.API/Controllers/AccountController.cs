@@ -87,13 +87,17 @@ namespace VaccineScheduleTracking.API.Controllers
 
 
         [HttpPost("register-blank-account")]
-        public async Task<IActionResult> RegisterBlankAccount([FromForm] RegisterAccountDto registerAccount)//đang sửa
+        public async Task<IActionResult> RegisterBlankAccount([FromForm] RegisterBlankAccountDto registerAccount)//đang sửa
         {
             try
             {
                 var account = await accountService.RegisterBlankAccountAsync(registerAccount);
                 if (account != null)
                     await staffService.RecoveryAdminAccount(account, account.Password);
+                if (account != null && registerAccount.Note != null)
+                {
+                    await accountService.CreateAccountNotation(account, registerAccount.Note);
+                }
 
                 return Ok(mapper.Map<AccountDto>(account));
             }

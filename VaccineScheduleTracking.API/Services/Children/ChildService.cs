@@ -250,50 +250,49 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
         }
 
 
-        public async Task SetOverdueChildScheduleAsync(int threshold)//sửa lại như Appointment
+        public async Task SetOverdueChildScheduleAsync(int threshold)
         {
-            var Children = await GetAllChildrenAsync();
+            var children = await GetAllChildrenAsync();
             var dailySchedules = await dailyScheduleRepository.GetAllDailyScheduleAsync();
             var today = DateOnly.FromDateTime(DateTime.Now);
             var now = DateTime.Now;
             var thresholdDate = today.AddDays(-threshold);
 
-            var deletedSlots = new List<DoctorTimeSlot>();
-            var disabledSlots = new List<DoctorTimeSlot>();
+            var deletedSlots = new List<ChildTimeSlot>();
+            var disabledSlots = new List<ChildTimeSlot>();
 
-            foreach (var child in Children)
+            foreach (var child in children)
             {
                 foreach (var date in dailySchedules)
                 {
+                    var timeSlots = await childRepository.GetChildTimeSlotsForDayAsync(child.ChildID, date.AppointmentDate);
+
                     if (date.AppointmentDate < today)
                     {
-                        var timeSlots = await childRepository.GetChildTimeSlotsForDayAsync(child.ChildID, date.AppointmentDate);
-                        foreach (var slot in timeSlots)
-                        {
-                            if (slot.Available)
-                            {
-                                slot.Available = false;
-                                await childRepository.UpdateChildTimeSlotsAsync(slot);
-                            }
-                        }
+                        deletedSlots.AddRange(timeSlots);
                     }
                     else if (date.AppointmentDate == today)
                     {
-                        var timeSlots = await childRepository.GetChildTimeSlotsForDayAsync(child.ChildID, date.AppointmentDate);
                         foreach (var slot in timeSlots)
                         {
                             var startTime = timeSlotHelper.CalculateStartTime(slot.SlotNumber);
                             var slotDateTime = date.AppointmentDate.ToDateTime(startTime);
+
                             if (slotDateTime < now && slot.Available)
                             {
-                                slot.Available = false;
-                                await childRepository.UpdateChildTimeSlotsAsync(slot);
+                                disabledSlots.Add(slot);
                             }
                         }
                     }
                 }
             }
+            if (deletedSlots.Any())
+                await DeleteChildScheduleAsync(deletedSlots);
+
+            if (disabledSlots.Any())
+                await DisableChildScheduleAsync(disabledSlots);
         }
+
 
 
 

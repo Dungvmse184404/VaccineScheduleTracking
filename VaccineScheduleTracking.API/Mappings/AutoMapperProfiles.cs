@@ -54,7 +54,8 @@ namespace VaccineScheduleTracking.API.Mappings
             CreateMap<ChildTimeSlot, ChildTimeSlotDto>();
 
             CreateMap<Account, AccountDto>().ReverseMap();
-            CreateMap<Account, RegisterAccountDto>().ReverseMap();
+            CreateMap<Account, RegisterBlankAccountDto>().ReverseMap();
+            CreateMap<Account, RegisterAccountDto>().ReverseMap();// ghim 
             CreateMap<Account, UpdateAccountDto>().ReverseMap();
             CreateMap<Account, DeleteAccountDto>().ReverseMap();
             CreateMap<Vaccine, VaccineDto>().ReverseMap();

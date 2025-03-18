@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Identity.Client;
 using VaccineScheduleTracking.API.Helpers;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Repository.Accounts;
 
 namespace VaccineScheduleTracking.API_Test.Services.Accounts
@@ -38,7 +40,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             }
             return mapper.Map<Account>(account);
         }
-
+        
         public async Task<Account?> RegisterAsync(RegisterAccountDto registerAccount)
         {
             if (await accountRepository.GetAccountByUsernameAsync(registerAccount.Username) != null)
@@ -105,7 +107,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
         }
 
 
-        public async Task<Account?> RegisterBlankAccountAsync(RegisterAccountDto registerAccount)
+        public async Task<Account?> RegisterBlankAccountAsync(RegisterBlankAccountDto registerAccount)
         {
             {
                 if (await accountRepository.GetAccountByUsernameAsync(registerAccount.Username) != null)
@@ -159,6 +161,18 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
 
                 return newAccount;
             }
+        }
+        public async Task CreateAccountNotation(Account acc, string note)
+        {
+            var accNote = new AccountNotation
+            {
+                AccountID = acc.AccountID,
+                CreateDate = DateTime.Now,
+                Notation = note,
+                Processed = false
+            };
+
+            await accountRepository.CreateAccountNotationAsync(accNote);
         }
 
 
@@ -254,6 +268,33 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
         {
             return await accountRepository.GetAccountByID(id);
         }
+
+        public async Task<Account?> GetParentByChildIDAsync(int childID)
+        {
+            return await accountRepository.GetParentByChildIDAsync(childID);
+        }
+
+        public async Task<List<AccountNotation>> GetAllAccountNotationsAsync()
+        {
+            return await accountRepository.GetAllAccountNotationsAsync();
+        }
+
+        public async Task<AccountNotation> GetAllAccountNotationAccByIDAsync(int accountID)
+        {
+            return await accountRepository.GetAllAccountNotationByIDAsync(accountID);
+        }
+
+        public async Task SetAccountNotationsAsync(int accountID, bool v)
+        {
+            var accNote = await GetAllAccountNotationAccByIDAsync(accountID);
+            if (accNote == null)
+            {
+                throw new Exception("Không tìm thấy ghi chú");
+            }
+            accNote.Processed = v;
+            await accountRepository.UpdateAccountNoteAsync(accNote);
+        }
+
 
         //public async Task<Account?> DeleteAccountAsync(int id)
         //{

@@ -1,5 +1,6 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Repository.Accounts
 {
@@ -15,6 +16,11 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
         Task<Account?> UpdateAccountAsync(Account updateAccount);
         Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccountDto);
         Task<Account?> DisableAccountAsync(Account account);
+        Task<Account?> GetParentByChildIDAsync(int childID);
+        Task CreateAccountNotationAsync(AccountNotation acc);
+        Task<List<AccountNotation>> GetAllAccountNotationsAsync();
+        Task<AccountNotation> GetAllAccountNotationByIDAsync(int accountID);
+        Task UpdateAccountNoteAsync(AccountNotation accNote);
         //Task<Account?> DeleteAccountsAsync(Account account);
     }
 }

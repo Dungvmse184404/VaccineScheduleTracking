@@ -564,13 +564,13 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             return doctorAppointments;
         }
 
-        public async Task DeleteOverDueAppointmentAsync(List<Appointment> appointments)
-        {
-            if (appointments.Any())
-            {
-                await _appointmentRepository.DeleteOverDueAppointmentAsync(appointments);
-            }
-        }
+        //public async Task DeleteOverDueAppointmentAsync(List<Appointment> appointments)
+        //{
+        //    if (appointments.Any())
+        //    {
+        //        await _appointmentRepository.DeleteOverDueAppointmentAsync(appointments);
+        //    }
+        //}
 
         /// <summary>
         /// tự động chuyển các apointment thành OVERDUE khi bị quá hạn
@@ -589,10 +589,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 int dateStatus = _timeSlotHelper.CompareNowTime(date.AppointmentDate);
                 var filteredAppointments = allAppointments.Where(a => a.TimeSlots.DailySchedule.AppointmentDate == date.AppointmentDate).ToList();
 
-                if (date.AppointmentDate < thresholdDate)
-                {
-                    overdueAppointments.AddRange(filteredAppointments);
-                }
+                //if (date.AppointmentDate < thresholdDate)
+                //{
+                //    overdueAppointments.AddRange(filteredAppointments);
+                //}
                 if (dateStatus == -1)
                 {
                     foreach (var appointment in filteredAppointments)
@@ -616,7 +616,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                     }
                 }
             }
-            await DeleteOverDueAppointmentAsync(overdueAppointments);
+            //await DeleteOverDueAppointmentAsync(overdueAppointments);
         }
         
 

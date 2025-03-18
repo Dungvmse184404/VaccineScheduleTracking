@@ -9,37 +9,32 @@ using VaccineScheduleTracking.API_Test.Helpers;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using Microsoft.Identity.Client;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using MailKit;
+using VaccineScheduleTracking.API_Test.Models.DTOs;
+using System.Security.Principal;
 
 namespace VaccineScheduleTracking.API_Test.Services.Doctors
 {
     public class DoctorServices : IDoctorServices
     {
-        private readonly IAccountService _accountService;
         private readonly TimeSlotHelper _timeSlotHelper;
+        private readonly IAccountService _accountService;
         private readonly IChildService _childService;
-
+        private readonly IEmailService _mailService;
         private readonly IDailyScheduleRepository _dailyScheduleRepository;
         private readonly IDoctorRepository _doctorRepository;
         private readonly IMapper _mapper;
 
-        public DoctorServices(TimeSlotHelper timeSlotHelper,
-            IChildService childService,
-            IAccountService accountService,
-
-            IDailyScheduleRepository dailyScheduleRepository,
-            IDoctorRepository doctorRepository,
-            IMapper mapper)
+        public DoctorServices(TimeSlotHelper timeSlotHelper, IAccountService accountService, IChildService childService, IEmailService mailService, IDailyScheduleRepository dailyScheduleRepository, IDoctorRepository doctorRepository, IMapper mapper)
         {
             _timeSlotHelper = timeSlotHelper;
-            _childService = childService;
             _accountService = accountService;
-
+            _childService = childService;
+            _mailService = mailService;
             _dailyScheduleRepository = dailyScheduleRepository;
             _doctorRepository = doctorRepository;
-
             _mapper = mapper;
         }
-
 
         public async Task<Doctor?> GetDoctorByAccountIDAsync(int accountId)
         {
@@ -419,6 +414,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
             var affectedAppointment = new List<Appointment>();
             foreach (var a in appointments)
             {
+                var parent = await _accountService.GetParentByChildIDAsync(a.ChildID);
+                string parentName = $"{parent.Lastname} {parent.Firstname}";
+
                 int slotNumber = a.TimeSlots.SlotNumber;
                 DateOnly date = a.TimeSlots.DailySchedule.AppointmentDate;
 
@@ -430,19 +428,83 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
                     {
                         childSlot.Available = false;
                         await _childService.UpdateChildTimeSlotAsync(childSlot);
+                        var account = await _accountService.GetAccountByIdAsync(a.AccountID);
+
+                        var mail = await CreateAutoCancelMail(a, parentName);
+                        await _mailService.SendEmailAsync(a.Account.Email, mail.Subject, mail.Body);
                     }
                 }
                 else
                 {
-                    var doctorAccount = await _doctorRepository.GetDoctorByIDAsync(doctorSlot.DoctorID);
-                    a.AccountID = doctorAccount.AccountID;
+                    var newDocAccount = await _doctorRepository.GetDoctorByIDAsync(doctorSlot.DoctorID);
+                    a.AccountID = newDocAccount.AccountID;
                     doctorSlot.Available = false;
                     await UpdateDoctorTimeSlotAsync(doctorSlot);
+
+                    var mail = await CreateAutoReassignMail(a, $"{newDocAccount.Lastname} {newDocAccount.Firstname}", parentName);
+                    await _mailService.SendEmailAsync(a.Account.Email, mail.Subject, mail.Body);
                 }
                 affectedAppointment.Add(a);
             }
             return affectedAppointment;
+
+
         }
+        
+        private async Task<AutoMailDto> CreateAutoReassignMail(Appointment appointment, string newDoctorName, string parentName)
+        {
+            var docAccount = await _accountService.GetAccountByIdAsync(appointment.AccountID);
+            var child = await _childService.GetChildByIDAsync(appointment.ChildID);
+            if (docAccount == null) throw new Exception($"Không tìm thấy account có ID: {appointment.AccountID}");
+
+            DateOnly date = appointment.TimeSlots.DailySchedule.AppointmentDate;
+            string doctorName = $"{docAccount.Lastname} {docAccount.Firstname}";
+            string childName = $"{child.Lastname} {child.Firstname}";
+
+            return new AutoMailDto
+            {
+                Subject = $"Thông báo thay đổi bác sĩ cho lịch hẹn ngày: {date}",
+                Body = $@"
+            <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+            <h2 style='color: #007bff;'>Kính gửi {parentName},</h2>
+            <p>Chúng tôi xin thông báo rằng lịch hẹn tiêm chủng của <strong>{childName}</strong> vào ngày <strong>{date:dd/MM/yyyy}</strong> đã có sự thay đổi.</p>
+            <p>Vì đã có sự thay đổi trong lịch làm việc của bác sĩ <strong>{doctorName}</strong>, lịch tiêm hiện tại sẽ được đảm nhiệm bởi bác sĩ <strong>{newDoctorName}</strong>.</p>
+            <p>Thời gian và địa điểm vẫn sẽ được giữ nguyên như lịch hẹn trước đó.</p>
+            <p>Chúng tôi rất mong nhận được sự thông cảm từ quý phụ huynh. Xin cảm ơn!</p>
+                <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+                <p style='text-align: center; font-size: 14px; color: #777;'>Trân trọng,<br>Trung tâm tiêm chủng</p>
+            </div>"
+            };
+        }
+
+        private async Task<AutoMailDto>CreateAutoCancelMail(Appointment appointment, string parentName)
+        {
+            var docAccount = await _accountService.GetAccountByIdAsync(appointment.AccountID);
+            var child = await _childService.GetChildByIDAsync(appointment.ChildID);
+            if (docAccount == null) throw new Exception($"Không tìm thấy account có ID: {appointment.AccountID}");
+
+            DateOnly date = appointment.TimeSlots.DailySchedule.AppointmentDate;
+            string doctorName = $"{docAccount.Lastname} {docAccount.Firstname}";
+            string childName = $"{child.Lastname} {child.Firstname}";
+
+            return new AutoMailDto
+            {
+                Subject = $"Thông báo hủy lịch hẹn tiêm chủng ngày: {date}",
+                Body = $@"
+                <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+                    <h2 style='color: #dc3545;'>Kính gửi {parentName},</h2>
+                    <p>Chúng tôi xin thông báo rằng lịch hẹn tiêm chủng của <strong>{childName}</strong> vào ngày <strong>{date:dd/MM/yyyy}</strong> đã có sự thay đổi.</p>
+                    <p>Vì đã có sự thay đổi trong lịch làm việc của bác sĩ <strong>{doctorName}</strong>, chúng tôi rất tiếc phải thông báo lịch hẹn ngày <strong>{date:dd/MM/yyyy} đã bị hủy do không còn bác sĩ nào khác thay thế trong ca làm việc này.</p>
+                    <p>Quý phụ huynh vui lòng truy cập hệ thống để đăng ký lịch hẹn mới trong thời gian sớm nhất.</p>
+                    <p>Chúng tôi một lần nữa xin lỗi về sự bất tiện này và mong nhận được sự thông cảm từ Quý phụ huynh.</p>
+                    <p>Nếu cần hỗ trợ, vui lòng liên hệ với chúng tôi.</p>
+                    <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+                    <p style='text-align: center; font-size: 14px; color: #777;'>Trân trọng,<br>Trung tâm tiêm chủng</p>
+                </div>"
+
+            };
+        }
+
 
 
 

@@ -157,11 +157,11 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
                 var timeSlots = await _timeSlotRepository.GetTimeSlotsByDateAsync(date.AppointmentDate);
                 int dateStatus = _timeSlotHelper.CompareNowTime(date.AppointmentDate);
 
-                if (date.AppointmentDate < thresholdDate) // xóa quá hạn
-                {
-                    deleteTimeSlots.AddRange(timeSlots);
-                }
-                else if (dateStatus == -1) // Ngày đã qua
+                //if (date.AppointmentDate < thresholdDate) // xóa quá hạn
+                //{
+                //    deleteTimeSlots.AddRange(timeSlots);
+                //}
+                if (dateStatus == -1) // Ngày đã qua
                 {
                     disableTimeSlots.AddRange(timeSlots);
                 }
@@ -177,7 +177,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
                     }
                 }
             }
-            await DeleteTimeSlotsAsync(deleteTimeSlots);
+            //await DeleteTimeSlotsAsync(deleteTimeSlots);
             await DisableTimeSlotAsync(disableTimeSlots);
         }
 

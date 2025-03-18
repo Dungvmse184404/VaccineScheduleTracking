@@ -110,8 +110,6 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 int doctorId = doc.DoctorID;
                 //--------------------------------------------------------
 
-                //ValidateInput(await _doctorService.GetDoctorByIDAsync(doctorId), $"tài khoản {accountId} không có thẩm quyền của doctor");
-
                 var appointmentList = await _appointmentService.GetPendingDoctorAppointmentAsync(doctorId);
 
                 var appointments = await _doctorService.ReassignDoctorAppointmentsAsync(doctorId, appointmentList);

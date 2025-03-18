@@ -9,7 +9,7 @@ GO
 USE [ChildrenVaccineScheduleTrackingSystem]
 GO
 
-/****** Object:  Table [dbo].[Account] ******/
+/****** Object: Table Account ******/
 CREATE TABLE [dbo].[Accounts](
     [AccountID] [int] IDENTITY(1,1) PRIMARY KEY,
     [Firstname] [nvarchar](100) NOT NULL,
@@ -19,11 +19,20 @@ CREATE TABLE [dbo].[Accounts](
     [PhoneNumber] [varchar](20) NOT NULL,
     [Email] [varchar](100) NOT NULL,
 	[Avatar] [varchar](max) NULL,
-    [Status] [varchar](20) NOT NULL
+    [Status] [varchar](20) NOT NULL,
 )
 GO
 
-/****** Object:  Table [dbo].[Parent] ******/
+CREATE TABLE  [dbo].[AccountNotations](
+	[AccountNotationID] [int] IDENTITY(1,1) PRIMARY KEY,
+	[AccountID] [int] NOT NULL,
+	[CreateDate] DATE NOT NULL,
+	[Notation] [nvarchar](255) NOT NULL,
+	[Processed] [bit] NOT NULL,
+	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
+)
+
+/****** Object:  Table Parent ******/
 CREATE TABLE [dbo].[Parents](
 	[ParentID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[AccountID] [int] NOT NULL,
@@ -31,7 +40,7 @@ CREATE TABLE [dbo].[Parents](
 )
 GO
 
-/****** Object:  Table [dbo].[Doctor] ******/
+/****** Object:  Table Doctors ******/
 CREATE TABLE [dbo].[Doctors](
 	[DoctorID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[AccountID] [int] NOT NULL,
@@ -49,6 +58,7 @@ CREATE TABLE [dbo].[DoctorTimeSlots](
 	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
 	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID])
 )
+
 /****** Object:  Table [dbo].[Staff] ******/
 CREATE TABLE [dbo].[Staffs](
 	[StaffID] [int] IDENTITY(1,1) PRIMARY KEY,
@@ -202,7 +212,7 @@ VALUES
 ('OPV (Oral Polio Vaccine)', 4, 'WHO', 500, 0, N'Vaccine uống phòng bại liệt', 0, 5, 2, 3, 1),
 ('IPV (Inactivated Polio Vaccine)', 4, 'Sanofi Pasteur', 300, 350000, N'Vaccine tiêm phòng bại liệt', 2, 99, 2, 2, 1);
 
-/** Ko biết test như nào :( v **/
+/** Table DailySchedule **/
 CREATE TABLE  [dbo].[DailySchedule](
 	[DailyScheduleID] int IDENTITY(1,1) PRIMARY KEY,
 	[AppointmentDate] DATE NOT NULL
@@ -242,7 +252,6 @@ CREATE TABLE [dbo].[CancelAppointment](
 )
 GO
 
- 
 
 CREATE TABLE [dbo].[ChildTimeSlots] (
     ChildTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
