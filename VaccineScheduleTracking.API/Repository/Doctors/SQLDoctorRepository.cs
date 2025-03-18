@@ -141,5 +141,14 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
             return account;
         }
 
+        public async Task DeleteDoctorTimeSlotsAsync(List<DoctorTimeSlot> doctorSchedule)
+        {
+            if (doctorSchedule == null || !doctorSchedule.Any())
+                return;
+
+            _dbContext.DoctorTimeSlots.RemoveRange(doctorSchedule);
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

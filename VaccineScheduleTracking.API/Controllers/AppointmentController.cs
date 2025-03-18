@@ -120,12 +120,20 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
-        [HttpPut("update-appointment/{appointmentId}")]
-        public async Task<IActionResult> UpdateAppointment([FromRoute] int appointmentId, UpdateAppointmentDto updateAppointment)
+        [HttpPut("update-appointment")]//cần sửa
+        public async Task<IActionResult> UpdateAppointment([FromBody] ModifyAppointmentDto modAppointment)
         {
             try
             {
-                var appointment = await _appointmentServices.UpdateAppointmentAsync(appointmentId, updateAppointment);
+                var updateAppointment = new UpdateAppointmentDto
+                {
+                    ChildID = 0,
+                    DoctorID = 0,
+                    VaccineID = modAppointment.VaccineID,
+                    SlotNumber = modAppointment.SlotNumber,
+                    Date = modAppointment.Date
+                };
+                var appointment = await _appointmentServices.UpdateAppointmentAsync(modAppointment.AppointmentID, updateAppointment);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
             catch (Exception ex)
@@ -135,12 +143,12 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
-        [HttpDelete("cancel-appointment/{id}")]
-        public async Task<IActionResult> CancelAppointment([FromRoute] int id, string reason)
+        [HttpDelete("cancel-appointment")]// cần sửa 
+        public async Task<IActionResult> CancelAppointment([FromBody] CancelAppointmentDto cancelApp)
         {
             try
             {
-                var appointment = await _appointmentServices.CancelAppointmentAsync(id, reason);
+                var appointment = await _appointmentServices.CancelAppointmentAsync(cancelApp.AppointmentID, cancelApp.Reason);
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
             catch (Exception ex)

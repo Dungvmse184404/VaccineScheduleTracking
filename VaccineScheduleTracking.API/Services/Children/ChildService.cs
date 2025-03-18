@@ -229,12 +229,37 @@ namespace VaccineScheduleTracking.API_Test.Services.Children
 
 
 
-        public async Task SetOverdueChildScheduleAsync()//sửa lại như Appointment
+        private async Task DeleteChildScheduleAsync(List<ChildTimeSlot> childSchedule)
+        {
+            if (childSchedule.Any())
+            {
+                await childRepository.DeleteChildTimeSlotsAsync(childSchedule);
+            }
+        }
+
+        private async Task DisableChildScheduleAsync(List<ChildTimeSlot> childSchedule)
+        {
+            foreach (var slot in childSchedule)
+            {
+                if (slot.Available)
+                {
+                    slot.Available = false;
+                    await childRepository.UpdateChildTimeSlotsAsync(slot);
+                }
+            }
+        }
+
+
+        public async Task SetOverdueChildScheduleAsync(int threshold)//sửa lại như Appointment
         {
             var Children = await GetAllChildrenAsync();
             var dailySchedules = await dailyScheduleRepository.GetAllDailyScheduleAsync();
             var today = DateOnly.FromDateTime(DateTime.Now);
             var now = DateTime.Now;
+            var thresholdDate = today.AddDays(-threshold);
+
+            var deletedSlots = new List<DoctorTimeSlot>();
+            var disabledSlots = new List<DoctorTimeSlot>();
 
             foreach (var child in Children)
             {

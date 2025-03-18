@@ -18,8 +18,13 @@
         private int CalculateAge(DateOnly birthDate)
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
+            if (birthDate > today)
+            {
+                return 0;
+            }
             int age = today.Year - birthDate.Year;
-            if (birthDate > today.AddYears(-age)) age--; //chưa đến sinh nhật thì -1
+            if (birthDate > today.AddYears(-age)) age--;
+
             return age;
         }
     }

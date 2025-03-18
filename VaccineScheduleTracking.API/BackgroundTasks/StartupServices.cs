@@ -45,10 +45,10 @@ namespace VaccineScheduleTracking.API_Test.BackgroundTasks
 
                     await doctorServices.GenerateDoctorCalanderAsync(doctorList, days);
                     /// set false cho những timeSlot trước ngày hôm nay
-                    await timeSlotServices.SetOverdueTimeSlotAsync();
-                    await doctorServices.SetOverdueDoctorScheduleAsync();
-                    await childServices.SetOverdueChildScheduleAsync();
-                    await appointmentServices.SetOverdueAppointmentAsync();
+                    //await timeSlotServices.SetOverdueTimeSlotAsync();
+                    //await doctorServices.SetOverdueDoctorScheduleAsync();
+                    //await childServices.SetOverdueChildScheduleAsync();
+                    //await appointmentServices.SetOverdueAppointmentAsync();
                 }
                 catch (Exception ex)
                 {

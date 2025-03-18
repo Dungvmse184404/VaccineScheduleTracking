@@ -68,6 +68,7 @@ namespace VaccineScheduleTracking.API.Controllers
                     });
                 }
                 child.ParentID = parentAccount.Parent.ParentID;
+                child.Available = true;
                 child = await childService.AddChild(child);
                 return Ok(mapper.Map<ChildDto>(child));
             }

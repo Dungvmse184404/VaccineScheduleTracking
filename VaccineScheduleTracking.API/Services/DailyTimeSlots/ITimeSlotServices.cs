@@ -1,6 +1,7 @@
 ﻿
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.Entities;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
 {
@@ -10,7 +11,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
         Task GenerateCalanderAsync(int numberOfDays);
         Task<TimeSlot> UpdateTimeSlotAsync(TimeSlot timeSlot);
         Task <TimeSlot?> GetTimeSlotAsync(int SlotNumber, DateOnly Date);
-        Task SetOverdueTimeSlotAsync();
+        Task SetOverdueTimeSlotAsync(int threshold);
         Task<TimeSlot?> GetTimeSlotByIDAsync(int timeSlotID);
     }
 }

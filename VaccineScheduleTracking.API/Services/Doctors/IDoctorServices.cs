@@ -18,7 +18,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         Task<DoctorTimeSlot?> FindDoctorTimeSlotAsync(int doctorId, DateOnly date, int slotNumber);
         Task<DoctorTimeSlot> SetDoctorTimeSlotAsync(DoctorTimeSlot doctorTimeSlot, bool status);
         Task<DoctorTimeSlot> UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot);
-        Task SetOverdueDoctorScheduleAsync();
+        Task SetOverdueDoctorScheduleAsync(int threshold);
         Task GenerateDoctorCalanderAsync(List<Doctor> doctorList, int numberOfDays);
         Task DeleteDoctorTimeSlotAsync(int doctorId);
 

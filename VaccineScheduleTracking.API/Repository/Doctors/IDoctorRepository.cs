@@ -24,6 +24,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Doctors
         Task<DoctorTimeSlot> GetSpecificDoctorTimeSlotAsync(int doctorId, DateOnly date, int slotNumber);
         Task AddTimeSlotForDoctorAsync(DoctorTimeSlot doctorSlot);
         Task<DoctorTimeSlot> UpdateDoctorTimeSlotAsync(DoctorTimeSlot doctorSlot);
+        Task DeleteDoctorTimeSlotsAsync(List<DoctorTimeSlot> doctorSchedule);
         Task DeleteDoctorTimeSlotByDoctorIDAsync(int doctorId);
         
     }

@@ -6,6 +6,7 @@ using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using VaccineScheduleTracking.API_Test.Helpers;
+using VaccineScheduleTracking.API_Test.Repository.Doctors;
 
 
 namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
@@ -122,25 +123,47 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
         }
 
 
-
-        public async Task SetOverdueTimeSlotAsync()//+++ đã xong +++
+        public async Task DeleteTimeSlotsAsync(List<TimeSlot> timeSlots)
         {
+            if (timeSlots.Any())
+            {
+                await _timeSlotRepository.DeleteTimeSlotsAsync(timeSlots);
+            }
+        }
+
+        public async Task DisableTimeSlotAsync(List<TimeSlot> timeSlots)
+        {
+            foreach (var slot in timeSlots)
+            {
+                if (slot.Available)
+                {
+                    slot.Available = false;
+                    await _timeSlotRepository.UpdateTimeSlotAsync(slot);
+                }
+            }
+        }
+
+        public async Task SetOverdueTimeSlotAsync(int threshold)// đã xong 
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var thresholdDate = today.AddDays(-threshold);
             var dailySchedules = await _dailyScheduleRepository.GetAllDailyScheduleAsync();
+            
+            var deleteTimeSlots = new List<TimeSlot>();
+            var disableTimeSlots = new List<TimeSlot>();
 
             foreach (var date in dailySchedules)
             {
                 var timeSlots = await _timeSlotRepository.GetTimeSlotsByDateAsync(date.AppointmentDate);
                 int dateStatus = _timeSlotHelper.CompareNowTime(date.AppointmentDate);
-                if (dateStatus == -1) // Ngày đã qua
+
+                if (date.AppointmentDate < thresholdDate) // xóa quá hạn
                 {
-                    foreach (var slot in timeSlots)
-                    {
-                        if (slot.Available)
-                        {
-                            slot.Available = false;
-                            await _timeSlotRepository.UpdateTimeSlotAsync(slot);
-                        }
-                    }
+                    deleteTimeSlots.AddRange(timeSlots);
+                }
+                else if (dateStatus == -1) // Ngày đã qua
+                {
+                    disableTimeSlots.AddRange(timeSlots);
                 }
                 else if (dateStatus == 0) // Ngày hôm nay, kiểm tra giờ
                 {
@@ -154,6 +177,8 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
                     }
                 }
             }
+            await DeleteTimeSlotsAsync(deleteTimeSlots);
+            await DisableTimeSlotAsync(disableTimeSlots);
         }
 
       

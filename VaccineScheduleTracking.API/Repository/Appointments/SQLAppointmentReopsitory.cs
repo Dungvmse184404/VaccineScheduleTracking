@@ -191,5 +191,15 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             _dbContext.CancelAppointments.Add(reason);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task DeleteOverDueAppointmentAsync(List<Appointment> appointments)
+        {
+            if (appointments == null || !appointments.Any())
+                return;
+
+            _dbContext.Appointments.RemoveRange(appointments);
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

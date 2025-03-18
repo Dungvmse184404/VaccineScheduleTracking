@@ -284,7 +284,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
 
 
-
         /// <summary>
         /// hàm tạo lịch hẹn - đang sửa 
         /// </summary>
@@ -322,14 +321,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             /// Kiểm tra trẻ có tồn tại không
             var child = await _childServices.GetChildByIDAsync(childID);
-            if (child == null)
-            {
-                throw new Exception($"Không tìm thấy trẻ có ID {childID}");
-            }
-            //if (child.DateOfBirth >= _timeSlotHelper.CalculateDate(-42))
-            //{
-            //    throw new Exception("không thể đăng kí tiêm cho trẻ dưới 6 tuần tuổi");
-            //}
+            if (child == null) throw new Exception($"Không tìm thấy trẻ có ID {childID}");
+            if (child.Available == false) throw new Exception($"tài khoản của trẻ {child.Lastname} {child.Firstname} đã bị vô hiệu hóa");
 
             /// Kiểm tra trẻ đã đặt slot này chưa 
             var childTimeSlot = await _childServices.GetChildTimeSlotBySlotNumberAsync(childID, slotNumber, date);
@@ -400,6 +393,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             int oldVaccineId = appointment.VaccineID;
             int oldSlotNumber = appointment.TimeSlots.SlotNumber;
             DateOnly oldDate = appointment.TimeSlots.DailySchedule.AppointmentDate;
+
+            var child = await _childServices.GetChildByIDAsync(oldChildId);
+            if (child == null) throw new Exception($"Không tìm thấy trẻ có ID {oldChildId}");
+            if (child.Available == false) throw new Exception($"tài khoản của trẻ {child.Lastname} {child.Firstname} đã bị vô hiệu hóa");
 
             ValidateInput(appointment, "Lịch hẹn không tồn tại!");
             _timeSlotHelper.LimitDate(modAppointment.Date, "TimeSlot chỉ được tạo đến trước ngày");
@@ -567,22 +564,35 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             return doctorAppointments;
         }
 
-
+        public async Task DeleteOverDueAppointmentAsync(List<Appointment> appointments)
+        {
+            if (appointments.Any())
+            {
+                await _appointmentRepository.DeleteOverDueAppointmentAsync(appointments);
+            }
+        }
 
         /// <summary>
         /// tự động chuyển các apointment thành OVERDUE khi bị quá hạn
         /// </summary>
         /// <returns></returns>
-        public async Task SetOverdueAppointmentAsync()// đã xong - chưa tối ưu
+        public async Task SetOverdueAppointmentAsync(int threshold)// đã xong 
         {
             var dailySchedules = await _dailyScheduleRepository.GetAllDailyScheduleAsync();
             var allAppointments = await _appointmentRepository.GetAllAppointmentsAsync();
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var thresholdDate = today.AddDays(-threshold);
+            var overdueAppointments = new List<Appointment>();
 
             foreach (var date in dailySchedules)
             {
                 int dateStatus = _timeSlotHelper.CompareNowTime(date.AppointmentDate);
                 var filteredAppointments = allAppointments.Where(a => a.TimeSlots.DailySchedule.AppointmentDate == date.AppointmentDate).ToList();
 
+                if (date.AppointmentDate < thresholdDate)
+                {
+                    overdueAppointments.AddRange(filteredAppointments);
+                }
                 if (dateStatus == -1)
                 {
                     foreach (var appointment in filteredAppointments)
@@ -598,7 +608,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 {
                     foreach (var appointment in filteredAppointments)
                     {
-                        if (_timeSlotHelper.CompareNowTime(appointment.TimeSlots.StartTime) == -1 && appointment.Status == "PENDING") // Giờ đã qua
+                        if (_timeSlotHelper.CompareNowTime(appointment.TimeSlots.StartTime) == -1 && appointment.Status == "PENDING")
                         {
                             appointment.Status = "OVERDUE";
                             await _appointmentRepository.UpdateAppointmentAsync(appointment);
@@ -606,14 +616,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                     }
                 }
             }
-
+            await DeleteOverDueAppointmentAsync(overdueAppointments);
         }
-
-
-        //public async Task AsyncTimeSlot(DateOnly date, int SlotNumber,  )
-        //{
-
-        //}
+        
 
 
     }

@@ -9,18 +9,21 @@ using VaccineScheduleTracking.API_Test.Services.DailyTimeSlots;
 using VaccineScheduleTracking.API_Test.Services.Doctors;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Helpers;
+using VaccineScheduleTracking.API_Test.Configurations;
 
 public class ScheduledTaskService : BackgroundService
 {
+    private readonly TimeSlotHelper _timeHelper;
+    private readonly DefaultConfig _config;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ScheduledTaskService> _logger;
-    private readonly TimeSlotHelper _timeSlotHelper;
 
-    public ScheduledTaskService(IServiceProvider serviceProvider, ILogger<ScheduledTaskService> logger, TimeSlotHelper timeSlotHelper)
+    public ScheduledTaskService(TimeSlotHelper timeHelper, DefaultConfig config, IServiceProvider serviceProvider, ILogger<ScheduledTaskService> logger)
     {
+        _timeHelper = timeHelper;
+        _config = config;
         _serviceProvider = serviceProvider;
         _logger = logger;
-        _timeSlotHelper = timeSlotHelper; 
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -37,19 +40,19 @@ public class ScheduledTaskService : BackgroundService
                     var appointmentServices = scope.ServiceProvider.GetRequiredService<IAppointmentService>();
 
                     /// Tạo lịch (TimeSlot)
-                    await timeSlotServices.GenerateCalanderAsync(_timeSlotHelper.SetCalendarDate());
+                    await timeSlotServices.GenerateCalanderAsync(_timeHelper.SetCalendarDate());
                     /// Tạo lịch làm việc cho bác sĩ
                     var docAccountList = await doctorServices.GetAllDoctorAsync();
                     var doctorList = docAccountList.Select(docAccount => docAccount.Doctor).ToList();
 
 
-                    await doctorServices.GenerateDoctorCalanderAsync(doctorList, _timeSlotHelper.SetCalendarDate());
+                    await doctorServices.GenerateDoctorCalanderAsync(doctorList, _timeHelper.SetCalendarDate());
 
                     /// Set false cho những TimeSlot trước ngày hôm nay
-                    await timeSlotServices.SetOverdueTimeSlotAsync();
-                    await doctorServices.SetOverdueDoctorScheduleAsync();
-                    await childServices.SetOverdueChildScheduleAsync();
-                    await appointmentServices.SetOverdueAppointmentAsync();
+                    await timeSlotServices.SetOverdueTimeSlotAsync(_config.OverdueSchedule);
+                    await doctorServices.SetOverdueDoctorScheduleAsync(_config.OverdueSchedule);
+                    await childServices.SetOverdueChildScheduleAsync(_config.OverdueSchedule);
+                    await appointmentServices.SetOverdueAppointmentAsync(_config.OverdueSchedule);
                 }
                 _logger.LogInformation($"ScheduledTaskService chạy lúc: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 Console.WriteLine($"ScheduledTaskService chạy lúc: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");

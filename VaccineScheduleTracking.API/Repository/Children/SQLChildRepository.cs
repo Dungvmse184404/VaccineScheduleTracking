@@ -118,5 +118,13 @@ namespace VaccineScheduleTracking.API_Test.Repository.Children
             return slot;
         }
 
+        public async Task DeleteChildTimeSlotsAsync(List<ChildTimeSlot> childSchedule)
+        {
+            if (childSchedule == null || !childSchedule.Any())
+                return;
+
+            dbContext.ChildTimeSlots.RemoveRange(childSchedule);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

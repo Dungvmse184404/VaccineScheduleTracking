@@ -65,7 +65,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
         {
             _dbContext.TimeSlots.Add(timeSlots);
             await _dbContext.SaveChangesAsync();
-
         }
 
         public async Task<TimeSlot> UpdateTimeSlotAsync(TimeSlot timeSlots)
@@ -83,6 +82,14 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
             return slot;
         }
 
-       
+        public async Task DeleteTimeSlotsAsync(List<TimeSlot> timeSlots)
+        {
+            if (timeSlots == null || !timeSlots.Any())
+                return; 
+
+            _dbContext.TimeSlots.RemoveRange(timeSlots);
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

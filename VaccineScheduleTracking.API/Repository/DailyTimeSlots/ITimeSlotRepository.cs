@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
@@ -10,6 +11,8 @@ namespace VaccineScheduleTracking.API_Test.Repository.DailyTimeSlots
         Task<TimeSlot?> GetTimeSlotAsync(int timeSlot, DateOnly date);
         Task AddTimeSlotForDayAsync(TimeSlot timeSlots);
         Task<List<TimeSlot>> GetTimeSlotsByDateAsync(DateOnly date);
-        //Task<List<TimeSlot>> GetAllAvailableTimeSlotAsync(int id);
+        Task DeleteTimeSlotsAsync(List<TimeSlot> timeSlots);
+        
+
     }
 }

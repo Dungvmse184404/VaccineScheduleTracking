@@ -8,6 +8,7 @@ using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Helpers;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using Microsoft.Identity.Client;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaccineScheduleTracking.API_Test.Services.Doctors
 {
@@ -334,9 +335,24 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         }
 
 
-        private async Task DeleteOverdueSchedule()
+        private async Task DeleteOverdueScheduleAsync(List<DoctorTimeSlot> doctorSchedule)
         {
+            if (doctorSchedule.Any())
+            {
+                await _doctorRepository.DeleteDoctorTimeSlotsAsync(doctorSchedule);
+            }
+        }
 
+        private async Task DisableOverdueScheduleAsync(List<DoctorTimeSlot> doctorSchedule)
+        {
+            foreach (var slot in doctorSchedule)
+            {
+                if (slot.Available)
+                {
+                    slot.Available = false;
+                    await _doctorRepository.UpdateDoctorTimeSlotAsync(slot);
+                }
+            }
         }
 
 
@@ -344,33 +360,36 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
         /// lhàm này sẽ kiểm tra xem các slot đã quá hạn chưa
         /// </summary>
         /// <returns></returns>
-        public async Task SetOverdueDoctorScheduleAsync()
+        /// <summary>
+        /// Kiểm tra và cập nhật trạng thái các lịch hẹn đã quá hạn
+        /// </summary>
+        public async Task SetOverdueDoctorScheduleAsync(int threshold)
         {
             var docAccountList = await _doctorRepository.GetAllDoctorAsync();
             var dailySchedules = await _dailyScheduleRepository.GetAllDailyScheduleAsync();
             var today = DateOnly.FromDateTime(DateTime.Now);
             var now = DateTime.Now;
+            var thresholdDate = today.AddDays(-threshold);
+
+            var deletedSlots = new List<DoctorTimeSlot>();
+            var disabledSlots = new List<DoctorTimeSlot>();
 
             foreach (var doctor in docAccountList)
             {
                 foreach (var date in dailySchedules)
                 {
-                    if (date.AppointmentDate < today)
+                    var doctorTimeSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(doctor.Doctor.DoctorID, date.AppointmentDate);
+                    if (date.AppointmentDate < thresholdDate) // xóa slot quá hạn 
                     {
-                        var timeSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(doctor.Doctor.DoctorID, date.AppointmentDate);
-                        foreach (var slot in timeSlots)
-                        {
-                            if (slot.Available)
-                            {
-                                slot.Available = false;
-                                await _doctorRepository.UpdateDoctorTimeSlotAsync(slot);
-                            }
-                        }
+                        deletedSlots.AddRange(doctorTimeSlots);
                     }
-                    else if (date.AppointmentDate == today)
+                    else if (date.AppointmentDate < today) // disable slot
                     {
-                        var timeSlots = await _doctorRepository.GetDoctorTimeSlotsForDayAsync(doctor.Doctor.DoctorID, date.AppointmentDate);
-                        foreach (var slot in timeSlots)
+                        disabledSlots.AddRange(doctorTimeSlots);
+                    }
+                    else if (date.AppointmentDate == today) // disable slot trong ngayf
+                    {
+                        foreach (var slot in doctorTimeSlots)
                         {
                             var startTime = _timeSlotHelper.CalculateStartTime(slot.SlotNumber);
                             var slotDateTime = date.AppointmentDate.ToDateTime(startTime);
@@ -383,7 +402,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Doctors
                     }
                 }
             }
+            await DeleteOverdueScheduleAsync(deletedSlots);
+            await DisableOverdueScheduleAsync(disabledSlots);
         }
+
 
 
         /// <summary>

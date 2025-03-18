@@ -19,6 +19,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         Task<List<Appointment>> GetAllAppointmentsAsync();
         Task<List<Appointment>> GetAppointmentByDateAsync(int childId, DateOnly date);
         Task createCancelReasonAsync(CancelAppointment reason);
+        Task DeleteOverDueAppointmentAsync(List<Appointment> appointments);
     }
 
 }

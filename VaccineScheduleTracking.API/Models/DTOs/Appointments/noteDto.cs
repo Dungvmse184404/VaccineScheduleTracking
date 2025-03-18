@@ -2,6 +2,7 @@
 {
     public class noteDto
     {
+        public int appointmentID { get; set; }
         public string note { get; set; }
     }
 }

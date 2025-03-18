@@ -1,25 +1,17 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using static VaccineScheduleTracking.API_Test.Helpers.TimeSlotHelper;
 using static VaccineScheduleTracking.API_Test.Helpers.ExceptionHelper;
 using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Doctors;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
-using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Services.Doctors;
-using VaccineScheduleTracking.API_Test.Repository.Appointments;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
-using VaccineScheduleTracking.API_Test.Models.Entities;
-using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 using System.Security.Claims;
 using VaccineScheduleTracking.API_Test.Repository.Doctors;
-using VaccineScheduleTracking.API_Test.Services.Record;
-using VaccineScheduleTracking.API_Test.Models.DTOs;
-using System.Net.NetworkInformation;
+
 
 namespace VaccineScheduleTracking.API_Test.Controllers
 {
@@ -29,7 +21,6 @@ namespace VaccineScheduleTracking.API_Test.Controllers
     {
         private readonly IDoctorServices _doctorService;
         private readonly IDoctorRepository _doctorRepository;
-
         private readonly IAccountService _accountService;
         private readonly IAppointmentService _appointmentService;
         private readonly IMapper _mapper;
@@ -37,13 +28,11 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         public DoctorController(IDoctorServices doctorService,
                                 IDoctorRepository doctorRepository,
                                 IAccountService accountService,
-
                                 IAppointmentService appointmentService,
                                 IMapper mapper)
         {
             _doctorService = doctorService;
             _doctorRepository = doctorRepository;
-
             _accountService = accountService;
             _appointmentService = appointmentService;
             _mapper = mapper;
@@ -84,13 +73,13 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
         [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
-        [HttpPut("set-appointment-status/{appointmentId}")]
-        public async Task<IActionResult> SetAppointmentStatus([FromRoute]int appointmentId, [FromBody] noteDto? note)
+        [HttpPut("set-appointment-status")]// cần sửa 
+        public async Task<IActionResult> SetAppointmentStatus([FromBody] noteDto note)
         {
             try
             {
-                ValidateInput(appointmentId, "ID buổi hẹn không thể để trống");
-                var appointment = await _appointmentService.SetAppointmentStatusAsync(appointmentId, "FINISHED", note.note);
+                ValidateInput(note.appointmentID, "ID buổi hẹn không thể để trống");
+                var appointment = await _appointmentService.SetAppointmentStatusAsync(note.appointmentID, "FINISHED", note.note);
 
                 return Ok(_mapper.Map<AppointmentDto>(appointment));
             }
@@ -102,8 +91,9 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
+
         [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
-        [HttpPut("change-doctor-schedule")]
+        [HttpPut("change-doctor-schedule")]//cần sửa 
         public async Task<IActionResult> ChangeDoctorTimeSlot([FromBody] DoctorScheduleDto ds)
         {
             try
@@ -137,6 +127,30 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             {
                 return HandleException(ex);
             }
+        }
+
+
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
+        [HttpPut("disable-doctor-account")]
+        public async Task<IActionResult> DisableDoctorAccount()
+        {
+            try
+            {
+                var accountId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                var account = await _accountService.DisableAccountAsync(accountId);
+                if (account != null)
+                {
+                    await _doctorService.DeleteDoctorTimeSlotAsync(account.Doctor.DoctorID);
+                }
+
+                return Ok($"đã vô hiệu hóa tài khoản ID {accountId} của {account.Lastname} {account.Firstname} ");
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
+
         }
 
 

@@ -56,7 +56,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
         [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
-        [HttpPost("update-record")]
+        [HttpPut("update-record")]
         public async Task<IActionResult> UpdateVaccineRecord([FromBody] UpdateVaccineRecordDto updateVaccine)
         {
             var updatedRecord = await vaccineRecordService.UpdateVaccineRecordAsync(updateVaccine);

@@ -27,7 +27,7 @@ namespace VaccineScheduleTracking.API_Test.Helpers
                 DateTime dt => dt.CompareTo(DateTime.Now),
                 TimeOnly to => to.CompareTo(TimeOnly.FromDateTime(DateTime.Now)),
                 DateOnly d => d.CompareTo(DateOnly.FromDateTime(DateTime.Now)),
-                _ => throw new ArgumentException("Định dạng ngày truyền vào không hỗ trợ")
+                _ => throw new ArgumentException($"Kiểu {typeof(T)} không được hỗ trợ")
             };
         }
 
