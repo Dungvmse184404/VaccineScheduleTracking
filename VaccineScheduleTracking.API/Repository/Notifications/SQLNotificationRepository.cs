@@ -17,6 +17,8 @@ namespace VaccineScheduleTracking.API_Test.Repository.Notifications
             _dbContext = dbContext;
         }
 
+       
+
         public async Task<Notification> AddNotification(Notification notification)
         {
             await _dbContext.Notifications.AddAsync(notification);
@@ -57,6 +59,31 @@ namespace VaccineScheduleTracking.API_Test.Repository.Notifications
         public async Task<Notification> UpdateNotification(Notification notification)
         {
             throw new NotImplementedException();
+        } 
+        
+        
+        public async Task<Announcement> AddAnnouncement(Announcement announce)
+        {
+            await _dbContext.Announcements.AddAsync(announce);
+            await _dbContext.SaveChangesAsync();
+            return announce;
         }
+
+        public async Task<List<Announcement>> GetPendingAnnouncements()
+        {
+            var today = DateTime.Now;
+
+            return await _dbContext.Announcements
+                .Where(a => !a.IsSent && a.MailSentDate <= today)
+                .ToListAsync();
+        }
+
+        public async Task<List<Announcement>> GetAllAnnouncementAsync()
+        {
+            return await _dbContext.Announcements.ToListAsync();
+        }
+
+
+
     }
 }

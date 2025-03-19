@@ -58,9 +58,32 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         {
             try
             {
-                var accNotes =  await _accountService.GetAllAccountNotationsAsync();
+                var accNotesTask = _accountService.GetAllAccountNotationsAsync();
+                var blkAccountsTask = _accountService.GetAllBlankAccountsAsync();
 
-                return Ok(accNotes);
+                await Task.WhenAll(accNotesTask, blkAccountsTask);
+
+                var accNotes = accNotesTask.Result;
+                var blkAccounts = blkAccountsTask.Result;
+
+                var blankAccountDtos = blkAccounts
+                    .Join(accNotes,
+                          blkAcc => blkAcc.AccountID,
+                          accNote => accNote.AccountID,
+                          (blkAcc, accNote) => new BlankAccountDto
+                          {
+                              AccountID = blkAcc.AccountID,
+                              Username = blkAcc.Username,
+                              Firstname = blkAcc.Firstname,
+                              Lastname = blkAcc.Lastname,
+                              Email = blkAcc.Email,
+                              PhoneNumber = blkAcc.PhoneNumber,
+                              Status = blkAcc.Status,
+                              Notation = accNote
+                          })
+                    .ToList();
+
+                return Ok(blankAccountDtos);
             }
             catch (Exception ex)
             {
@@ -84,7 +107,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                     await _emailService.SendEmailAsync(account.Email, mail.Subject, mail.Body);
                     await _accountService.SetAccountNotationsAsync(account.AccountID, true);
                 }
-                
+
                 return Ok(_mapper.Map<DoctorAccountDto>(account));
             }
             catch (Exception ex)

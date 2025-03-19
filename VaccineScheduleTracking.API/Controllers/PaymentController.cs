@@ -77,15 +77,14 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             {
                 AccountId = model.AccountID,
                 AppointmentId = model.AppointmentID,
-                Amount = (decimal) model.Amount,
+                Amount = (decimal)model.Amount,
                 CreateDate = DateTime.Now,
-            };
+            };  
 
             var addedPayment = await paymentService.AddPaymentAsync(payment);
-            if (addedPayment != null)
-            {
-                appointmentsService.SetAppointmentStatusAsync(appointment.AppointmentID, "CONFIRMED", null);
-            }
+
+            await appointmentsService.SetAppointmentStatusAsync(appointment.AppointmentID, "CONFIRMED", null);
+
 
             return Ok(addedPayment);
         }

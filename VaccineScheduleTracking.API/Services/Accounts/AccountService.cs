@@ -162,6 +162,17 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
                 return newAccount;
             }
         }
+
+        public async Task<List<Account>> GetAllBlankAccountsAsync()
+        {
+            return await accountRepository.GetAllBlankAccountsAsync();
+        }
+
+        public async Task<List<AccountNotation>> GetAllAccountNotationsAsync()
+        {
+            return await accountRepository.GetAllAccountNotationsAsync();
+        }
+
         public async Task CreateAccountNotation(Account acc, string note)
         {
             var accNote = new AccountNotation
@@ -274,11 +285,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             return await accountRepository.GetParentByChildIDAsync(childID);
         }
 
-        public async Task<List<AccountNotation>> GetAllAccountNotationsAsync()
-        {
-            return await accountRepository.GetAllAccountNotationsAsync();
-        }
-
         public async Task<AccountNotation> GetAllAccountNotationAccByIDAsync(int accountID)
         {
             return await accountRepository.GetAllAccountNotationByIDAsync(accountID);
@@ -295,6 +301,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             accNote.Processed = v;
             await accountRepository.UpdateAccountNoteAsync(accNote);
         }
+
+       
 
 
         //public async Task<Account?> DeleteAccountAsync(int id)

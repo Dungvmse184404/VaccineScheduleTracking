@@ -12,5 +12,9 @@ namespace VaccineScheduleTracking.API.Repository.Notifications
         Task<Notification> DeleteNotification(Notification notification);
         Task<List<Notification>> GetPendingNotifications();
 
+        // ------------------- Announcement -------------------
+        Task<Announcement> AddAnnouncement(Announcement announce);
+        Task<List<Announcement>> GetPendingAnnouncements();
+        Task<List<Announcement>> GetAllAnnouncementAsync();
     }
 }

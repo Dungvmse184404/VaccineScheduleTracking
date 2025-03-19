@@ -111,6 +111,24 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
+        [HttpGet("get-all-blank-accounts")]
+        public async Task<IActionResult> GetAllBlankAccounts()//đang sửa
+        {
+            try
+            {
+                var accounts = await accountService.GetAllBlankAccountsAsync();
+
+                return Ok(mapper.Map<AccountDto>(accounts));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = ex.StackTrace,
+                    Message = ex.Message
+                });
+            }
+        }
 
         [HttpGet("send-email-token")]
         public async Task<IActionResult> SendEmailToken(string username)

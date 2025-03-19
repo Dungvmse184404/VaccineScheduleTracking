@@ -21,6 +21,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
         Task<List<AccountNotation>> GetAllAccountNotationsAsync();
         Task<AccountNotation> GetAllAccountNotationByIDAsync(int accountID);
         Task UpdateAccountNoteAsync(AccountNotation accNote);
+        Task<List<Account>> GetAllBlankAccountsAsync();
         //Task<Account?> DeleteAccountsAsync(Account account);
     }
 }

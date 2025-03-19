@@ -11,6 +11,7 @@ namespace VaccineScheduleTracking.API_Test.Models.Entities
         public string Topic { get; set; }
         public string Message { get; set; }
         public DateTime MailSentDate { get; set; }
+        public bool IsSent { get; set; }
 
     }
 }

@@ -180,6 +180,11 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
             await dbContext.SaveChangesAsync();
         }
 
+        public Task<List<Account>> GetAllBlankAccountsAsync()
+        {
+            return dbContext.Accounts.Where(x => x.Parent == null && x.Doctor == null && x.Staff == null && x.Manager == null).ToListAsync();
+        }
+
 
         //public async Task<Account?> DeleteAccountsAsync(Account account)
         //{

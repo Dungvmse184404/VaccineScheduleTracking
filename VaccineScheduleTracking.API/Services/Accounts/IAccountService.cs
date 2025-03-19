@@ -11,6 +11,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
         Task<Account?> LoginAsync(string username, string password);
         Task<Account?> RegisterAsync(RegisterAccountDto registerAccount);
         Task<Account?> RegisterBlankAccountAsync(RegisterBlankAccountDto account);
+        Task<List<Account>> GetAllBlankAccountsAsync();
+        Task<List<AccountNotation>> GetAllAccountNotationsAsync();
         Task CreateAccountNotation(Account acc, string note);
         Task<Account?> UpdateAccountAsync(UpdateAccountDto updateAccount);
         Task<Account?> GetAccountRole(int accountId);
@@ -19,9 +21,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
         Task<bool> VerifyAccountEmail(int accountId, string username, string email, string phoneNumber);
         Task<Account?> GetAccountByIdAsync(int accountId);
         Task<Account?> GetParentByChildIDAsync(int childID);
-        Task<List<AccountNotation>> GetAllAccountNotationsAsync();
         Task SetAccountNotationsAsync(int accountID, bool v);
-
         //Task<Account?> DeleteAccountAsync(int id);
     }
 }

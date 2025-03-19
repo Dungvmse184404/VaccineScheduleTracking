@@ -166,7 +166,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             var (Available, limitDate) = await LimitVaccinePeriod(vaccineId, childId, date);
             if (!Available)
             {
-                throw new Exception($"Vaccine này đã được dùng gần đây, sẽ khả dụng sau ngày {limitDate}");
+                throw new Exception($"Vaccine này đã được dùng gần đây, sẽ khả dụng sau ngày {limitDate:dd/MM/yyyy}");
             }
         }
 
@@ -623,6 +623,11 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         public async Task<CancelAppointment> GetCancelAppointmentReasonAsync(int appointmentId)
         {
             return await _appointmentRepository.GetCancelAppointmentReasonAsync(appointmentId);
+        }
+
+        public async Task<List<Appointment>> GetPendingAppointments(int beforeDueDate)
+        {
+            throw new NotImplementedException();
         }
     }
 }
