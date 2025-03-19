@@ -52,19 +52,16 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
+        //[Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpGet("Get-All-Request")]
         public async Task<IActionResult> GetAllRequest()
         {
             try
             {
-                var accNotesTask = _accountService.GetAllAccountNotationsAsync();
-                var blkAccountsTask = _accountService.GetAllBlankAccountsAsync();
+                var accNotes = await _accountService.GetAllAccountNotationsAsync();
+                var blkAccounts = await _accountService.GetAllBlankAccountsAsync();
 
-                await Task.WhenAll(accNotesTask, blkAccountsTask);
 
-                var accNotes = accNotesTask.Result;
-                var blkAccounts = blkAccountsTask.Result;
 
                 var blankAccountDtos = blkAccounts
                     .Join(accNotes,
