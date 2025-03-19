@@ -10,6 +10,7 @@ using VaccineScheduleTracking.API_Test.Services.Doctors;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Helpers;
 using VaccineScheduleTracking.API_Test.Configurations;
+using VaccineScheduleTracking.API_Test.Services.Notifications;
 
 public class ScheduledTaskService : BackgroundService
 {
@@ -38,6 +39,7 @@ public class ScheduledTaskService : BackgroundService
                     var doctorServices = scope.ServiceProvider.GetRequiredService<IDoctorServices>();
                     var childServices = scope.ServiceProvider.GetRequiredService<IChildService>();
                     var appointmentServices = scope.ServiceProvider.GetRequiredService<IAppointmentService>();
+                    var notificationServices = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
                     /// Tạo lịch (TimeSlot)
                     await timeSlotServices.GenerateCalanderAsync(_config.ScheduleLength);
@@ -55,7 +57,7 @@ public class ScheduledTaskService : BackgroundService
                     await childServices.SetOverdueChildScheduleAsync(_config.OverdueSchedule);
 
                     ///gửi thông báo cho những lịch hẹn sắp tới
-                    
+                    await notificationServices.SentAutoMailAnnouncementAsync();
 
                 }
                 _logger.LogInformation($"ScheduledTaskService chạy lúc: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");

@@ -33,26 +33,26 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             _mapper = mapper;
         }
 
-        private ManualMailDto CreateRoleAssignmentMailDto(string accountName, string role)
+        private AutoMailDto CreateRoleAssignmentMailDto(string accountName, string role)
         {
-            return new ManualMailDto
+            return new AutoMailDto
             {
-                Subject = $"Thông báo gán quyền truy cập: {role}",
+                Footer = "Trân trọng,<br>Đội ngũ quản trị viên",
+                RecipientName = accountName,
+                Subject = "Thông báo cấp quyền truy cập",
                 Body = $@"
-        <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
-            <h2 style='color: #007bff;'>Xin chào {accountName},</h2>
-            <p>Chúng tôi xin thông báo rằng tài khoản của bạn đã được cấp quyền mới trên hệ thống.</p>
-            <p><strong>Vai trò mới:</strong> {role}</p>
-            <p>Vui lòng đăng nhập vào hệ thống để kiểm tra quyền hạn và sử dụng các tính năng tương ứng.</p>
-            <p>Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ.</p>
-            <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
-            <p style='text-align: center; font-size: 14px; color: #777;'>Trân trọng,<br>Đội ngũ quản trị hệ thống</p>
-        </div>"
+                    Chúng tôi xin thông báo rằng tài khoản của bạn đã được cấp quyền mới trên hệ thống |Vaccine Schedule Tracking System|.<br>
+                    |Vai trò mới:| {role} 📜<br>
+                    📍 Vui lòng đăng nhập vào hệ thống để kiểm tra quyền hạn và sử dụng các tính năng tương ứng.<br>
+                    Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ."
             };
+
         }
 
+        
 
-        //[Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
+
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpGet("Get-All-Request")]
         public async Task<IActionResult> GetAllRequest()
         {
@@ -60,8 +60,6 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             {
                 var accNotes = await _accountService.GetAllAccountNotationsAsync();
                 var blkAccounts = await _accountService.GetAllBlankAccountsAsync();
-
-
 
                 var blankAccountDtos = blkAccounts
                     .Join(accNotes,
@@ -114,7 +112,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
+        //[Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpPost("Promote-to-staff/{accountId}")]
         public async Task<IActionResult> PromoteToStaff([FromRoute] int accountId)
         {

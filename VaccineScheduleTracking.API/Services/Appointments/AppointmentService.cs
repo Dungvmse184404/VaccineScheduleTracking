@@ -16,6 +16,7 @@ using VaccineScheduleTracking.API_Test.Helpers;
 using System.Runtime.CompilerServices;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using VaccineScheduleTracking.API_Test.Models.Entities;
+using Microsoft.VisualBasic;
 
 namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
@@ -627,7 +628,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
         public async Task<List<Appointment>> GetPendingAppointments(int beforeDueDate)
         {
-            throw new NotImplementedException();
+            var dueDate = _timeSlotHelper.CalculateDate(beforeDueDate);
+
+            return await _appointmentRepository.GetPendingAppointments(dueDate);
         }
     }
 }

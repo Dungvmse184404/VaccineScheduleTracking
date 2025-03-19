@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API_Test.Models.DTOs;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Services.Record;
 
@@ -55,6 +56,27 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<VaccineRecordDto>(record));
         }
 
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
+        [HttpGet("get-record-by/{appointmentId}")]
+        public async Task<IActionResult> GetRecordByAppointmentID([FromRoute] int appointmentId)
+        {
+            try
+            {
+                if (appointmentId == null) throw new Exception("chưa nhập appointmentId");
+                VaccineRecord record = await vaccineRecordService.GetRecordByAppointmentID(appointmentId);
+
+                return Ok(record);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Message = ex.Message,
+                });
+            }
+
+        }
+
         [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPut("update-record")]
         public async Task<IActionResult> UpdateVaccineRecord([FromBody] UpdateVaccineRecordDto updateVaccine)
@@ -75,7 +97,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         public async Task<IActionResult> UpdateVaccineHistory([FromBody] UpdateVaccineHistoryDto updateVaccineHistory)
         {
             var record = await vaccineRecordService.GetRecordByIDAsync(updateVaccineHistory.VaccineRecordID);
-            if(record == null)
+            if (record == null)
             {
                 return BadRequest(new
                 {
@@ -143,5 +165,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             var record = await vaccineRecordService.AddVaccineRecordAsync(createVaccineRecord);
             return Ok(mapper.Map<VaccineRecordDto>(record));
         }
+
+
     }
 }

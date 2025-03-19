@@ -2,6 +2,7 @@
 using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Repository.Record;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
+using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 
 namespace VaccineScheduleTracking.API_Test.Services.Record
 {
@@ -55,6 +56,13 @@ namespace VaccineScheduleTracking.API_Test.Services.Record
         public async Task<VaccineRecord?> DeleteRecordAsync(int recordID)
         {
             return await vaccineRecordRepository.DeleteRecord(recordID);
+        }
+
+        public async Task<VaccineRecord> GetRecordByAppointmentID(int appointmentId)
+        {
+            VaccineRecord? vaccineRecord = await vaccineRecordRepository.GetRecordByAppointmentID(appointmentId);
+            ValidateInput(vaccineRecord, $"không tìm thấy record cho appointment ID: {appointmentId}");
+            return vaccineRecord;
         }
 
         public async Task<VaccineRecord?> GetRecordByIDAsync(int recordID)

@@ -9,5 +9,6 @@ namespace VaccineScheduleTracking.API_Test.Repository.Record
         Task<VaccineRecord> AddRecord(VaccineRecord record);
         Task<VaccineRecord?> UpdateRecord(VaccineRecord record);
         Task<VaccineRecord?> DeleteRecord(int recordID);
+        Task<VaccineRecord?> GetRecordByAppointmentID(int appointmentId);
     }
 }

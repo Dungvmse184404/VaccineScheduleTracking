@@ -10,6 +10,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Notifications
         Task<Notification> CreateNotification(CreateNotificationDto notification);
         Task<Notification> UpdateNotification(Notification notification);
         Task<Notification> DeleteNotification(Notification notification);
-        Task SentMailNotificationAsync(); 
+        Task SentAutoMailAnnouncementAsync(); 
     }
 }

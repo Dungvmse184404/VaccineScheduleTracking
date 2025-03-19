@@ -35,6 +35,9 @@ using VaccineScheduleTracking.API_Test.Payment.VnPay.Service;
 
 using VaccineScheduleTracking.API_Test.Services.Staffs;
 using VaccineScheduleTracking.API_Test.Repository.Staffs;
+using VaccineScheduleTracking.API_Test.Services.Notifications;
+using VaccineScheduleTracking.API.Repository.Notifications;
+using VaccineScheduleTracking.API_Test.Repository.Notifications;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -77,6 +80,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<VaccineScheduleDbContext>(option =>
 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<INotificationRepository, SQLNotificationRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IStaffRepository, SQLStaffRepository>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IDailyScheduleRepository, SQLDailyScheduleRepository>();
@@ -156,6 +161,7 @@ builder.Services.Configure<AdminAccountConfig>(builder.Configuration.GetSection(
 builder.Services.AddSingleton<AdminAccountConfig>(sp => sp.GetRequiredService<IOptions<AdminAccountConfig>>().Value);
 
 builder.Services.AddSingleton<TimeSlotHelper>();
+builder.Services.AddScoped<MailFormHelper>();
 
 //đăng kí chạy background
 builder.Services.AddHostedService<ScheduledTaskService>();

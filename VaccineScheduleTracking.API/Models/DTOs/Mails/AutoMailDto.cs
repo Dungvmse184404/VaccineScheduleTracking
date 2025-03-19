@@ -4,8 +4,6 @@ using System.Text.RegularExpressions;
 
 namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
 {
-    using System.Text.RegularExpressions;
-
     public class AutoMailDto
     {
         public string RecipientName { get; set; }
@@ -23,15 +21,29 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
         {
             get
             {
-                string footerContent = string.IsNullOrEmpty(_footer) ? "<p>Trân trọng, <br> Đội ngũ hỗ trợ </p>" : _footer;
-                return ConvertToHtml(_body) + "<br><hr style='border-top: 1px solid #ddd; margin: 20px 0;'><br>" + ConvertToHtml(footerContent);
+                string greeting = $"<h2 style='color: #007bff;'>Xin chào {RecipientName},</h2>";
+                return $"{greeting}<p>{ConvertToHtml(_body)}</p><hr style='border-top: 1px solid #ddd; margin: 20px 0;'>{Footer}";
             }
             set => _body = value;
         }
 
         public string Footer
         {
+            get => string.IsNullOrEmpty(_footer) ? DefaultFooter : WrapFooter(_footer);
             set => _footer = value;
+        }
+
+        private string DefaultFooter => @"
+        <p style='text-align: center; font-size: 14px; color: #777;'>
+            Trân trọng,<br>Đội ngũ hỗ trợ
+        </p>";
+
+        private string WrapFooter(string customFooter)
+        {
+            return $@"
+        <p style='text-align: center; font-size: 14px; color: #777;'>
+            {ConvertToHtml(customFooter)}
+        </p>";
         }
 
         private string ConvertToHtml(string text)
@@ -40,20 +52,21 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
                 return string.Empty;
 
             text = text.Replace("\n", "<br>").Replace(Environment.NewLine, "<br>");
-            text = Regex.Replace(text, @"\|(.*?)\|", "<strong>$1</strong>");
+            text = Regex.Replace(text, @"\|(.*?)\|", "<strong>$1</strong>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-            return text;
+            return text.Trim();
         }
 
         public string ToHtml()
         {
             return $@"
-    <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
-        <h2 style='color: #007bff;'>Kính gửi {RecipientName},</h2>
-        <p>{Body}</p>
-    </div>";
+            <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+                {Body}
+            </div>".Trim();
         }
     }
+
+
 
 
 

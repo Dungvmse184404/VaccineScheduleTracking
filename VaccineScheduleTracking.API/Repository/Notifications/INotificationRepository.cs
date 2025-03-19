@@ -16,5 +16,9 @@ namespace VaccineScheduleTracking.API.Repository.Notifications
         Task<Announcement> AddAnnouncement(Announcement announce);
         Task<List<Announcement>> GetPendingAnnouncements();
         Task<List<Announcement>> GetAllAnnouncementAsync();
+        Task AddAnnouncementRecipientAsync(AnnouncementRecipient announcement);
+        Task<AnnouncementRecipient?> GetRecipientByAppointmentIDAsync(int appointmentId);
+        Task AddAutoAnnouncementAsync(AutoAnnouncement autoAnnouncement);
+        Task<AutoAnnouncement> GetAutoAnnounceAppointmentIDAsync(int appointmentId);
     }
 }

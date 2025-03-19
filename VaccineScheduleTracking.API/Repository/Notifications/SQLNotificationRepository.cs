@@ -84,6 +84,29 @@ namespace VaccineScheduleTracking.API_Test.Repository.Notifications
         }
 
 
+        public async Task<AnnouncementRecipient?> GetRecipientByAppointmentIDAsync(int appointmentId)
+        {
+            return await _dbContext.AnnouncementRecipients.FirstOrDefaultAsync(a => a.AppointmentID == appointmentId);
+        }
 
+        public async Task AddAnnouncementRecipientAsync(AnnouncementRecipient announcement)
+        {
+            await _dbContext.AnnouncementRecipients.AddAsync(announcement);
+            await _dbContext.SaveChangesAsync();
+
+        }
+
+        public async Task AddAutoAnnouncementAsync(AutoAnnouncement autoAnnouncement)
+        {
+            await _dbContext.AutoAnnouncements.AddAsync(autoAnnouncement);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<AutoAnnouncement> GetAutoAnnounceAppointmentIDAsync(int appointmentId)
+        {
+            return await _dbContext.AutoAnnouncements.FirstOrDefaultAsync(a => a.AppointmentID == appointmentId);
+        }
+
+       
     }
 }

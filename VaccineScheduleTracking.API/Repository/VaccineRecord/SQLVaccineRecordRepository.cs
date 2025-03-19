@@ -64,5 +64,13 @@ namespace VaccineScheduleTracking.API_Test.Repository.Record
 
             return deletedRecord;
         }
+
+        public async Task<VaccineRecord?> GetRecordByAppointmentID(int appointmentId)
+        {
+            return await dbContext.VaccineRecords.Include(x => x.Child)
+                                                 .Include(x => x.VaccineType)
+                                                 .Include(x => x.Vaccine)
+                                                 .Include(x => x.Appointment).FirstOrDefaultAsync(c =>              c.AppointmentID == appointmentId);
+        }
     }
 }

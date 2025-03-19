@@ -12,5 +12,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Record
         Task<VaccineRecord> AddVaccineHistoryAsync(ChildVaccineHistoryDto childVaccineHistory);
         Task<VaccineRecord> AddVaccineRecordAsync(CreateVaccineRecordDto createVaccineRecord);
         Task<VaccineRecord?> UpdateVaccineHistoryAsync(UpdateVaccineHistoryDto updateVaccineRecord);
+        Task<VaccineRecord> GetRecordByAppointmentID(int appointmentId);
     }
 }

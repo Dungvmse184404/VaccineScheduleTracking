@@ -6,6 +6,7 @@
         public int ScheduleLength { get; set; } // Độ dài lịch hẹn (ngày)
         public int OverdueSchedule { get; set; } // xóa lịch hoàn toàn (ngày)
         public int PeriodForVaccine { get; set; } // Chu kỳ tiêm vaccine (ngày)
+        public int MailDueDate { get; set; } // Ngày gửi mail nhắc nhở ( > ngày hiện tại ?? ngày)
 
     }
 

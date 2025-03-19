@@ -206,5 +206,20 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
         {
             return await _dbContext.CancelAppointments.FirstOrDefaultAsync(c => c.AppointmentID == appointmentId);
         }
+
+        public async Task<List<Appointment>> GetPendingAppointments(DateOnly dueDate)
+        {
+            var statusList = new List<string> { "PENDING", "CONFIRMED" };
+            return await _dbContext.Appointments
+                .Where(a => a.TimeSlots.DailySchedule.AppointmentDate <= dueDate && statusList.Contains(a.Status))
+                .Include(a => a.Child)
+                .Include(a => a.Account)
+                    .ThenInclude(d => d.Doctor)
+                .Include(a => a.Vaccine)
+                .Include(a => a.TimeSlots)
+                    .ThenInclude(s => s.DailySchedule)
+                .ToListAsync();
+        }
+
     }
 }

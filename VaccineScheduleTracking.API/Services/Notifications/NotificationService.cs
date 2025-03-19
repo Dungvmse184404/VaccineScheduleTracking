@@ -1,6 +1,7 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API.Repository.Notifications;
 using VaccineScheduleTracking.API_Test.Configurations;
+using VaccineScheduleTracking.API_Test.Helpers;
 using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Mails;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Notifications;
@@ -13,13 +14,18 @@ namespace VaccineScheduleTracking.API_Test.Services.Notifications
 {
     public class NotificationService : INotificationService
     {
+        private readonly MailFormHelper _mailFormHelper;
         private readonly DefaultConfig _config;
+        private readonly IEmailService _emailService;
         private readonly IAppointmentService _appointmentsService;
         private readonly INotificationRepository _notificationRepository;
         private readonly IAccountService _accountService;
-        public NotificationService(DefaultConfig config, IAppointmentService appointmentsService, INotificationRepository notificationRepository, IAccountService accountService)
+
+        public NotificationService(MailFormHelper mailFormHelper, DefaultConfig config, IEmailService emailService, IAppointmentService appointmentsService, INotificationRepository notificationRepository, IAccountService accountService)
         {
+            _mailFormHelper = mailFormHelper;
             _config = config;
+            _emailService = emailService;
             _appointmentsService = appointmentsService;
             _notificationRepository = notificationRepository;
             _accountService = accountService;
@@ -129,6 +135,54 @@ namespace VaccineScheduleTracking.API_Test.Services.Notifications
         public async Task<List<Appointment>> GetPendingAppointmentsAsync(int beforeDueDate)
         {
             return await _appointmentsService.GetPendingAppointments(beforeDueDate);
+        }
+
+        public async Task SentAutoMailAnnouncementAsync()
+        {
+            var appointments = await GetPendingAppointmentsAsync(_config.MailDueDate);
+            foreach (var appointment in appointments)
+            {
+                var rep = await GetAutoAnnounceAppointmentIDAsync(appointment.AppointmentID);
+                if (rep != null)
+                    continue;
+
+                var account = await _accountService.GetParentByChildIDAsync(appointment.ChildID);
+                if (account != null)
+                {
+                    var mail = await _mailFormHelper.CreateReminderMailForm(appointment);
+                    await _emailService.SendEmailAsync(account.Email, mail.Subject, mail.Body);
+                    await CreateAutoAnnouncementMarkerAsync(appointment.AppointmentID);
+                }
+            }
+        }
+
+
+        public async Task CreateAutoAnnouncementMarkerAsync(int appointmentId)
+        {
+            await _notificationRepository.AddAutoAnnouncementAsync(new AutoAnnouncement()
+            {
+                AppointmentID = appointmentId
+            });
+        }
+
+        public async Task<AutoAnnouncement> GetAutoAnnounceAppointmentIDAsync(int appointmentId)
+        {
+            return await _notificationRepository.GetAutoAnnounceAppointmentIDAsync(appointmentId);
+        }
+
+        public async Task<AnnouncementRecipient> GetRecipientByAppointmentIDAsync(int appointmentID)
+        {
+            return await _notificationRepository.GetRecipientByAppointmentIDAsync(appointmentID);
+        }
+        
+        private async Task CreateAnnouncementRecipientAsync(int announcementID, int appointmentID)
+        {
+            var announcement = new AnnouncementRecipient()
+            {
+                AnnouncementID = announcementID,
+                AppointmentID = appointmentID
+            };
+            await _notificationRepository.AddAnnouncementRecipientAsync(announcement);
         }
 
         public async Task<List<Announcement>> GetPendingToSentMailAccounts()

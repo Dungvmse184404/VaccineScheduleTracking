@@ -87,7 +87,7 @@ namespace VaccineScheduleTracking.API.Controllers
 
 
         [HttpPost("register-blank-account")]
-        public async Task<IActionResult> RegisterBlankAccount([FromForm] RegisterBlankAccountDto registerAccount)//đang sửa
+        public async Task<IActionResult> RegisterBlankAccount([FromForm] RegisterBlankAccountDto registerAccount)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [HttpGet("get-all-blank-accounts")]
-        public async Task<IActionResult> GetAllBlankAccounts()//đang sửa
+        public async Task<IActionResult> GetAllBlankAccounts()
         {
             try
             {
