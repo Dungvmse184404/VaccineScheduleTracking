@@ -32,7 +32,7 @@ CREATE TABLE  [dbo].[AccountNotations](
 	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
 )
 
-
+/* thông báo */
 CREATE TABLE [dbo].[Notifications](
     [NotificationID] INT IDENTITY(1,1) PRIMARY KEY,
     [AccountID] INT NOT NULL,
@@ -56,14 +56,21 @@ CREATE TABLE [dbo].[Announcements](
     FOREIGN KEY ([CreatedByAccountID]) REFERENCES [dbo].[Accounts]([AccountID])
 );
 
+CREATE TABLE [dbo].[AutoAnnouncements](
+	[AutoAnnouncementID] INT IDENTITY(1,1) PRIMARY KEY,
+	[AppointmentID] INT NOT NULL,
+	FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments]([AppointmentID])
+)
+
 
 CREATE TABLE [dbo].[AnnouncementRecipients](
+	[AnnouncementRecipientID] INT IDENTITY(1,1) PRIMARY KEY,
 	[AnnouncementID] INT NOT NULL,
-	[AccountID] INT NOT NULL,
-	PRIMARY KEY ([AnnouncementID], [AccountID]),
+	[AppointmentID] INT NOT NULL,
 	FOREIGN KEY ([AnnouncementID]) REFERENCES [dbo].[Announcements]([AnnouncementID]),
-	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
+	FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments]([AppointmentID])
 )
+/****************************/
 
 /****** Object:  Table Parent ******/
 CREATE TABLE [dbo].[Parents](
