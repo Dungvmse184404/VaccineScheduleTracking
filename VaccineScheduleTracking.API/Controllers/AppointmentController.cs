@@ -55,6 +55,26 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
 
+
+        //[HttpGet("get-appointment-by-appointmentId/{appointmentId}")]
+        //public async Task<IActionResult> GetCancelReason([FromRoute] int appointmentId)
+        //{
+        //    try
+        //    {
+        //        var appointmentReson = await _appointmentServices.GetCancelAppointmentReasonAsync(appointmentId);
+        //        if (appointmentReson == null)
+        //        {
+        //            throw new Exception($"không tìm thấy Appointment có ID {appointmentId}");
+        //        }
+        //        return Ok(appointmentReson);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex);
+        //    }
+        //}
+
+
         [Authorize(Roles = "Doctor, Parent", Policy = "EmailConfirmed")]
         [HttpGet("get-appointment-by-appointmentId/{appointmentId}")]
         public async Task<IActionResult> GetAppointmentByAppointmentID([FromRoute] int appointmentId)

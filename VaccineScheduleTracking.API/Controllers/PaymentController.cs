@@ -59,7 +59,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [Authorize(Roles = "Manager, Staff", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Doctor, Manager, Staff", Policy = "EmailConfirmed")]
         [HttpPost("create-cash-payment")]
         public async Task<IActionResult> CreatePaymentByCash([FromBody] PaymentInformationModel model)
         {

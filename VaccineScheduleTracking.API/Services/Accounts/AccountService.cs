@@ -289,7 +289,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             var accNote = await GetAllAccountNotationAccByIDAsync(accountID);
             if (accNote == null)
             {
-                throw new Exception("Không tìm thấy ghi chú");
+                Console.WriteLine("không tìm thấy Account notation");
+                return;
             }
             accNote.Processed = v;
             await accountRepository.UpdateAccountNoteAsync(accNote);

@@ -1,6 +1,6 @@
-﻿namespace VaccineScheduleTracking.API_Test.Models.DTOs
+﻿namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
 {
-    public class AutoMailDto
+    public class ManualMailDto
     {
         public string Subject { get; set; }
         public string Body { get; set; }

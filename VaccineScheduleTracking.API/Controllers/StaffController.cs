@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API.Models.Entities;
-using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Doctors;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Mails;
 using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Repository.Accounts;
 using VaccineScheduleTracking.API_Test.Services;
@@ -33,14 +33,14 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             _mapper = mapper;
         }
 
-        private AutoMailDto CreateRoleAssignmentMailDto(string accountName, string role)
+        private ManualMailDto CreateRoleAssignmentMailDto(string accountName, string role)
         {
-            return new AutoMailDto
+            return new ManualMailDto
             {
                 Subject = $"Thông báo gán quyền truy cập: {role}",
                 Body = $@"
         <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
-            <h2 style='color: #007bff;'>Kính gửi {accountName},</h2>
+            <h2 style='color: #007bff;'>Xin chào {accountName},</h2>
             <p>Chúng tôi xin thông báo rằng tài khoản của bạn đã được cấp quyền mới trên hệ thống.</p>
             <p><strong>Vai trò mới:</strong> {role}</p>
             <p>Vui lòng đăng nhập vào hệ thống để kiểm tra quyền hạn và sử dụng các tính năng tương ứng.</p>
@@ -50,6 +50,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         </div>"
             };
         }
+
 
         [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpGet("Get-All-Request")]

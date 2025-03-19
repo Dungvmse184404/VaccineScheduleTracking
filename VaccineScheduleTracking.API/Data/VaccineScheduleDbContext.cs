@@ -12,6 +12,8 @@ namespace VaccineScheduleTracking.API.Data
 
         }
 
+        public DbSet<Announcement> Announcements { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<AccountNotation> AccountNotations { get; set; }
         public DbSet<CancelAppointment> CancelAppointments { get; set; }
         public DbSet<ChildTimeSlot> ChildTimeSlots { get; set; }

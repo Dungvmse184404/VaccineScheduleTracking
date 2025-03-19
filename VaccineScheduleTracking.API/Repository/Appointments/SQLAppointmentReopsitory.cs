@@ -71,6 +71,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
                 .Include(a => a.Account)
                     .ThenInclude(d => d.Doctor)
                 .Include(a => a.Vaccine)
+                    .ThenInclude(v => v.VaccineType)//đang sửa 
                 .Include(a => a.TimeSlots)
                     .ThenInclude(s => s.DailySchedule)
                 .FirstOrDefaultAsync();
@@ -201,5 +202,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<CancelAppointment> GetCancelAppointmentReasonAsync(int appointmentId)
+        {
+            return await _dbContext.CancelAppointments.FirstOrDefaultAsync(c => c.AppointmentID == appointmentId);
+        }
     }
 }

@@ -53,7 +53,10 @@ public class ScheduledTaskService : BackgroundService
                     await timeSlotServices.SetOverdueTimeSlotAsync(_config.OverdueSchedule);
                     await doctorServices.SetOverdueDoctorScheduleAsync(_config.OverdueSchedule);
                     await childServices.SetOverdueChildScheduleAsync(_config.OverdueSchedule);
+
+                    ///gửi thông báo cho những lịch hẹn sắp tới
                     
+
                 }
                 _logger.LogInformation($"ScheduledTaskService chạy lúc: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 Console.WriteLine($"ScheduledTaskService chạy lúc: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");

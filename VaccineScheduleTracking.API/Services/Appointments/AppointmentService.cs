@@ -435,7 +435,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 throw new Exception("không thể đặt ngày đã qua hạn!");
             }
             ///giới hạn tiêm 
-            await ValidateVaccineConditions(upVaccineId, upChildId, upDate);
+            //await ValidateVaccineConditions(upVaccineId, upChildId, upDate);
 
             ///kiểm tra slot
             var timeSlot = await _timeSlotServices.GetTimeSlotAsync(upSlotNumber, upDate);
@@ -559,7 +559,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             var doctorAppointments = await _appointmentRepository.GetAppointmentsByDoctorIDAsync(doctorId);
             if (doctorAppointments.IsNullOrEmpty())
             {
-                throw new Exception($"không tìm thấy buổi hẹn nào cho bác sĩ {docAccount.Lastname} {docAccount.Firstname}");
+                return null; 
             }
             return doctorAppointments;
         }
@@ -618,8 +618,11 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             }
             //await DeleteOverDueAppointmentAsync(overdueAppointments);
         }
-        
 
 
+        public async Task<CancelAppointment> GetCancelAppointmentReasonAsync(int appointmentId)
+        {
+            return await _appointmentRepository.GetCancelAppointmentReasonAsync(appointmentId);
+        }
     }
 }

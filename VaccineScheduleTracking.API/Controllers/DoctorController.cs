@@ -73,7 +73,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
         [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
-        [HttpPut("set-appointment-status")]// cần sửa 
+        [HttpPut("set-appointment-status")]
         public async Task<IActionResult> SetAppointmentStatus([FromBody] noteDto note)
         {
             try

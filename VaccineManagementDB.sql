@@ -32,6 +32,37 @@ CREATE TABLE  [dbo].[AccountNotations](
 	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
 )
 
+
+CREATE TABLE [dbo].[Notifications](
+	[NotificationID] INT IDENTITY(1,1) PRIMARY KEY,
+	[AccountID] INT NOT NULL,
+	[CreatedDate] DATETIME NOT NULL,
+	[Topic] NVARCHAR(100) NOT NULL,
+	[Message] NVARCHAR(MAX) NOT NULL,
+	[MailSentDate] DATETIME NULL,
+	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
+)
+
+CREATE TABLE [dbo].[Announcements](
+	[AnnouncementID] INT IDENTITY(1,1) PRIMARY KEY,
+	[CreatedByAccountID] INT NOT NULL,
+	[CreatedDate] DATETIME NOT NULL,
+	[ToRole] NVARCHAR(50) NOT NULL,
+	[Topic] NVARCHAR(100) NOT NULL,
+	[Message] NVARCHAR(MAX) NOT NULL,
+	[MailSentDate] DATETIME NULL,
+	FOREIGN KEY ([CreatedByAccountID]) REFERENCES [dbo].[Accounts]([AccountID])
+)
+
+CREATE TABLE [dbo].[AnnouncementRecipients](
+	[AnnouncementID] INT NOT NULL,
+	[AccountID] INT NOT NULL,
+	PRIMARY KEY ([AnnouncementID], [AccountID]),
+	FOREIGN KEY ([AnnouncementID]) REFERENCES [dbo].[Announcements]([AnnouncementID]),
+	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
+)
+
+
 /****** Object:  Table Parent ******/
 CREATE TABLE [dbo].[Parents](
 	[ParentID] [int] IDENTITY(1,1) PRIMARY KEY,
@@ -243,7 +274,7 @@ CREATE TABLE [dbo].[Appointments](
 )	
 GO
 
-CREATE TABLE [dbo].[CancelAppointment](
+CREATE TABLE [dbo].[CancelAppointments](
 	[CancelAppointmentID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[AppointmentID] [int] NOT NULL,
 	[CancelDate] [DateTime] NOT NULL,

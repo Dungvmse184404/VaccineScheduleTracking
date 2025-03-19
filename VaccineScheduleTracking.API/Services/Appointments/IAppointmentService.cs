@@ -1,5 +1,6 @@
 ﻿using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
+using VaccineScheduleTracking.API_Test.Models.Entities;
 
 namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
@@ -14,6 +15,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         Task<Appointment?> SetAppointmentStatusAsync(int appointmentId, string status, string? note);
         Task AddAppointmentToRecord(Appointment appointment, string? note);
         Task<Appointment?> CancelAppointmentAsync(int appointmentId, string reason);
+        Task<CancelAppointment> GetCancelAppointmentReasonAsync(int appointmentId);
         Task SetOverdueAppointmentAsync(int threshold);
     }
 }
