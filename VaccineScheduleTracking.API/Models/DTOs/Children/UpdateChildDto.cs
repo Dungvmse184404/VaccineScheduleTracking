@@ -2,6 +2,7 @@
 {
     public class UpdateChildDto
     {
+        public int childId { get; set; }
         public string? Firstname { get; set; }
         public string? Lastname { get; set; }
         public decimal? Weight { get; set; }

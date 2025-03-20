@@ -100,15 +100,15 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
-        [HttpPut("update-child/{id}")]
-        public async Task<IActionResult> ModifileChildProfile([FromRoute] int id, [FromQuery] UpdateChildDto updateChild)
+        [HttpPut("update-child")]
+        public async Task<IActionResult> ModifileChildProfile([FromBody] UpdateChildDto updateChild)
         {
             try
             {
                 var parAccount = await accountService.GetAccountRole(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
 
 
-                var modifiledChild = await childService.UpdateChildForParent(parAccount.Parent.ParentID, id, mapper.Map<Child>(updateChild));
+                var modifiledChild = await childService.UpdateChildForParent(parAccount.Parent.ParentID, updateChild.childId, mapper.Map<Child>(updateChild));
 
                 return Ok(mapper.Map<ChildDto>(modifiledChild));
             }

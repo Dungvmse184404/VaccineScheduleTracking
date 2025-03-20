@@ -40,7 +40,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             }
             return mapper.Map<Account>(account);
         }
-        
+
         public async Task<Account?> RegisterAsync(RegisterAccountDto registerAccount)
         {
             if (await accountRepository.GetAccountByUsernameAsync(registerAccount.Username) != null)
@@ -265,9 +265,28 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             {
                 throw new Exception($"ID {id} không tồn tại");
             }
-            //account = mapper.Map<Account>(account);
+            if (account.Status == "INACTIVE")
+            {
+                throw new Exception($"tài khoản đã bị khóa trước đó");
+            }
+            account.Status = "INACTIVE";
             return await accountRepository.DisableAccountAsync(account);
         }
+        public async Task<Account?> EnableAccountAsync(int id)
+        {
+            var account = await accountRepository.GetAccountByID(id);
+            if (account == null)
+            {
+                throw new Exception($"ID {id} không tồn tại");
+            }
+            if (account.Status == "ACTIVE")
+            {
+                throw new Exception($"tài khoản đã được kích hoạt trước đó");
+            }
+            account.Status = "ACTIVE";
+            return await accountRepository.EnableAccountAsync(account);
+        }
+        
 
         public async Task<Account?> GetAccountByIdAsync(int accountId)
         {
@@ -302,7 +321,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
             await accountRepository.UpdateAccountNoteAsync(accNote);
         }
 
-       
+
+
+
 
 
         //public async Task<Account?> DeleteAccountAsync(int id)

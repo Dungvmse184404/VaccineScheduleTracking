@@ -217,7 +217,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 VaccineTypeID = appointment.Vaccine.VaccineTypeID,
                 VaccineID = appointment.VaccineID,
                 Date = appointment.TimeSlots.DailySchedule.AppointmentDate,
-                Note = note ?? "autoMsg: không phản ứng phụ được ghi nhận"
+                Note = note ?? "không phản ứng phụ được ghi nhận"
             };
 
             var rec = await _vaccineRecordService.AddVaccineRecordAsync(record).ConfigureAwait(false);

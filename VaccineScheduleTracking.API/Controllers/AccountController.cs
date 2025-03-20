@@ -279,6 +279,27 @@ namespace VaccineScheduleTracking.API.Controllers
 
         }
 
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
+        [HttpPut("enable-account/{id}")]
+        public async Task<IActionResult> EnableAccount([FromRoute] int id)
+        {
+            try
+            {
+                var account = await accountService.EnableAccountAsync(id);
+                if (account == null)
+                {
+                    return NotFound("Account not found or already active");
+                }
+                //return Ok(mapper.Map<DeleteAccountDto>(account));
+                return Ok($" Account {account.Username} Enable successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+
+        }
+
         //[Authorize (Roles = "Staff")]
         //[HttpDelete("delete-account")]
         //public async Task<IActionResult> deleteAccount([FromRoute] int id)

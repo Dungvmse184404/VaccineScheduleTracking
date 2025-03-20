@@ -18,6 +18,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Accounts
         Task<Account?> GetAccountRole(int accountId);
         Task<List<Account>> GetAllAccountsAsync(FilterAccountDto filterAccountDto);
         Task<Account?> DisableAccountAsync(int id);
+        Task<Account?> EnableAccountAsync(int id);
         Task<bool> VerifyAccountEmail(int accountId, string username, string email, string phoneNumber);
         Task<Account?> GetAccountByIdAsync(int accountId);
         Task<Account?> GetParentByChildIDAsync(int childID);

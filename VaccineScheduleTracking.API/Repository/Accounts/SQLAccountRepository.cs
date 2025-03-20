@@ -136,7 +136,15 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
 
         public async Task<Account?> DisableAccountAsync(Account account)
         {
-            account.Status = "INACTIVE";
+            //account.Status = "INACTIVE";
+            await dbContext.SaveChangesAsync();
+
+            return account;
+        }
+
+        public async Task<Account?> EnableAccountAsync(Account account)
+        {
+            //account.Status = "ACTIVE";
             await dbContext.SaveChangesAsync();
 
             return account;
@@ -184,6 +192,7 @@ namespace VaccineScheduleTracking.API_Test.Repository.Accounts
         {
             return dbContext.Accounts.Where(x => x.Parent == null && x.Doctor == null && x.Staff == null && x.Manager == null).ToListAsync();
         }
+
 
 
         //public async Task<Account?> DeleteAccountsAsync(Account account)

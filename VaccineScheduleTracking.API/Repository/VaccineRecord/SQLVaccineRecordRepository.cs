@@ -27,7 +27,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Record
             return await dbContext.VaccineRecords.Include(x => x.Child)
                                                  .Include(x => x.VaccineType)
                                                  .Include(x => x.Vaccine)
-                                                 .Include(x => x.Appointment).FirstOrDefaultAsync(c => c.VaccineRecordID == recordID);
+                                                 .OrderByDescending(c => c.VaccineRecordID)
+                                                 .Include(x => x.Appointment)
+                                                 .FirstOrDefaultAsync(c => c.VaccineRecordID == recordID);
         }
 
         public async Task<VaccineRecord> AddRecord(VaccineRecord record)
@@ -70,7 +72,9 @@ namespace VaccineScheduleTracking.API_Test.Repository.Record
             return await dbContext.VaccineRecords.Include(x => x.Child)
                                                  .Include(x => x.VaccineType)
                                                  .Include(x => x.Vaccine)
-                                                 .Include(x => x.Appointment).FirstOrDefaultAsync(c =>              c.AppointmentID == appointmentId);
+                                                 .Include(x => x.Appointment)
+                                                 .OrderByDescending(c => c.VaccineRecordID)
+                                                 .FirstOrDefaultAsync(c => c.AppointmentID == appointmentId);
         }
     }
 }
