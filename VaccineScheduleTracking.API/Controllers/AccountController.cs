@@ -111,24 +111,24 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        [HttpGet("get-all-role-account/{accountID}")]
-        public async Task<IActionResult> GetAllRoleAccount([FromRoute] int accountID)
-        {
-            try
-            {
-                var accounts = await accountService.GetAccountRole(accountID);
+        //[HttpGet("get-all-role-account/{accountID}")]
+        //public async Task<IActionResult> GetAllRoleAccount([FromRoute] int accountID)
+        //{
+        //    try
+        //    {
+        //        var accounts = await accountService.GetAccountRole(accountID);
 
-                return Ok(accounts);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new
-                {
-                    Error = ex.StackTrace,
-                    Message = ex.Message
-                });
-            }
-        }
+        //        return Ok(accounts);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            Error = ex.StackTrace,
+        //            Message = ex.Message
+        //        });
+        //    }
+        //}
 
         [HttpGet("get-all-blank-accounts")]
         public async Task<IActionResult> GetAllBlankAccounts()
