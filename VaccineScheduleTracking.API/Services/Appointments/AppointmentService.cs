@@ -17,6 +17,7 @@ using System.Runtime.CompilerServices;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using VaccineScheduleTracking.API_Test.Models.Entities;
 using Microsoft.VisualBasic;
+using System.Globalization;
 
 namespace VaccineScheduleTracking.API_Test.Services.Appointments
 {
@@ -167,6 +168,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             var (Available, limitDate) = await LimitVaccinePeriod(vaccineId, childId, date);
             if (!Available)
             {
+                string.Format("dd-MM-yyyy", limitDate);
                 throw new Exception($"Vaccine này đã được dùng gần đây, sẽ khả dụng sau ngày {limitDate:dd/MM/yyyy}");
             }
         }

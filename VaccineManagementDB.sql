@@ -56,20 +56,7 @@ CREATE TABLE [dbo].[Announcements](
     FOREIGN KEY ([CreatedByAccountID]) REFERENCES [dbo].[Accounts]([AccountID])
 );
 
-CREATE TABLE [dbo].[AutoAnnouncements](
-	[AutoAnnouncementID] INT IDENTITY(1,1) PRIMARY KEY,
-	[AppointmentID] INT NOT NULL,
-	FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments]([AppointmentID])
-)
 
-
-CREATE TABLE [dbo].[AnnouncementRecipients](
-	[AnnouncementRecipientID] INT IDENTITY(1,1) PRIMARY KEY,
-	[AnnouncementID] INT NOT NULL,
-	[AppointmentID] INT NOT NULL,
-	FOREIGN KEY ([AnnouncementID]) REFERENCES [dbo].[Announcements]([AnnouncementID]),
-	FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments]([AppointmentID])
-)
 /****************************/
 
 /****** Object:  Table Parent ******/
@@ -88,7 +75,11 @@ CREATE TABLE [dbo].[Doctors](
 	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
 )
 GO
-
+/** Table DailySchedule **/
+CREATE TABLE  [dbo].[DailySchedule](
+	[DailyScheduleID] int IDENTITY(1,1) PRIMARY KEY,
+	[AppointmentDate] DATE NOT NULL
+)
 CREATE TABLE [dbo].[DoctorTimeSlots](
 	DoctorTimeSlotID int IDENTITY(1,1) PRIMARY KEY,
 	DoctorID int NOT NULL,
@@ -108,7 +99,7 @@ CREATE TABLE [dbo].[Staffs](
 GO
 
 /****** Object:  Table [dbo].[Manager] ******/
-CREATE TABLE [dbo].[Manager](
+CREATE TABLE [dbo].[Managers](
 	[ManagerID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[AccountID] [int] NOT NULL,
 	FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Accounts]([AccountID])
@@ -252,11 +243,7 @@ VALUES
 ('OPV (Oral Polio Vaccine)', 4, 'WHO', 500, 0, N'Vaccine uống phòng bại liệt', 0, 5, 2, 3, 1),
 ('IPV (Inactivated Polio Vaccine)', 4, 'Sanofi Pasteur', 300, 350000, N'Vaccine tiêm phòng bại liệt', 2, 99, 2, 2, 1);
 
-/** Table DailySchedule **/
-CREATE TABLE  [dbo].[DailySchedule](
-	[DailyScheduleID] int IDENTITY(1,1) PRIMARY KEY,
-	[AppointmentDate] DATE NOT NULL
-)
+
 
 
 CREATE TABLE [dbo].[TimeSlots](
@@ -392,4 +379,19 @@ CREATE TABLE [dbo].[VnPayTransactions] (
 	[Token] [varchar](500) NOT NULL,
 	[PaymentId] [int] NOT NULL, 
 	FOREIGN KEY ([PaymentId]) REFERENCES [dbo].[Payments]([PaymentId])
+)
+
+CREATE TABLE [dbo].[AutoAnnouncements](
+	[AutoAnnouncementID] INT IDENTITY(1,1) PRIMARY KEY,
+	[AppointmentID] INT NOT NULL,
+	FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments]([AppointmentID])
+)
+
+
+CREATE TABLE [dbo].[AnnouncementRecipients](
+	[AnnouncementRecipientID] INT IDENTITY(1,1) PRIMARY KEY,
+	[AnnouncementID] INT NOT NULL,
+	[AppointmentID] INT NOT NULL,
+	FOREIGN KEY ([AnnouncementID]) REFERENCES [dbo].[Announcements]([AnnouncementID]),
+	FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments]([AppointmentID])
 )
