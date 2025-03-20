@@ -12,6 +12,7 @@ using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -46,7 +47,7 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var appointment = await _appointmentServices.CreateAppointmentAsync(createAppointment);
-                return Ok(_mapper.Map<AppointmentDto>(appointment));
+                return Ok(_mapper.Map<ManagerAccountDto>(appointment));
             }
             catch (Exception ex)
             {

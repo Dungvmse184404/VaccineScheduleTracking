@@ -14,6 +14,7 @@ namespace VaccineScheduleTracking.API.Mappings
     {
         public AutoMapperProfiles()
         {
+            CreateMap<Account, BlankAccountDto>();
             CreateMap<Appointment, AppointmentDto>()
                 .ForMember(dest => dest.AppointmentID, opt => opt.MapFrom(src => src.AppointmentID))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.TimeSlots.DailySchedule.AppointmentDate))
