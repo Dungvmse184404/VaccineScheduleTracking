@@ -279,6 +279,8 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 CancelDate = DateTime.Now,
                 Reason = reason
             };
+            await _doctorServices.UpdateDoctorTimeSlotAsync(doctorTimeSlot);
+            await _childServices.UpdateChildTimeSlotAsync(childTimeSlot);
 
             await _appointmentRepository.createCancelReasonAsync(cancelReason);
 
@@ -329,7 +331,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             /// Kiểm tra trẻ đã đặt slot này chưa 
             var childTimeSlot = await _childServices.GetChildTimeSlotBySlotNumberAsync(childID, slotNumber, date);
-            if (childTimeSlot != null && childTimeSlot.Available == false)
+            if (childTimeSlot != null && childTimeSlot.Available != false)
             {
                 throw new Exception("Slot này đã được đăng ký");
             }

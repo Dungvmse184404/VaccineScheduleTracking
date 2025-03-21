@@ -269,7 +269,6 @@ namespace VaccineScheduleTracking.API.Controllers
                 {
                     return NotFound("Account not found or already inactive");
                 }
-                //return Ok(mapper.Map<DeleteAccountDto>(account));
                 return Ok($" Account {account.Username} disabled successfully");
             }
             catch (Exception ex)
@@ -290,7 +289,6 @@ namespace VaccineScheduleTracking.API.Controllers
                 {
                     return NotFound("Account not found or already active");
                 }
-                //return Ok(mapper.Map<DeleteAccountDto>(account));
                 return Ok($" Account {account.Username} Enable successfully");
             }
             catch (Exception ex)
