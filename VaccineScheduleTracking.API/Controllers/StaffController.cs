@@ -44,7 +44,8 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                     Chúng tôi xin thông báo rằng tài khoản của bạn đã được cấp quyền mới trên hệ thống |Vaccine Schedule Tracking System|.<br>
                     |Vai trò mới:| {role} 📜<br>
                     📍 Vui lòng đăng nhập vào hệ thống để kiểm tra quyền hạn và sử dụng các tính năng tương ứng.<br>
-                    Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ."
+                    Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ.<br>
+                    [đây là tin nhắn tự động, vui lòng không phản hồi]"
             };
 
         }
@@ -112,7 +113,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        //[Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpPost("Promote-to-staff/{accountId}")]
         public async Task<IActionResult> PromoteToStaff([FromRoute] int accountId)
         {
@@ -136,7 +137,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff", Policy = "EmailConfirmed")]
         [HttpPost("Promote-to-manager/{accountId}")]
         public async Task<IActionResult> PromoteToManager([FromRoute] int accountId)
         {

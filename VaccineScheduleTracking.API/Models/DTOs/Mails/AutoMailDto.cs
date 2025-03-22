@@ -21,8 +21,14 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
         {
             get
             {
-                string greeting = $"<h2 style='color: #007bff;'>Xin chào {RecipientName},</h2>";
-                return $"{greeting}<p>{ConvertToHtml(_body)}</p><hr style='border-top: 1px solid #ddd; margin: 20px 0;'>{Footer}";
+                return $@"
+            <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; 
+                        border: 1px solid #ddd; border-radius: 10px; background-color: #fff;'>
+                <h2 style='color: #007bff;'>Xin chào {RecipientName},</h2>
+                <p>{ConvertToHtml(_body)}</p>
+                <hr style='border-top: 1px solid #ddd; margin: 20px 0;'>
+                {Footer}
+            </div>";
             }
             set => _body = value;
         }
@@ -34,16 +40,16 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
         }
 
         private string DefaultFooter => @"
-        <p style='text-align: center; font-size: 14px; color: #777;'>
-            Trân trọng,<br>Đội ngũ hỗ trợ
-        </p>";
+            <p style='text-align: center; font-size: 14px; color: #777;'>
+                Trân trọng,<br>Đội ngũ hỗ trợ
+            </p>";
 
         private string WrapFooter(string customFooter)
         {
             return $@"
-        <p style='text-align: center; font-size: 14px; color: #777;'>
-            {ConvertToHtml(customFooter)}
-        </p>";
+            <p style='text-align: center; font-size: 14px; color: #777;'>
+                {ConvertToHtml(customFooter)}
+            </p>";
         }
 
         private string ConvertToHtml(string text)
@@ -52,7 +58,10 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
                 return string.Empty;
 
             text = text.Replace("\n", "<br>").Replace(Environment.NewLine, "<br>");
+
             text = Regex.Replace(text, @"\|(.*?)\|", "<strong>$1</strong>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            text = Regex.Replace(text, @"\[(.*?)\]", "<span style='color: gray;'>$1</span>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             return text.Trim();
         }
@@ -60,13 +69,11 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
         public string ToHtml()
         {
             return $@"
-            <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+            <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px;'>
                 {Body}
             </div>".Trim();
         }
     }
-
-
 
 
 

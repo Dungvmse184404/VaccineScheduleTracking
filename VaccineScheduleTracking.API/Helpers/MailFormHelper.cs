@@ -31,16 +31,16 @@ namespace VaccineScheduleTracking.API_Test.Helpers
                 Subject = "📢 Nhắc nhở lịch tiêm chủng 📢",
                 Body = $@"
                     Chúng tôi xin thông báo rằng con của bạn, <strong>{childName}</strong>, có lịch hẹn tiêm chủng sắp tới.
-                    <br><br>
+                    <br>
                     📅| Ngày hẹn:| {date} <br>
                     ⏰| Giờ hẹn:| {time} <br>
-                    💉| Vắc xin:| {appointment.Vaccine.Name} <br><br>
+                    💉| Vắc xin:| {appointment.Vaccine.Name} <br>
                     Vui lòng đưa trẻ đến đúng giờ và đem theo các loại |giấy tờ tùy thân| cần thiết cho trẻ để đảm bảo quá trình tiêm chủng diễn ra thuận lợi.
                     <br><br>
                     Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với trung tâm y tế để được hỗ trợ.<br>
                     📞: 0772.706.420<br>
                     📧: koi221204@gmail.com<br>
-                    [đây là tin nhắn tự động]"
+                    [đây là tin nhắn tự động, vui lòng không phản hồi]"
             };
         }
 
