@@ -44,6 +44,22 @@ namespace VaccineScheduleTracking.API_Test.Helpers
             };
         }
 
+        public async Task<AutoMailDto> CreateRoleAssignmentMail(string accountName, string role)
+        {
+            return new AutoMailDto
+            {
+                Footer = "Trân trọng,<br>Đội ngũ quản trị viên",
+                RecipientName = accountName,
+                Subject = "Thông báo cấp quyền truy cập",
+                Body = $@"
+                    Chúng tôi xin thông báo rằng tài khoản của bạn đã được cấp quyền hạn mới trên hệ thống |Vaccine Schedule Tracking System|.<br>
+                    |Vai trò mới:| {role} 📜<br>
+                    hiện tại tài khoản trên đã được mở khóa các tính năng và quyền truy cập tương ứng trên hệ thống.<br>
+                    Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ.<br>
+                    [đây là tin nhắn tự động, vui lòng không phản hồi]"
+            };
+        }
+
 
     }
 }

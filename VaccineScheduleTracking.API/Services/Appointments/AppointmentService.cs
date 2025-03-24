@@ -302,15 +302,6 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             int childID = createAppointment.ChildID;
             int vaccineID = createAppointment.VaccineID;
 
-            //try
-            //{
-            //    DateTime dt = date.ToDateTime(new TimeOnly(0, 0));
-            //}
-            //catch (ArgumentOutOfRangeException)
-            //{
-            //    throw new Exception("Format của date không đúng.");
-            //}
-
             /// Catch boundary cho ngày đặt lịch 
             _timeSlotHelper.LimitDate(date, "Hiện tại chỉ có thể đặt lịch trước ngày");
             ///giới hạn mũi tiêm
