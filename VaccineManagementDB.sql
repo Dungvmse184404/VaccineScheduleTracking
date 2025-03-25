@@ -89,6 +89,12 @@ CREATE TABLE [dbo].[DoctorTimeSlots](
 	FOREIGN KEY ([DailyScheduleID]) REFERENCES [dbo].[DailySchedule]([DailyScheduleID]),
 	FOREIGN KEY ([DoctorID]) REFERENCES [dbo].[Doctors]([DoctorID])
 )
+/*
+TRUNCATE TABLE [DoctorTimeSlots];
+TRUNCATE TABLE [ChildTimeSlots];
+TRUNCATE TABLE [AutoAnnouncements];
+TRUNCATE TABLE [Appointments];
+*/
 
 /****** Object:  Table [dbo].[Staff] ******/
 CREATE TABLE [dbo].[Staffs](
@@ -238,7 +244,7 @@ VALUES
 ('Engerix-B', 3, 'GSK', 80, 300000, N'Vaccine phòng viêm gan B', 0, 99, 6, 1, 2),
 ('ComBE Five', 5, 'Biological E. Limited', 350, 200000, N'Vaccine phòng bạch hầu, ho gà, uốn ván', 2, 12, 2, 3, 2),
 ('Pentaxim', 5, 'Sanofi Pasteur', 250, 500000, N'Vaccine 5 trong 1 phòng bạch hầu, ho gà, uốn ván, bại liệt và Hib', 2, 12, 2, 4, 1),
-('MMR II', 3, 'Merck', 450, 400000, N'Vaccine phòng sởi, quai bị, rubella', 3, 99, 12, 2, 3),
+('MMR II', 3, 'Merck', 450, 400000, N'Vaccine phòng sởi, quai bị, rubella', 3, 99, 12, 1, 3),
 ('Varilrix', 3, 'GlaxoSmithKline', 200, 600000, N'Vaccine phòng thủy đậu', 12, 99, 12, 1, 3),
 ('OPV (Oral Polio Vaccine)', 4, 'WHO', 500, 0, N'Vaccine uống phòng bại liệt', 0, 5, 2, 3, 1),
 ('IPV (Inactivated Polio Vaccine)', 4, 'Sanofi Pasteur', 300, 350000, N'Vaccine tiêm phòng bại liệt', 2, 99, 2, 2, 1);

@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Data;
+using System.Globalization;
+using System.Text;
 using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Configurations;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
@@ -28,9 +30,9 @@ namespace VaccineScheduleTracking.API_Test.Helpers
             return new AutoMailDto()
             {
                 RecipientName = parentName,
-                Subject = "📢 Nhắc nhở lịch tiêm chủng 📢",
+                Subject = "Nhắc nhở lịch tiêm chủng",
                 Body = $@"
-                    Chúng tôi xin thông báo rằng con của bạn, <strong>{childName}</strong>, có lịch hẹn tiêm chủng sắp tới.
+                    Trung tâm tiêm chủng xin thông báo rằng bé <strong>{childName}</strong>, có lịch hẹn tiêm chủng sắp tới.
                     <br>
                     📅| Ngày hẹn:| {date} <br>
                     ⏰| Giờ hẹn:| {time} <br>
@@ -52,14 +54,52 @@ namespace VaccineScheduleTracking.API_Test.Helpers
                 RecipientName = accountName,
                 Subject = "Thông báo cấp quyền truy cập",
                 Body = $@"
-                    Chúng tôi xin thông báo rằng tài khoản của bạn đã được cấp quyền hạn mới trên hệ thống |Vaccine Schedule Tracking System|.<br>
+                    Trung tâm tiêm chủng xin thông báo rằng tài khoản của bạn đã được cấp quyền hạn mới trên hệ thống |Vaccine Schedule Tracking System|.<br>
                     |Vai trò mới:| {role} 📜<br>
                     hiện tại tài khoản trên đã được mở khóa các tính năng và quyền truy cập tương ứng trên hệ thống.<br>
                     Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ.<br>
+                    📞: 0772.706.420<br>
+                    📧: koi221204@gmail.com<br>
                     [đây là tin nhắn tự động, vui lòng không phản hồi]"
             };
         }
 
+
+        public async Task<AutoMailDto> CreateComboRegisterMail(List<Appointment> appo, string comboName)
+        {
+            var parentAccount = await _accountService.GetParentByChildIDAsync(appo[0].ChildID);
+
+            string parentName = $"{parentAccount.Lastname} {parentAccount.Firstname}";
+            string childName = $"{appo[0].Child.Lastname} {appo[0].Child.Firstname}";
+
+            // Chuỗi chứa lịch hẹn
+            StringBuilder appointmentDetails = new StringBuilder();
+
+            foreach (var app in appo)
+            {
+                string date = app.TimeSlots.DailySchedule.AppointmentDate.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+                TimeOnly time = app.TimeSlots.StartTime;
+                string vaccineName = app.Vaccine.Name;
+
+                appointmentDetails.AppendLine($"📅 {date} - 🕒 {time} - Loại vaccine: {vaccineName} 💉<br>");
+            }
+
+            return new AutoMailDto
+            {
+                Footer = "Trân trọng,<br>Đội ngũ hỗ trợ",
+                RecipientName = parentName,
+                Subject = "Thông báo đăng kí Combo tiêm chủng",
+                Body = $@"
+            Trung tâm tiêm chủng xin thông báo combo |{comboName}| đã được xác nhận đăng kí cho bé |{childName}|.<br>
+            <b>Lịch tiêm đã được hệ thống sắp xếp như sau:</b><br>
+            {appointmentDetails}<br><br>
+
+            Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với trung tâm y tế để được hỗ trợ.<br>
+            📞: 0772.706.420<br>
+            📧: koi221204@gmail.com<br>
+            [đây là tin nhắn tự động, vui lòng không phản hồi]"
+            };
+        }
 
     }
 }

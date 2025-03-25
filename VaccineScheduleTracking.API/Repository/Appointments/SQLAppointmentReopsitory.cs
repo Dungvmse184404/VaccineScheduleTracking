@@ -221,5 +221,18 @@ namespace VaccineScheduleTracking.API_Test.Repository.Appointments
                 .ToListAsync();
         }
 
+        public async Task<Appointment?> FindAppointment(CreateAppointmentDto appDto)
+        {
+            return await _dbContext.Appointments
+                .Where(a => a.ChildID == appDto.ChildID &&
+                            a.TimeSlots.DailySchedule.AppointmentDate == appDto.Date &&
+                            a.TimeSlots.SlotNumber == appDto.SlotNumber)
+                .Include(a => a.Account)
+                .Include(a => a.Vaccine)
+                .Include(a => a.TimeSlots)
+                    .ThenInclude(s => s.DailySchedule)
+                .FirstOrDefaultAsync();
+
+        }
     }
 }

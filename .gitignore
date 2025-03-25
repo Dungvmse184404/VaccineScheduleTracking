@@ -6,5 +6,6 @@
 
 bin/
 obj/
-Utility.test/
+Utility.Tests/
 BackgroundServices.txt/
+VaccinationSystem.IntegrationTests/

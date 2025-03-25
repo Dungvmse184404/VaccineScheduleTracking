@@ -1,19 +1,41 @@
-﻿using VaccineScheduleTracking.API_Test.Models.DTOs;
+﻿using MailKit;
+using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
+using System.Runtime.InteropServices.JavaScript;
+using VaccineScheduleTracking.API.Models.Entities;
+using VaccineScheduleTracking.API_Test.Helpers;
+using VaccineScheduleTracking.API_Test.Models.DTOs;
+using VaccineScheduleTracking.API_Test.Models.DTOs.Appointments;
 using VaccineScheduleTracking.API_Test.Models.Entities;
 using VaccineScheduleTracking.API_Test.Repository.VaccineContainers;
 using VaccineScheduleTracking.API_Test.Repository.VaccinePackage;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
+using VaccineScheduleTracking.API_Test.Services.Accounts;
+using VaccineScheduleTracking.API_Test.Services.Appointments;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
+using static VaccineScheduleTracking.API_Test.Services.Appointments.AppointmentService;
 
 namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
 {
     public class VaccineComboService : IVaccineComboService
     {
+        private readonly IAccountService accountService;
+        private readonly IEmailService mailService;
+        private readonly MailFormHelper mailHelper;
+        private readonly TimeSlotHelper timeHelper;
+        private readonly IAppointmentService appointmentService;
         private readonly IVaccineComboRepository vaccineComboRepository;
         private readonly IVaccineRepository vaccineRepository;
         private readonly IVaccineContainerRepository vaccineContainerRepository;
 
-        public VaccineComboService(IVaccineComboRepository vaccineComboRepository, IVaccineRepository vaccineRepository, IVaccineContainerRepository vaccineContainerRepository)
+        public VaccineComboService(IAccountService accountService, IEmailService mailService, MailFormHelper mailHelper, TimeSlotHelper timeHelper, IAppointmentService appointmentService, IVaccineComboRepository vaccineComboRepository, IVaccineRepository vaccineRepository, IVaccineContainerRepository vaccineContainerRepository)
         {
+            this.accountService = accountService;
+            this.mailService = mailService;
+            this.mailHelper = mailHelper;
+            this.timeHelper = timeHelper;
+            this.appointmentService = appointmentService;
             this.vaccineComboRepository = vaccineComboRepository;
             this.vaccineRepository = vaccineRepository;
             this.vaccineContainerRepository = vaccineContainerRepository;
@@ -42,7 +64,7 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
             return await vaccineContainerRepository.AddVaccineContainer(vaccineContainer);
         }
 
-       
+
 
         public async Task<VaccineCombo> CreateVaccineComboAsync(CreateVaccineComboDto createVaccineCombo)
         {
@@ -79,7 +101,7 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
             {
                 throw new Exception("Không tìm thấy Vaccine container hợp lệ");
             }
-            await vaccineContainerRepository.DeleteVaccineContainerAsync(deletedVaccineContainer.VaccineID);    
+            await vaccineContainerRepository.DeleteVaccineContainerAsync(deletedVaccineContainer.VaccineID);
             return true;
         }
 
@@ -91,6 +113,106 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
         public async Task<List<VaccineCombo>> GetVaccineCombosAsync()
         {
             return await vaccineComboRepository.GetVaccineCombosAsync();
+        }
+
+
+
+        public async Task RegisterCombo(DateOnly startDate, int childId, int comboId)
+        {
+            var combo = await GetVaccineComboByIdAsync(comboId);
+            ValidateInput(combo, "Không tìm thấy combo");
+
+            var appointments = await CreateAppointmentsForCombo(startDate, childId, combo);
+            Result<Appointment> result = null;
+            foreach (var app in appointments)
+            {
+                result = await appointmentService.CreateAppointmentAsync(app);
+            }
+            if (result != null && result.Errors.Any())
+            {
+                throw new Exception(result.Message);
+            }
+            await SentComboAutoMail(appointments, combo.Name);
+        }
+
+
+        private async Task<List<CreateAppointmentDto>> CreateAppointmentsForCombo(DateOnly startDate, int childId, VaccineCombo combo)
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            var createList = new List<CreateAppointmentDto>();
+
+            foreach (var vac in combo.VaccineContainers.Select(x => x.Vaccine))
+            {
+                int dosesRequired = vac.DosesRequired;
+                int period = vac.Period;
+                DateOnly limDate = await appointmentService.GetLatestVaccineDate(childId, vac.VaccineID) ?? startDate;
+                limDate = limDate > today ? limDate : startDate;
+
+                for (int dose = 0; dose < dosesRequired; dose++)
+                {
+                    int slotNumber = createList.Any() ? createList.Max(x => x.Date == limDate ? x.SlotNumber : 0) + 1 : 1;
+                    while (true)
+                    {
+                        while (limDate.DayOfWeek == DayOfWeek.Sunday)
+                        {
+                            limDate = limDate.AddDays(1);
+                        }
+
+                        var appointment = new CreateAppointmentDto
+                        {
+                            ChildID = childId,
+                            SlotNumber = slotNumber,
+                            VaccineID = vac.VaccineID,
+                            Date = limDate
+                        };
+
+                        var error = await appointmentService.ValidateAppointmentConditions(childId, vac.VaccineID, slotNumber, limDate);
+                        if (!error.Any())
+                        {
+                            createList.Add(appointment);
+                            slotNumber++;
+                            break;
+                        }
+
+                        if (error.Any(e => e.ToLower().Contains("trong")))
+                        {
+                            limDate = limDate.AddDays(1);
+                            slotNumber = 1;
+                        }
+                        else if (error.Any(e => e.ToLower().Contains("slot")))
+                        {
+                            slotNumber++;
+                            if (slotNumber > 20)
+                            {
+                                limDate = limDate.AddDays(1);
+                                slotNumber = 1;
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(error.First());
+                        }
+                    }
+                    limDate = limDate.AddDays((period * 7) + 1);
+                }
+            }
+            return createList;
+        }
+
+
+        private async Task SentComboAutoMail(List<CreateAppointmentDto> appDto, string comboName)
+        {
+            var parentAcc = await accountService.GetParentByChildIDAsync(appDto[0].ChildID);
+            var appointments = new List<Appointment>();
+            foreach (var app in appDto)
+            {
+                appointments.Add(await appointmentService.FindAppointment(app));
+            }
+
+            var mail = await mailHelper.CreateComboRegisterMail(appointments, comboName);
+            await mailService.SendEmailAsync(parentAcc.Email, mail.Subject, mail.Body);
+
+
         }
 
 
