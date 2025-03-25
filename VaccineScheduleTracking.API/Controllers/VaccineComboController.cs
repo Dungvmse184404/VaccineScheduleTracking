@@ -109,5 +109,24 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 });
             }
         }
+
+
+        [HttpPut("register-combo")]
+        public async Task<IActionResult> RegisterCombo([FromBody] RegisterComboDto regCombo)
+        {
+            try
+            {
+                await vaccineComboService.RegisterCombo(regCombo.StartDate, regCombo.ChildId, regCombo.ComnboId);
+                return Ok("đăng kí combo thành công");
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
     }
 }

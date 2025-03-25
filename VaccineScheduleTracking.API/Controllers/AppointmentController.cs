@@ -13,6 +13,7 @@ using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Services.Children;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Children;
 using VaccineScheduleTracking.API_Test.Models.DTOs.Accounts;
+using static VaccineScheduleTracking.API_Test.Services.Appointments.AppointmentService;
 
 namespace VaccineScheduleTracking.API.Controllers
 {
@@ -46,8 +47,12 @@ namespace VaccineScheduleTracking.API.Controllers
         {
             try
             {
-                var appointment = await _appointmentServices.CreateAppointmentAsync(createAppointment);
-                return Ok(_mapper.Map<AppointmentDto>(appointment));
+                var result = await _appointmentServices.CreateAppointmentAsync(createAppointment);
+                if (!result.IsSuccess)
+                {
+                    return BadRequest(new { message = string.Join("; ", result.Errors) });
+                }
+                return Ok(_mapper.Map<AppointmentDto>(result.Data));
             }
             catch (Exception ex)
             {
@@ -141,7 +146,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
-        [HttpPut("update-appointment")]//cần sửa
+        [HttpPut("update-appointment")]
         public async Task<IActionResult> UpdateAppointment([FromBody] ModifyAppointmentDto modAppointment)
         {
             try

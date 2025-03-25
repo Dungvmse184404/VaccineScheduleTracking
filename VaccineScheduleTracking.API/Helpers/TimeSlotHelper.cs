@@ -50,7 +50,7 @@ namespace VaccineScheduleTracking.API_Test.Helpers
             DateOnly limitDate = CalculateDate(SetCalendarDate());
             if (date >= limitDate)
             {
-                throw new Exception($"err: {exceptionMsg} {limitDate.AddDays(-1)}");
+                throw new Exception($"{exceptionMsg} {limitDate.AddDays(-1)}");
             }
         }
 

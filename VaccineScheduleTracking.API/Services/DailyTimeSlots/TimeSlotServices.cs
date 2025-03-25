@@ -117,7 +117,7 @@ namespace VaccineScheduleTracking.API_Test.Services.DailyTimeSlots
             ValidateInput(date, "Chưa nhập ngày");
             if (!_timeSlotHelper.ExcludedDay(date))
             {
-                throw new Exception("Chủ nhật hong có làm việc");
+                throw new Exception("không thể đặt lịch vào chủ nhật");
             }
             return await _timeSlotRepository.GetTimeSlotAsync(SlotNumber, date);
         }
