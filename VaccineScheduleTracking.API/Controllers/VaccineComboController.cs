@@ -110,7 +110,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
         [HttpPut("register-combo")]
         public async Task<IActionResult> RegisterCombo([FromBody] RegisterComboDto regCombo)
         {

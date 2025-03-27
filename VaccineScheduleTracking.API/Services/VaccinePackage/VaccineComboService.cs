@@ -127,6 +127,7 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
             foreach (var app in appointments)
             {
                 result = await appointmentService.CreateAppointmentAsync(app);
+                await appointmentService.SetAppointmentStatusAsync(result.Data.AppointmentID, "CONFIRMED", null);
             }
             if (result != null && result.Errors.Any())
             {
