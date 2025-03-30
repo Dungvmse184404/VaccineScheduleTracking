@@ -12,6 +12,6 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
         Task<bool> DeleteVaccineContainerAsync(DeleteVaccineContainerDto deleteVaccineContainer);
         Task<bool> DeleteVaccineComboAsync(int id);
 
-        Task RegisterCombo(DateOnly startDate, int childId, int ComboId);
+        Task <List<string>> RegisterCombo(DateOnly startDate, int childId, int ComboId);
     }
 }

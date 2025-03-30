@@ -34,14 +34,14 @@ namespace VaccineScheduleTracking.API_Test.Helpers
                 Body = $@"
                     Trung tâm tiêm chủng xin thông báo rằng bé <strong>{childName}</strong>, có lịch hẹn tiêm chủng sắp tới.
                     <br>
-                    📅| Ngày hẹn:| {date} <br>
-                    ⏰| Giờ hẹn:| {time} <br>
+                    📅| Ngày hẹn:| {date} 
+                    ⏰| Giờ hẹn:| {time} 
                     💉| Vắc xin:| {appointment.Vaccine.Name} <br>
                     Vui lòng đưa trẻ đến đúng giờ và đem theo các loại |giấy tờ tùy thân| cần thiết cho trẻ để đảm bảo quá trình tiêm chủng diễn ra thuận lợi.
-                    <br><br>
-                    Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với trung tâm y tế để được hỗ trợ.<br>
-                    📞: 0772.706.420<br>
-                    📧: koi221204@gmail.com<br>
+                    <br>
+                    Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với trung tâm y tế để được hỗ trợ.
+                    📞: 0772.706.420
+                    📧: koi221204@gmail.com
                     [đây là tin nhắn tự động, vui lòng không phản hồi]"
             };
         }
@@ -57,9 +57,9 @@ namespace VaccineScheduleTracking.API_Test.Helpers
                     Trung tâm tiêm chủng xin thông báo rằng tài khoản của bạn đã được cấp quyền hạn mới trên hệ thống |Vaccine Schedule Tracking System|.<br>
                     |Vai trò mới:| {role} 📜<br>
                     hiện tại tài khoản trên đã được mở khóa các tính năng và quyền truy cập tương ứng trên hệ thống.<br>
-                    Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ.<br>
-                    📞: 0772.706.420<br>
-                    📧: koi221204@gmail.com<br>
+                    Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với quản trị viên để được hỗ trợ.
+                    📞: 0772.706.420
+                    📧: koi221204@gmail.com
                     [đây là tin nhắn tự động, vui lòng không phản hồi]"
             };
         }
@@ -81,7 +81,7 @@ namespace VaccineScheduleTracking.API_Test.Helpers
                 TimeOnly time = app.TimeSlots.StartTime;
                 string vaccineName = app.Vaccine.Name;
 
-                appointmentDetails.AppendLine($"📅 {date} - 🕒 {time} - Loại vaccine: {vaccineName} 💉<br>");
+                appointmentDetails.AppendLine($" {date} - 🕒 {time} - Loại vaccine: |{vaccineName}| 💉<br>");
             }
 
             return new AutoMailDto
@@ -91,12 +91,12 @@ namespace VaccineScheduleTracking.API_Test.Helpers
                 Subject = "Thông báo đăng kí Combo tiêm chủng",
                 Body = $@"
             Trung tâm tiêm chủng xin thông báo combo |{comboName}| đã được xác nhận đăng kí cho bé |{childName}|.<br>
-            <b>Lịch tiêm đã được hệ thống sắp xếp như sau:</b><br>
-            {appointmentDetails}<br><br>
+            |📅 Lịch tiêm đã được hệ thống sắp xếp như sau:|<br>
+            {appointmentDetails.ToString().Trim()}
 
-            Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với trung tâm y tế để được hỗ trợ.<br>
-            📞: 0772.706.420<br>
-            📧: koi221204@gmail.com<br>
+            Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với trung tâm y tế để được hỗ trợ.
+            📞: 0772.706.420
+            📧: koi221204@gmail.com
             [đây là tin nhắn tự động, vui lòng không phản hồi]"
             };
         }

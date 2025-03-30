@@ -205,8 +205,10 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 throw new Exception($"buổi hẹn {Time} cho bé {childName} chưa được thanh toán!!");
 
             appointment.Status = status;
-            await AddAppointmentToRecord(appointment, note);
-
+            if (status == "FINISHED")
+            {
+                await AddAppointmentToRecord(appointment, note);    
+            }
             return await _appointmentRepository.UpdateAppointmentAsync(appointment);
         }
 

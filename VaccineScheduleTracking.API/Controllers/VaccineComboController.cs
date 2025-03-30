@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VaccineScheduleTracking.API_Test.Models.DTOs;
 using VaccineScheduleTracking.API_Test.Services.VaccinePackage;
+using static VaccineScheduleTracking.API_Test.Services.Appointments.AppointmentService;
 
 namespace VaccineScheduleTracking.API_Test.Controllers
 {
@@ -110,13 +111,17 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPut("register-combo")]
         public async Task<IActionResult> RegisterCombo([FromBody] RegisterComboDto regCombo)
         {
             try
             {
-                await vaccineComboService.RegisterCombo(regCombo.StartDate, regCombo.ChildId, regCombo.ComnboId);
+                var error = await vaccineComboService.RegisterCombo(regCombo.StartDate, regCombo.ChildId, regCombo.ComnboId);
+                if (error != null && error.Any())
+                {
+                    throw new Exception($"{error}, ");
+                }
                 return Ok("đăng kí combo thành công");
                 
             }

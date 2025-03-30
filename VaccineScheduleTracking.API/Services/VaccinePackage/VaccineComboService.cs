@@ -117,7 +117,7 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
 
 
 
-        public async Task RegisterCombo(DateOnly startDate, int childId, int comboId)
+        public async Task<List<string>> RegisterCombo(DateOnly startDate, int childId, int comboId)
         {
             var combo = await GetVaccineComboByIdAsync(comboId);
             ValidateInput(combo, "Không tìm thấy combo");
@@ -129,11 +129,8 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
                 result = await appointmentService.CreateAppointmentAsync(app);
                 await appointmentService.SetAppointmentStatusAsync(result.Data.AppointmentID, "CONFIRMED", null);
             }
-            if (result != null && result.Errors.Any())
-            {
-                throw new Exception(result.Message);
-            }
             await SentComboAutoMail(appointments, combo.Name);
+            return result.Errors;
         }
 
 
