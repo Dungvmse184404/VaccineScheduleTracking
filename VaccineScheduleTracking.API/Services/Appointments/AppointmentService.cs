@@ -120,23 +120,32 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
             foreach (var app in appointments)
             {
-                if ((app.Status == "FINISHED" || app.Status == "PENDING" || app.Status == "CONFIRMED"))
+                if (app.Status == "FINISHED" || app.Status == "PENDING" || app.Status == "CONFIRMED")
                 {
-                    if (!latestDates.TryGetValue(app.VaccineID, out var latest) || app.TimeSlots.DailySchedule.AppointmentDate > latest)
+                    if (app.VaccineID != null && app.VaccineID == vaccineId)
                     {
-                        latestDates[app.VaccineID] = app.TimeSlots.DailySchedule.AppointmentDate;
+                        var appointmentDate = app.TimeSlots.DailySchedule.AppointmentDate;
+                        if (!latestDates.TryGetValue(app.VaccineID, out var latest) || appointmentDate > latest)
+                        {
+                            latestDates[app.VaccineID] = appointmentDate;
+                        }
                     }
                 }
             }
             foreach (var record in vacHistory)
             {
-                if (!latestDates.TryGetValue(record.VaccineID ?? 0, out var latest) || record.Date > latest)
+                if (record.VaccineID != null && record.VaccineID == vaccineId)
                 {
-                    latestDates[record.VaccineID ?? 0] = record.Date;
+                    var recordDate = record.Date;
+                    if (!latestDates.TryGetValue(record.VaccineID.Value, out var latest) || recordDate > latest)
+                    {
+                        latestDates[record.VaccineID.Value] = recordDate;
+                    }
                 }
             }
             return latestDates.TryGetValue(vaccineId, out var latestDate) ? latestDate : null;
         }
+
 
 
 
@@ -149,31 +158,34 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         /// <param name="childId"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        public async Task LimitVaccinePeriod(int vaccineId, int childId, DateOnly date)
+        public async Task<string> LimitVaccinePeriod(int vaccineId, int childId, DateOnly date)
         {
+            string message = string.Empty;
             var vaccine = await _vaccineServices.GetVaccineByIDAsync(vaccineId);
             DateOnly? latestDate = await GetLatestVaccineDate(childId, vaccineId);
 
-            if (latestDate == null) return;
+            if (latestDate == null) return message;
 
             DateOnly limitDate = _timeSlotHelper.GetPeriodDate(vaccine.Period, latestDate.Value);
 
             if (date <= limitDate)
             {
-                throw new Exception($"Vaccine này đã được dùng ngày {latestDate:dd/MM/yyyy}, để đảm bảo an toàn vaccine loại này sẽ khả dụng sau ngày {limitDate:dd/MM/yyyy}");
+                message = ($"Vaccine này đã được dùng ngày {latestDate:dd/MM/yyyy}, để đảm bảo an toàn vaccine loại này sẽ khả dụng sau ngày {limitDate:dd/MM/yyyy}");
             }
+            return message;
         }
 
 
 
-        public async Task ValidateVaccineConditions(int vaccineId, int childId, DateOnly date)
+        public async Task<List<string>> ValidateVaccineConditions(int vaccineId, int childId, DateOnly date)
         {
+            var error = new List<string>(); ;
             if (await LimitAmount(childId, date))
             {
-                throw new Exception("Không thể đặt quá 5 lịch hẹn 1 ngày");
+                error.Add("Không thể đặt quá 5 lịch hẹn 1 ngày");
             }
-
-            await LimitVaccinePeriod(vaccineId, childId, date);
+            error.Add(await LimitVaccinePeriod(vaccineId, childId, date));
+            return error;
         }
 
 
@@ -323,6 +335,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             var vaccine = await _vaccineServices.GetVaccineByIDAsync(vaccineID);
             if (vaccine == null)
                 errors.Add($"Không tìm thấy vaccine có ID: {vaccineID}");
+            else if (vaccine.Stock <= 0)
+                errors.Add($"Vaccine {vaccine.Name} đã hết hàng!");
+
             bool c = await LimitAmount(childID, date);
             if (c)
             {
@@ -377,12 +392,13 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
             int childID = createAppointment.ChildID;
             int vaccineID = createAppointment.VaccineID;
 
-            //await ValidateVaccineConditions(vaccineID, childID, date);
+            var validateErr = await ValidateVaccineConditions(vaccineID, childID, date);
 
             var errors = await ValidateAppointmentConditions(childID, vaccineID, slotNumber, date);
-            if (errors.Any())
+            if (errors.Any() || validateErr.Any())
             {
                 result.Errors.AddRange(errors);
+                result.Errors.AddRange(validateErr);
                 return result;
             }
 
@@ -477,8 +493,9 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
                 throw new Exception("không thể đặt ngày đã qua hạn!");
             }
             ///giới hạn tiêm 
-            //await ValidateVaccineConditions(upVaccineId, upChildId, upDate);
-
+            var error = await ValidateVaccineConditions(upVaccineId, upChildId, upDate);
+            if (error.Any())
+                throw new Exception(error.First());
             ///kiểm tra slot
             var timeSlot = await _timeSlotServices.GetTimeSlotAsync(upSlotNumber, upDate);
             if (timeSlot.Available == false)

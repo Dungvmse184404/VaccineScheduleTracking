@@ -117,7 +117,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         {
             try
             {
-                var error = await vaccineComboService.RegisterCombo(regCombo.StartDate, regCombo.ChildId, regCombo.ComnboId);
+               var error = await vaccineComboService.RegisterCombo(regCombo.StartDate, regCombo.ChildId, regCombo.ComnboId);
                 if (error != null && error.Any())
                 {
                     throw new Exception($"{error}, ");

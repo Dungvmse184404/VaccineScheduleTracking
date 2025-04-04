@@ -93,6 +93,9 @@ CREATE TABLE [dbo].[DoctorTimeSlots](
 TRUNCATE TABLE [DoctorTimeSlots];
 TRUNCATE TABLE [ChildTimeSlots];
 TRUNCATE TABLE [AutoAnnouncements];
+TRUNCATE TABLE [AutoAnnouncements];
+TRUNCATE TABLE [CancelAppointments];
+TRUNCATE TABLE [VaccineRecords];
 TRUNCATE TABLE [Appointments];
 */
 
