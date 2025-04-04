@@ -40,16 +40,16 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Mails
         }
 
         private string DefaultFooter => @"
-            <p style='text-align: center; font-size: 14px; color: #777;'>
-                Trân trọng,<br>Đội ngũ hỗ trợ
-            </p>";
+            <div style='text-align: center; font-size: 14px; color: #777;'>
+                <strong>Trân trọng,</strong><br>Đội ngũ hỗ trợ
+            </div>";
 
         private string WrapFooter(string customFooter)
         {
             return $@"
-            <p style='text-align: center; font-size: 14px; color: #777;'>
+            <div style='text-align: center; font-size: 14px; color: #777;'>
                 {ConvertToHtml(customFooter)}
-            </p>";
+            </div>";
         }
 
         private string ConvertToHtml(string text)

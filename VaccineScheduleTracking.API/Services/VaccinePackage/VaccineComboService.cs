@@ -12,6 +12,7 @@ using VaccineScheduleTracking.API_Test.Repository.VaccinePackage;
 using VaccineScheduleTracking.API_Test.Repository.Vaccines;
 using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Services.Appointments;
+using VaccineScheduleTracking.API_Test.Services.Record;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static VaccineScheduleTracking.API_Test.Helpers.ValidationHelper;
 using static VaccineScheduleTracking.API_Test.Services.Appointments.AppointmentService;
@@ -20,6 +21,7 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
 {
     public class VaccineComboService : IVaccineComboService
     {
+        private readonly IVaccineRecordService vaccineRecordService;
         private readonly IAccountService accountService;
         private readonly IEmailService mailService;
         private readonly MailFormHelper mailHelper;
@@ -29,8 +31,9 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
         private readonly IVaccineRepository vaccineRepository;
         private readonly IVaccineContainerRepository vaccineContainerRepository;
 
-        public VaccineComboService(IAccountService accountService, IEmailService mailService, MailFormHelper mailHelper, TimeSlotHelper timeHelper, IAppointmentService appointmentService, IVaccineComboRepository vaccineComboRepository, IVaccineRepository vaccineRepository, IVaccineContainerRepository vaccineContainerRepository)
+        public VaccineComboService(IVaccineRecordService vaccineRecordService, IAccountService accountService, IEmailService mailService, MailFormHelper mailHelper, TimeSlotHelper timeHelper, IAppointmentService appointmentService, IVaccineComboRepository vaccineComboRepository, IVaccineRepository vaccineRepository, IVaccineContainerRepository vaccineContainerRepository)
         {
+            this.vaccineRecordService = vaccineRecordService;
             this.accountService = accountService;
             this.mailService = mailService;
             this.mailHelper = mailHelper;
@@ -117,7 +120,7 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
 
 
 
-        public async Task RegisterCombo(DateOnly startDate, int childId, int comboId)
+        public async Task<List<string>> RegisterCombo(DateOnly startDate, int childId, int comboId)
         {
             var combo = await GetVaccineComboByIdAsync(comboId);
             ValidateInput(combo, "Không tìm thấy combo");
@@ -127,12 +130,10 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
             foreach (var app in appointments)
             {
                 result = await appointmentService.CreateAppointmentAsync(app);
-            }
-            if (result != null && result.Errors.Any())
-            {
-                throw new Exception(result.Message);
+                await appointmentService.SetAppointmentStatusAsync(result.Data.AppointmentID, "CONFIRMED", null);
             }
             await SentComboAutoMail(appointments, combo.Name);
+            return result.Errors;
         }
 
 
@@ -145,12 +146,21 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
             {
                 int dosesRequired = vac.DosesRequired;
                 int period = vac.Period;
-                DateOnly limDate = await appointmentService.GetLatestVaccineDate(childId, vac.VaccineID) ?? startDate;
+                DateOnly limDate = DateOnly.MinValue;
+
+                DateOnly LastestDate = await appointmentService.GetLatestVaccineDate(childId, vac.VaccineID) ?? startDate;
+                if (LastestDate < today)
+                {
+                    limDate = LastestDate.AddDays(vac.Period * 7);
+                    //dosesRequired--;
+                }
+                
                 limDate = limDate > today ? limDate : startDate;
 
                 for (int dose = 0; dose < dosesRequired; dose++)
                 {
                     int slotNumber = createList.Any() ? createList.Max(x => x.Date == limDate ? x.SlotNumber : 0) + 1 : 1;
+
                     while (true)
                     {
                         while (limDate.DayOfWeek == DayOfWeek.Sunday)

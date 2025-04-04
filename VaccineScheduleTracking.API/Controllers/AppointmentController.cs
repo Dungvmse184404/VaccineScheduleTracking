@@ -48,7 +48,7 @@ namespace VaccineScheduleTracking.API.Controllers
             try
             {
                 var result = await _appointmentServices.CreateAppointmentAsync(createAppointment);
-                if (!result.IsSuccess)
+                if (result.Errors.Any())
                 {
                     return BadRequest(new { message = string.Join("; ", result.Errors) });
                 }
