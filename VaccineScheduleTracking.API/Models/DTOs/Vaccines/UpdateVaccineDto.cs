@@ -7,7 +7,7 @@ namespace VaccineScheduleTracking.API_Test.Models.DTOs.Vaccines
         public string Name { get; set; }
         //public int? VaccineTypeID { get; set; } //update VaccineTypeID gây conflict
         public string Manufacturer { get; set; }
-        public int Stock { get; set; }
+        public int? Stock { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
         public int FromAge { get; set; }

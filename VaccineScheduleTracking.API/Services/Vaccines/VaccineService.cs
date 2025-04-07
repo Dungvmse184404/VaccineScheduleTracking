@@ -106,13 +106,12 @@ namespace VaccineScheduleTracking.API_Test.Services.Vaccines
             vaccine.Name = NullValidator(updateVaccine.Name)
                 ? updateVaccine.Name
                 : vaccine.Name;
-            //vaccine.VaccineTypeID = updateVaccine.VaccineTypeID ?? vaccine.VaccineTypeID;
+            //vaccine.VaccineTypeID = updateVaccine.VaccineTypeIDq?? vaccine.VaccineTypeID;
             vaccine.Manufacturer = NullValidator(updateVaccine.Manufacturer)
                 ? updateVaccine.Manufacturer
                 : vaccine.Manufacturer;
-            vaccine.Stock = NullValidator(updateVaccine.Stock)
-                ? updateVaccine.Stock
-                : vaccine.Stock;
+           vaccine.Stock = updateVaccine.Stock ?? vaccine.Stock;
+
             vaccine.Price = NullValidator(updateVaccine.Price)
                 ? updateVaccine.Price
                 : vaccine.Price;

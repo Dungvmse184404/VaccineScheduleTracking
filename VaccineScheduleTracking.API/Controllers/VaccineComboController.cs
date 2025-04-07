@@ -29,7 +29,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<List<VaccineComboDto>>(vaccineCombos));
         }
 
-        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Doctor, Manager", Policy = "EmailConfirmed")]
         [HttpPost("create-vaccine-combo")]
         public async Task<IActionResult> CreateVaccineCombo([FromBody] CreateVaccineComboDto createVaccineCombo)
         {
@@ -37,6 +37,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<VaccineComboDto>(vaccineCombo));
         }
 
+        [Authorize(Roles = "Doctor, Manager", Policy = "EmailConfirmed")]
         [HttpGet("get-vaccine-combo/{comboID}")]
         public async Task<IActionResult> GetVaccineComboByID([FromRoute] int comboID)
         {
@@ -51,6 +52,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<VaccineComboDto>(vaccineCombo));
         }
 
+        [Authorize(Roles = "Doctor, Manager", Policy = "EmailConfirmed")]
         [HttpPost("add-vaccine-container")]
         public async Task<IActionResult> AddVaccineContainer(CreateVaccineContainerDto createVaccineContainer)
         {
@@ -69,7 +71,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Doctor, Manager", Policy = "EmailConfirmed")]
         [HttpDelete("delete-vaccine-container")]
         public async Task<IActionResult> DeleteVaccineContainer([FromBody] DeleteVaccineContainerDto deleteVaccineContainer)
         {
@@ -90,7 +92,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [Authorize(Roles = "Doctor", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Doctor, Manager", Policy = "EmailConfirmed")]
         [HttpDelete("delete-vaccine-combo/{vaccineComboID}")]
         public async Task<IActionResult> DeleteVaccineCombo([FromRoute] int vaccineComboID)
         {
@@ -112,7 +114,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         }
 
         [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
-        [HttpPut("register-combo")]
+        [HttpPost("register-combo")]
         public async Task<IActionResult> RegisterCombo([FromBody] RegisterComboDto regCombo)
         {
             try
