@@ -115,7 +115,7 @@ namespace VaccineScheduleTracking.API.Controllers
             return Ok(vaccineType);
         }
 
-        //[Authorize(Roles = "Manager, Staff", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Manager, Staff", Policy = "EmailConfirmed")]
         [HttpPut("Update-vaccinetype/{id}")]
         public async Task<IActionResult> UpdateVaccineType([FromRoute] int id, UpdateVaccineTypeDto updateVaccineType)
         {
@@ -156,7 +156,7 @@ namespace VaccineScheduleTracking.API.Controllers
             }
         }
 
-        //[Authorize(Roles = "Manager, Staff", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Manager, Staff", Policy = "EmailConfirmed")]
         [HttpPut("update-vaccine/{id}")]
         public async Task<IActionResult> UpdateVaccine([FromRoute] int id, [FromBody] UpdateVaccineDto updateVaccineDto)
         {

@@ -160,11 +160,11 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         /// <returns></returns>
         public async Task<string> LimitVaccinePeriod(int vaccineId, int childId, DateOnly date)
         {
-            string message = string.Empty;
+            string message = null ;
             var vaccine = await _vaccineServices.GetVaccineByIDAsync(vaccineId);
             DateOnly? latestDate = await GetLatestVaccineDate(childId, vaccineId);
 
-            if (latestDate == null) return message;
+            if (latestDate == null) return null;
 
             DateOnly limitDate = _timeSlotHelper.GetPeriodDate(vaccine.Period, latestDate.Value);
 
@@ -179,12 +179,16 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
 
         public async Task<List<string>> ValidateVaccineConditions(int vaccineId, int childId, DateOnly date)
         {
-            var error = new List<string>(); ;
+            var error = new List<string>() { };
             if (await LimitAmount(childId, date))
             {
                 error.Add("Không thể đặt quá 5 lịch hẹn 1 ngày");
             }
-            error.Add(await LimitVaccinePeriod(vaccineId, childId, date));
+            var message = await LimitVaccinePeriod(vaccineId, childId, date);
+            if (!string.IsNullOrEmpty(message))
+            {
+                error.Add(message);
+            }
             return error;
         }
 
