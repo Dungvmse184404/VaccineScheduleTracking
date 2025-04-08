@@ -7,6 +7,7 @@
         public int VaccineComboId { get; set; }
         public decimal Amount { get; set; }
         public DateTime CreateDate { get; set; }
+        //public string TransactionId { get; set; }
 
         //public VnPayTransaction? VnPayTransaction { get; set; }
     }

@@ -138,17 +138,14 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         public async Task<IActionResult> GetOwnPayments()
         {
             int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int currentUserID);
-            return Ok(await paymentService.GetPaymentsByAccountId(currentUserID));
-        }
+
+            var payment = await paymentService.GetPaymentsByAccountId(currentUserID);
+            var comboPayment = await paymentService.GetPaymentComboByAccountId(currentUserID);
 
 
-        [Authorize(Policy = "EmailConfirmed")]
-        [HttpGet("get-own-combo-payments")]
-        public async Task<IActionResult> GetOwnComboPayments()
-        {
-            int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int currentUserID);
-            return Ok(await paymentService.GetPaymentComboByAccountId(currentUserID));
+            return Ok();
         }
+
 
 
         [HttpGet("payment-info")]
@@ -165,7 +162,8 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 AccountId = accountId,
                 AppointmentId = appointmentId,
                 Amount = response.Amount / 100,
-                CreateDate = createDate
+                CreateDate = createDate,
+                //TransactionId = response.TransactionId
             };
 
             var addedPayment = await paymentService.AddPaymentAsync(payment);
@@ -205,7 +203,8 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 AccountId = accountId,
                 VaccineComboId = comboId,
                 Amount = response.Amount / 100,
-                CreateDate = createDate
+                CreateDate = createDate,
+                //TransactionId = response.TransactionId
             };
 
             var addedPayment = await paymentService.AddComboPaymentAsync(payment);

@@ -40,7 +40,7 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             return Ok(mapper.Map<List<VaccineComboDto>>(vaccineCombos));
         }
 
-        [Authorize(Roles = "Doctor, Manager", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Manager, Doctor", Policy = "EmailConfirmed")]
         [HttpPost("create-vaccine-combo")]
         public async Task<IActionResult> CreateVaccineCombo([FromBody] CreateVaccineComboDto createVaccineCombo)
         {
