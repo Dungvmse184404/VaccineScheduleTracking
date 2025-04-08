@@ -29,5 +29,13 @@ namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Repository
         {
             return await dbContext.VnPayTransactions.FirstOrDefaultAsync(x => x.TargetId == comboPaymentId && x.PaymentType == "combo");
         }
+
+        public async Task<VnPayTransaction> GetTransactionForAccountAsync(int targetId, string paymentType)
+        {
+            return await dbContext.VnPayTransactions
+                .AsQueryable()
+                .Where(x => x.TargetId == targetId && x.PaymentType == paymentType)
+                .FirstOrDefaultAsync();
+        }
     }
 }

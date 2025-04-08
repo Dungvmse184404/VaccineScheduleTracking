@@ -138,12 +138,9 @@ namespace VaccineScheduleTracking.API_Test.Controllers
         public async Task<IActionResult> GetOwnPayments()
         {
             int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int currentUserID);
+            var billList = await paymentService.GetAllBillByAccountIdAsync(currentUserID);
 
-            var payment = await paymentService.GetPaymentsByAccountId(currentUserID);
-            var comboPayment = await paymentService.GetPaymentComboByAccountId(currentUserID);
-
-
-            return Ok();
+            return Ok(billList);
         }
 
 
@@ -163,7 +160,6 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 AppointmentId = appointmentId,
                 Amount = response.Amount / 100,
                 CreateDate = createDate,
-                //TransactionId = response.TransactionId
             };
 
             var addedPayment = await paymentService.AddPaymentAsync(payment);
@@ -204,7 +200,6 @@ namespace VaccineScheduleTracking.API_Test.Controllers
                 VaccineComboId = comboId,
                 Amount = response.Amount / 100,
                 CreateDate = createDate,
-                //TransactionId = response.TransactionId
             };
 
             var addedPayment = await paymentService.AddComboPaymentAsync(payment);

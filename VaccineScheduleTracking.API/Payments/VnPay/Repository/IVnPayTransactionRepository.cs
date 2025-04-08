@@ -7,5 +7,6 @@ namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Repository
         Task<VnPayTransaction?> GetTransactionByPymentIdAsync(int paymentId);
         Task<VnPayTransaction?> GetTransactionByComboPaymentIdAsync(int comboPaymentId);
         Task<VnPayTransaction> AddTransactionAsync(VnPayTransaction vnPayTransaction);
+        Task<VnPayTransaction> GetTransactionForAccountAsync(int targetId, string paymentType);
     }
 }

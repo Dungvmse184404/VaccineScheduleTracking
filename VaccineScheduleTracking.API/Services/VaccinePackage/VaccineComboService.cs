@@ -194,17 +194,16 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             var createList = new List<CreateAppointmentDto>();
 
-            foreach (var vac in combo.VaccineContainers.Select(x => x.Vaccine))
+            foreach (   var vac in combo.VaccineContainers.Select(x => x.Vaccine))
             {
                 int dosesRequired = vac.DosesRequired;
                 int period = vac.Period;
                 DateOnly limDate = DateOnly.MinValue;
 
-                DateOnly LastestDate = await appointmentService.GetLatestVaccineDate(childId, vac.VaccineID) ?? startDate;
-                if (LastestDate != null)
+                DateOnly? LastestDate = await appointmentService.GetLatestVaccineDate(childId, vac.VaccineID);
+                if (LastestDate.HasValue)
                 {
-                    limDate = LastestDate.AddDays((vac.Period * 7) + 1);
-                    //dosesRequired--;
+                    limDate = LastestDate.Value.AddDays((vac.Period * 7) + 1);
                 }
 
                 limDate = limDate > today ? limDate : startDate;

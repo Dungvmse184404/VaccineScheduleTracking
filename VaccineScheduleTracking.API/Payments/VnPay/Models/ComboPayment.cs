@@ -1,4 +1,6 @@
-﻿namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Models
 {
     public class ComboPayment
     {
@@ -7,7 +9,6 @@
         public int VaccineComboId { get; set; }
         public decimal Amount { get; set; }
         public DateTime CreateDate { get; set; }
-        //public string TransactionId { get; set; }
 
         //public VnPayTransaction? VnPayTransaction { get; set; }
     }

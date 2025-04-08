@@ -41,7 +41,7 @@ namespace VaccineScheduleTracking.API.Controllers
             _mapper = mapper;
         }
 
-        //[Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPost("create-appointment")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDto createAppointment)
         {

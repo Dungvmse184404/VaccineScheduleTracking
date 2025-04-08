@@ -399,7 +399,7 @@ CREATE TABLE [dbo].[VnPayTransactions] (
     [Token] VARCHAR(500) NOT NULL,
     [TargetId] INT NOT NULL,
     [PaymentType] NVARCHAR(50) NOT NULL,
-    [CreatedDate] DATETIME NOT NULL DEFAULT GETDATE()
+    [CreatedDate] DATETIME NOT NULL
 );
 
 
