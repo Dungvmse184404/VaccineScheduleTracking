@@ -120,20 +120,56 @@ namespace VaccineScheduleTracking.API_Test.Services.VaccinePackage
 
 
 
+        //public async Task<List<string>> RegisterCombo(DateOnly startDate, int childId, int comboId)
+        //{
+        //    var combo = await GetVaccineComboByIdAsync(comboId);
+        //    ValidateInput(combo, "Không tìm thấy combo");
+
+        //    var appointments = await CreateAppointmentsForCombo(startDate, childId, combo);
+        //    Result<Appointment> result = null;
+        //    foreach (var app in appointments)
+        //    {
+        //        result = await appointmentService.CreateAppointmentAsync(app);
+        //        await appointmentService.SetAppointmentStatusAsync(result.Data.AppointmentID, "CONFIRMED", null);
+        //    }
+        //    await SentComboAutoMail(appointments, combo.Name);
+        //    return result.Errors;
+        //}
+
         public async Task<List<string>> RegisterCombo(DateOnly startDate, int childId, int comboId)
+        {
+            var appointments = await GenerateAppointmentsFromCombo(startDate, childId, comboId);
+            var errors = await RegisterAppointments(appointments);
+
+            var combo = await GetVaccineComboByIdAsync(comboId);
+
+            await SentComboAutoMail(appointments, combo.Name);
+
+            return errors;
+        }
+
+
+        public async Task<List<CreateAppointmentDto>> GenerateAppointmentsFromCombo(DateOnly startDate, int childId, int comboId)
         {
             var combo = await GetVaccineComboByIdAsync(comboId);
             ValidateInput(combo, "Không tìm thấy combo");
 
             var appointments = await CreateAppointmentsForCombo(startDate, childId, combo);
-            Result<Appointment> result = null;
+            return appointments;
+        }
+
+        public async Task<List<string>> RegisterAppointments(List<CreateAppointmentDto> appointments)
+        {
+            List<string> errors = new();
             foreach (var app in appointments)
             {
-                result = await appointmentService.CreateAppointmentAsync(app);
+                var result = await appointmentService.CreateAppointmentAsync(app);
                 await appointmentService.SetAppointmentStatusAsync(result.Data.AppointmentID, "CONFIRMED", null);
+
+                if (result.Errors != null && result.Errors.Any())
+                    errors.AddRange(result.Errors);
             }
-            await SentComboAutoMail(appointments, combo.Name);
-            return result.Errors;
+            return errors;
         }
 
 

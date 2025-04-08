@@ -2,7 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using VaccineScheduleTracking.API.Models.Entities;
 using VaccineScheduleTracking.API_Test.Models.DTOs;
+using VaccineScheduleTracking.API_Test.Payments.VnPay.Models;
+using VaccineScheduleTracking.API_Test.Payments.VnPay.Service;
+using VaccineScheduleTracking.API_Test.Services.Accounts;
 using VaccineScheduleTracking.API_Test.Services.VaccinePackage;
 using static VaccineScheduleTracking.API_Test.Services.Appointments.AppointmentService;
 
@@ -12,13 +17,19 @@ namespace VaccineScheduleTracking.API_Test.Controllers
     [ApiController]
     public class VaccineComboController : ControllerBase
     {
+        private readonly IAccountService accountService;
+        private readonly IVnPayService vnPayService;
         private readonly IVaccineComboService vaccineComboService;
         private readonly IMapper mapper;
+        private readonly IMemoryCache cache;
 
-        public VaccineComboController(IVaccineComboService vaccineComboService, IMapper mapper)
+        public VaccineComboController(IAccountService accountService, IVnPayService vnPayService, IVaccineComboService vaccineComboService, IMapper mapper, IMemoryCache cache)
         {
+            this.accountService = accountService;
+            this.vnPayService = vnPayService;
             this.vaccineComboService = vaccineComboService;
             this.mapper = mapper;
+            this.cache = cache;
         }
 
         [HttpGet("get-all-vaccine-combo")]
@@ -113,19 +124,38 @@ namespace VaccineScheduleTracking.API_Test.Controllers
             }
         }
 
-        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
+        //[Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPost("register-combo")]
         public async Task<IActionResult> RegisterCombo([FromBody] RegisterComboDto regCombo)
         {
             try
             {
-               var error = await vaccineComboService.RegisterCombo(regCombo.StartDate, regCombo.ChildId, regCombo.ComnboId);
-                if (error != null && error.Any())
-                {
-                    throw new Exception($"{error}, ");
-                }
-                return Ok("đăng kí combo thành công");
+                var appointmentDtoList = await vaccineComboService.GenerateAppointmentsFromCombo(regCombo.StartDate, regCombo.ChildId, regCombo.ComnboId);
                 
+                var parent = await accountService.GetParentByChildIDAsync(regCombo.ChildId);
+                if (parent == null)
+                {
+                    return BadRequest(new
+                    {
+                        Message = "Không tìm thấy thông tin tài khoản"
+                    });
+                }
+
+                var cacheKey = $"combo_appointments_{regCombo.ComnboId}_{parent.AccountID}";
+                cache.Set(cacheKey, appointmentDtoList, TimeSpan.FromMinutes(30));
+
+                var PaymentModel = new PaymentInformationModel
+                {
+                    Amount = regCombo.Amount,
+                    OrderDescription = regCombo.OrderDescription,
+                    PaymentType = "combo",
+                    AccountID = parent.AccountID,
+                    AppointmentID = regCombo.ComnboId,
+
+                };
+                var url = vnPayService.CreatePaymentUrl(PaymentModel, HttpContext);
+                
+                return Ok(new { PaymentUrl = url });
             }
             catch (Exception ex)
             {

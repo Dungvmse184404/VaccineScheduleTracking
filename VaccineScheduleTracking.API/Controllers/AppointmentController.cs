@@ -41,7 +41,7 @@ namespace VaccineScheduleTracking.API.Controllers
             _mapper = mapper;
         }
 
-        //[Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
+        [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
         [HttpPost("create-appointment")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDto createAppointment)
         {
@@ -169,7 +169,7 @@ namespace VaccineScheduleTracking.API.Controllers
         }
 
         [Authorize(Roles = "Parent", Policy = "EmailConfirmed")]
-        [HttpDelete("cancel-appointment")]// cần sửa 
+        [HttpDelete("cancel-appointment")]
         public async Task<IActionResult> CancelAppointment([FromBody] CancelAppointmentDto cancelApp)
         {
             try

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Models
 {
@@ -7,6 +8,9 @@ namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Models
         [Key]
         public string TransactionId { get; set; } = null!;
         public string Token { get; set; } = null!;
-        public int PaymentId { get; set; }
+        public int TargetId { get; set; }
+        public string PaymentType { get; set; }
+        public DateTime CreatedDate { get; set; }
+
     }
 }

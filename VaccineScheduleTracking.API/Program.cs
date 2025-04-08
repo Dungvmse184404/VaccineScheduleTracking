@@ -167,6 +167,8 @@ builder.Services.AddScoped<MailFormHelper>();
 builder.Services.AddHostedService<ScheduledTaskService>();
 builder.Host.UseWindowsService();
 
+builder.Services.AddMemoryCache();
+
 
 var app = builder.Build();
 

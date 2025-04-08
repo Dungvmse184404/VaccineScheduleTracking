@@ -6,5 +6,6 @@
         public string OrderDescription { get; set; }
         public int AccountID { get; set; }
         public int AppointmentID { get; set; }
+        public string PaymentType { get; set; }
     }
 }

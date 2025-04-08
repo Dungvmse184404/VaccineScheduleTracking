@@ -12,13 +12,17 @@ namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Service
             _configuration = configuration;
         }
 
-        public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
+        public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)// đang sửa
         {
             var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
             var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
             var tick = DateTime.Now.Ticks.ToString();
             var pay = new VnPayLibrary();
-            var urlCallBack = _configuration["Vnpay:PaymentBackReturnUrl"];
+            string urlCallBack = null;
+            if (model.PaymentType.ToLower().Equals("combo"))
+                urlCallBack = _configuration["Vnpay:ComboCallbackUrl"];
+            else 
+                urlCallBack = _configuration["Vnpay:PaymentBackReturnUrl"];
 
             pay.AddRequestData("vnp_Version", _configuration["Vnpay:Version"]);
             pay.AddRequestData("vnp_Command", _configuration["Vnpay:Command"]);
@@ -33,9 +37,8 @@ namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Service
             pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
             pay.AddRequestData("vnp_TxnRef", $"{model.AccountID}_{model.AppointmentID}_{tick}");
 
-            var paymentUrl =
-                pay.CreateRequestUrl(_configuration["Vnpay:BaseUrl"], _configuration["Vnpay:HashSecret"]);
-
+            var paymentUrl = pay.CreateRequestUrl(_configuration["Vnpay:BaseUrl"], _configuration["Vnpay:HashSecret"]);
+                
             return paymentUrl;
         }
 

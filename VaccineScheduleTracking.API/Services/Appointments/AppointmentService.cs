@@ -201,10 +201,12 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         /// <param name="status"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Appointment?> SetAppointmentStatusAsync(int appointmentId, string status, string? note)
+        public async Task<Appointment?> SetAppointmentStatusAsync(int? appointmentId, string status, string? note)
         {
+            if (appointmentId == null)
+                return null;
             //ValidateInput(appointmentId, "Id buổi hẹn không thể để trống");
-            var appointment = await _appointmentRepository.GetAppointmentByIDAsync(appointmentId);
+            var appointment = await _appointmentRepository.GetAppointmentByIDAsync((int)appointmentId);
             if (appointment == null)
                 throw new Exception("không tìm thấy buổi hẹn");
             else if (appointment.Status == "OVERDUE")

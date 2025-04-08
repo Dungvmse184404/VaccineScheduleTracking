@@ -36,6 +36,7 @@ namespace VaccineScheduleTracking.API.Data
         public DbSet<VaccineCombo> VaccineCombos { get; set; }
         public DbSet<VaccineContainer> VaccineContainers { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<ComboPayment> ComboPayments { get; set; }
         public DbSet<VnPayTransaction> VnPayTransactions { get; set; }
     }
 }

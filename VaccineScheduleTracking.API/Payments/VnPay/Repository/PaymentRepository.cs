@@ -13,6 +13,22 @@ namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Repository
             this.dbContext = dbContext;
         }
 
+        public async Task<ComboPayment> AddComboPaymentAsync(ComboPayment model)
+        {
+            await dbContext.ComboPayments.AddAsync(model);
+            await dbContext.SaveChangesAsync();
+            return model;
+        }
+
+        public async Task<List<Models.ComboPayment>> GetPaymentComboByAccountId(int id)
+        {
+            return await dbContext.ComboPayments
+                /*.Include(x => x.VnPayTransaction)*/
+                .AsQueryable()
+                .Where(x => x.AccountId == id)
+                .ToListAsync();
+        }
+
         public async Task<Models.Payment> AddPaymentAsync(Models.Payment model)
         {
             await dbContext.Payments.AddAsync(model);
@@ -22,7 +38,11 @@ namespace VaccineScheduleTracking.API_Test.Payments.VnPay.Repository
 
         public async Task<List<Models.Payment>> GetPaymentsByAccountId(int id)
         {
-            return await dbContext.Payments.Include(x => x.VnPayTransaction).AsQueryable().Where(x => x.AccountId == id).ToListAsync();
+            return await dbContext.Payments.
+                /*Include(x => x.VnPayTransaction).*/
+                AsQueryable()
+                .Where(x => x.AccountId == id)
+                .ToListAsync();
         }
     }
 }

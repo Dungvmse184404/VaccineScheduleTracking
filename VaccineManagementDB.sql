@@ -383,12 +383,25 @@ CREATE TABLE [dbo].[Payments](
 )
 GO
 
-CREATE TABLE [dbo].[VnPayTransactions] (
-	[TransactionId] [varchar](500) PRIMARY KEY,
-	[Token] [varchar](500) NOT NULL,
-	[PaymentId] [int] NOT NULL, 
-	FOREIGN KEY ([PaymentId]) REFERENCES [dbo].[Payments]([PaymentId])
+CREATE TABLE [dbo].[ComboPayments](
+	[ComboPaymentId] [int] IDENTITY(1,1) PRIMARY KEY,
+	[AccountId] [int] NOT NULL,
+	[VaccineComboID] [int] NOT NULL,
+	[Amount] [decimal](10,0) NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+	FOREIGN KEY ([AccountId]) REFERENCES [dbo].[Accounts]([AccountID]),
+	FOREIGN KEY ([VaccineComboID]) REFERENCES [dbo].[VaccineCombos]([VaccineComboID])
 )
+GO
+
+CREATE TABLE [dbo].[VnPayTransactions] (
+    [TransactionId] VARCHAR(500) PRIMARY KEY,
+    [Token] VARCHAR(500) NOT NULL,
+    [TargetId] INT NOT NULL,
+    [PaymentType] NVARCHAR(50) NOT NULL,
+    [CreatedDate] DATETIME NOT NULL DEFAULT GETDATE()
+);
+
 
 CREATE TABLE [dbo].[AutoAnnouncements](
 	[AutoAnnouncementID] INT IDENTITY(1,1) PRIMARY KEY,
@@ -404,3 +417,9 @@ CREATE TABLE [dbo].[AnnouncementRecipients](
 	FOREIGN KEY ([AnnouncementID]) REFERENCES [dbo].[Announcements]([AnnouncementID]),
 	FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments]([AppointmentID])
 )
+
+
+/*
+TRUNCATE TABLE [VnPayTransactions];
+TRUNCATE TABLE [Payments];
+*/

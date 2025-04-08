@@ -16,7 +16,7 @@ namespace VaccineScheduleTracking.API_Test.Services.Appointments
         //---------------------- functions ----------------------
         Task<Result<Appointment>> CreateAppointmentAsync(CreateAppointmentDto createAppointment);
         Task<Appointment?> UpdateAppointmentAsync(int appointmenID, UpdateAppointmentDto appointment);
-        Task<Appointment?> SetAppointmentStatusAsync(int appointmentId, string status, string? note);
+        Task<Appointment?> SetAppointmentStatusAsync(int? appointmentId, string status, string? note);
         Task AddAppointmentToRecord(Appointment appointment, string? note);
         Task<Appointment?> CancelAppointmentAsync(int appointmentId, string reason);
         Task<CancelAppointment> GetCancelAppointmentReasonAsync(int appointmentId);

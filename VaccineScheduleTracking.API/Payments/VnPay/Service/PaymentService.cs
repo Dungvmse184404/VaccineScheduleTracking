@@ -14,6 +14,13 @@ namespace VaccineScheduleTracking.API_Test.Payment.VnPay.Service
             this.paymentRepository = paymentRepository;
             this.vnPayTransactionRepository = vnPayTransactionRepository;
         }
+
+        public async Task<ComboPayment> AddComboPaymentAsync(ComboPayment model)
+        {
+            await paymentRepository.AddComboPaymentAsync(model);
+            return model;
+        }
+
         public async Task<Payments.VnPay.Models.Payment> AddPaymentAsync(Payments.VnPay.Models.Payment model)
         {
             await paymentRepository.AddPaymentAsync(model);
@@ -23,6 +30,11 @@ namespace VaccineScheduleTracking.API_Test.Payment.VnPay.Service
         public async Task<VnPayTransaction> AddPaymentVnPayTransactionAsyn(VnPayTransaction vnPayTransaction)
         {
             return await vnPayTransactionRepository.AddTransactionAsync(vnPayTransaction);
+        }
+
+        public async Task<List<ComboPayment>> GetPaymentComboByAccountId(int id)
+        {
+            return await paymentRepository.GetPaymentComboByAccountId(id);
         }
 
         public async Task<List<Payments.VnPay.Models.Payment>> GetPaymentsByAccountId(int id)
